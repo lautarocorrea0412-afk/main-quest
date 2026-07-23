@@ -232,6 +232,7 @@ function accion(e) {
       save(data);
       render();
       estallarPetalos(); // después del render: el hanko ya existe en pantalla
+      document.dispatchEvent(new CustomEvent("contexto-cambiado"));
       return;
     }
 
@@ -302,6 +303,7 @@ function accion(e) {
 
   save(data);
   render();
+  document.dispatchEvent(new CustomEvent("contexto-cambiado"));
 }
 
 /* ------------------------------------------------------------

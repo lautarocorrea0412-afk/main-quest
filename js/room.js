@@ -63,8 +63,10 @@ function aplicarInventario() {
 /* ------------------------------------------------------------
    Mete tu avatar dentro de la escena, parado sobre la
    alfombra. El cuarto mide 160x120 y el avatar 48x80; la
-   escala 0.625 lo deja de 30x50, que es la mitad del alto
-   de la pared: presencia de protagonista, no de NPC.
+   escala 0.79 lo deja de 38x63, casi el 80% del alto de la
+   pared: presencia de protagonista, no de NPC. Queda parado
+   delante de la cama (eso da profundidad) sin tapar ningún
+   mueble comprado.
    ------------------------------------------------------------ */
 function dibujarEnEscena() {
   const svg = document.querySelector("#cuarto svg");
@@ -79,7 +81,7 @@ function dibujarEnEscena() {
 
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   g.id = "avatar-en-cuarto";
-  g.setAttribute("transform", "translate(38, 62) scale(0.625)");
+  g.setAttribute("transform", "translate(30, 49) scale(0.79)");
   g.innerHTML = cuerpo;
   svg.appendChild(g); // último = adelante de los muebles
 }
@@ -136,6 +138,7 @@ export function initCuarto(appData) {
 
   // Si cambiás de ropa en VOS, el avatar del cuarto se actualiza.
   document.addEventListener("avatar-cambiado", dibujarEnEscena);
+  document.addEventListener("contexto-cambiado", dibujarEnEscena);
 
   cargarCuarto();
 }

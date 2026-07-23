@@ -123,6 +123,8 @@ function accion(e) {
       editando = false;
       energiaSel = null;
       render();
+      // La energía cargada puede cambiar la cara del avatar.
+      document.dispatchEvent(new CustomEvent("contexto-cambiado"));
       return;
     }
 

@@ -79,9 +79,12 @@ function armarContexto() {
     ultimas.length >= 2 &&
     ultimas.reduce((suma, e) => suma + e.energia, 0) / ultimas.length <= 2;
 
+  const hoyMis = data.misiones.hoy;
+
   return {
     parcialProximo,               // { materia, fecha, dias } o null
     energiaBaja,
+    principalCumplidaHoy: !!(hoyMis && hoyMis.principal && hoyMis.principal.completada),
     racha: calcularRacha(),
     totalPrincipales,
     mesesJapon: Math.max(0, mesesJapon),
@@ -90,6 +93,16 @@ function armarContexto() {
     nivelEdicion: data.arboles.edicion.nivel,
     nivelFitness: data.arboles.fitness.nivel
   };
+}
+
+/* ------------------------------------------------------------
+   El contexto, disponible para otros módulos.
+   Lo usa avatar.js para elegir la expresión: así el motor
+   sigue siendo el único que sabe interpretar tu vida, y el
+   avatar solo la refleja.
+   ------------------------------------------------------------ */
+export function contextoActual() {
+  return armarContexto();
 }
 
 /* ============================================================
@@ -227,6 +240,7 @@ export function elegirMensaje() {
    ------------------------------------------------------------ */
 function renderMensaje() {
   const cont = document.getElementById("mensaje-dia");
+  if (!cont) return;
   const { texto, ctx } = elegirMensaje();
 
   const pill = ctx.parcialProximo
@@ -248,6 +262,7 @@ function renderMensaje() {
    ------------------------------------------------------------ */
 function renderParciales() {
   const lista = document.getElementById("lista-parciales");
+  if (!lista) return;
   const items = [...data.contexto.parciales].sort((a, b) => a.fecha.localeCompare(b.fecha));
 
   if (items.length === 0) {

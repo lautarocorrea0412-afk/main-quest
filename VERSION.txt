@@ -1,4 +1,4 @@
-Fase 3 · Paso 1b — Avatar rediseñado (protagonista)
-Caché SW: mq-fase3-paso1b
-La app debe mostrar en VOS: 'Fase 3 · Paso 1b · datos v4'
-Modificados: js/avatar.js (rediseño completo), js/room.js, css/app.css, js/app.js, sw.js
+Fase 3 · Paso 1c — Avatar protagonista + expresiones
+Caché SW: mq-fase3-paso1c
+La app debe mostrar en VOS: 'Fase 3 · Paso 1c · datos v4'
+Modificados: js/avatar.js, js/engine.js, js/room.js, js/missions.js, js/journal.js, css/app.css, js/app.js, sw.js

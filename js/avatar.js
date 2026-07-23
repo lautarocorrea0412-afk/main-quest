@@ -16,6 +16,7 @@
 
 import { save } from "./store.js";
 import { ARBOLES_META } from "./xp.js";
+import { contextoActual } from "./engine.js";
 
 let data;
 
@@ -124,35 +125,135 @@ const PELOS = {
   }
 };
 
-/* ===================== CARA ===================== */
-function dibujarCara() {
+/* ===================== CARA Y EXPRESIONES =====================
+   Las expresiones NO son emojis que cambian de cara: son
+   pequeños ajustes de cejas, párpados y boca sobre la misma
+   cara, como en un slice of life. La estructura ósea nunca
+   cambia; cambia el gesto.
+
+   Cada expresión define tres piezas: cejas, ojos y boca.
+   Agregar una nueva en el futuro = agregar una entrada acá. */
+
+const EXPRESIONES = {
+
+  /* Tranquila: la de todos los días. */
+  normal: {
+    nombre: "Tranquilo",
+    cejas: () => r(17, 14, 6, 1, P.pelo) + r(26, 14, 6, 1, P.pelo),
+    ojos: () =>
+      r(17, 16, 6, 1, P.pelo) + r(17, 17, 6, 7, P.blanco) +
+      r(18, 18, 4, 5, P.ojo) + r(18, 18, 4, 2, P.pelo) +
+      r(21, 18, 1, 1, P.blanco) + r(18, 22, 3, 1, P.ojo_lt) +
+      r(26, 16, 6, 1, P.pelo) + r(26, 17, 6, 7, P.blanco) +
+      r(27, 18, 4, 5, P.ojo) + r(27, 18, 4, 2, P.pelo) +
+      r(30, 18, 1, 1, P.blanco) + r(28, 22, 3, 1, P.ojo_lt),
+    boca: () => r(23, 25, 3, 1, P.boca),
+    extra: () => r(15, 24, 2, 2, P.blush) + r(31, 24, 2, 2, P.blush)
+  },
+
+  /* Misión cumplida: orgullo. Ojos un poco entrecerrados de
+     satisfacción y sonrisa con las comisuras levantadas. */
+  feliz: {
+    nombre: "Orgulloso",
+    cejas: () => r(17, 13, 6, 1, P.pelo) + r(26, 13, 6, 1, P.pelo),
+    ojos: () =>
+      r(17, 17, 6, 1, P.pelo) + r(17, 18, 6, 6, P.blanco) +
+      r(18, 19, 4, 4, P.ojo) + r(18, 19, 4, 2, P.pelo) +
+      r(21, 19, 1, 1, P.blanco) +
+      r(26, 17, 6, 1, P.pelo) + r(26, 18, 6, 6, P.blanco) +
+      r(27, 19, 4, 4, P.ojo) + r(27, 19, 4, 2, P.pelo) +
+      r(30, 19, 1, 1, P.blanco),
+    boca: () => r(22, 25, 4, 1, P.boca) + r(21, 24, 1, 1, P.boca) + r(26, 24, 1, 1, P.boca),
+    extra: () => r(14, 24, 3, 2, P.blush) + r(31, 24, 3, 2, P.blush)
+  },
+
+  /* Modo parcial: concentración. Cejas hacia adentro y abajo,
+     párpado más bajo, boca en línea recta. */
+  concentrado: {
+    nombre: "Concentrado",
+    cejas: () =>
+      r(17, 13, 3, 1, P.pelo) + r(20, 15, 3, 1, P.pelo) +
+      r(26, 15, 3, 1, P.pelo) + r(29, 13, 3, 1, P.pelo),
+    ojos: () =>
+      r(17, 17, 6, 2, P.pelo) + r(17, 19, 6, 5, P.blanco) +
+      r(18, 19, 4, 4, P.ojo) + r(18, 19, 4, 2, P.pelo) +
+      r(21, 20, 1, 1, P.blanco) +
+      r(26, 17, 6, 2, P.pelo) + r(26, 19, 6, 5, P.blanco) +
+      r(27, 19, 4, 4, P.ojo) + r(27, 19, 4, 2, P.pelo) +
+      r(30, 20, 1, 1, P.blanco),
+    boca: () => r(22, 25, 4, 1, P.boca),
+    extra: () => ""
+  },
+
+  /* Energía baja: párpados a media asta y ojeras suaves.
+     No es tristeza: es cansancio honesto. */
+  cansado: {
+    nombre: "Cansado",
+    cejas: () =>
+      r(17, 15, 3, 1, P.pelo) + r(20, 13, 3, 1, P.pelo) +
+      r(26, 13, 3, 1, P.pelo) + r(29, 15, 3, 1, P.pelo),
+    ojos: () =>
+      r(17, 17, 6, 2, P.pelo) + r(17, 19, 6, 4, P.blanco) +
+      r(18, 20, 4, 3, P.ojo) + r(18, 20, 4, 1, P.pelo) +
+      r(26, 17, 6, 2, P.pelo) + r(26, 19, 6, 4, P.blanco) +
+      r(27, 20, 4, 3, P.ojo) + r(27, 20, 4, 1, P.pelo),
+    boca: () => r(23, 25, 2, 1, P.boca),
+    extra: () => r(17, 24, 6, 1, P.piel_sh) + r(26, 24, 6, 1, P.piel_sh)
+  },
+
+  /* Racha alta: confianza. Una ceja levantada y media sonrisa. */
+  confiado: {
+    nombre: "Confiado",
+    cejas: () => r(17, 12, 6, 1, P.pelo) + r(26, 14, 6, 1, P.pelo),
+    ojos: () =>
+      r(17, 16, 6, 1, P.pelo) + r(17, 17, 6, 7, P.blanco) +
+      r(18, 18, 4, 5, P.ojo) + r(18, 18, 4, 2, P.pelo) +
+      r(21, 18, 1, 1, P.blanco) +
+      r(26, 17, 6, 1, P.pelo) + r(26, 18, 6, 6, P.blanco) +
+      r(27, 19, 4, 4, P.ojo) + r(27, 19, 4, 2, P.pelo) +
+      r(30, 19, 1, 1, P.blanco),
+    boca: () => r(22, 25, 4, 1, P.boca) + r(26, 24, 1, 1, P.boca),
+    extra: () => r(31, 24, 2, 2, P.blush)
+  }
+};
+
+export const NOMBRES_EXPRESION = Object.fromEntries(
+  Object.entries(EXPRESIONES).map(([k, v]) => [k, v.nombre])
+);
+
+function dibujarCara(expr) {
+  const e = EXPRESIONES[expr] || EXPRESIONES.normal;
   return (
     r(15, 8, 18, 22, P.piel) +          // óvalo
     r(15, 27, 18, 3, P.piel_sh) +       // mentón sombreado
     r(20, 29, 8, 5, P.piel_sh) +        // cuello
-    // Cejas
-    r(17, 14, 6, 1, P.pelo) +
-    r(26, 14, 6, 1, P.pelo) +
-    // Ojos grandes estilo anime: blanco + iris + pupila + brillo.
-    // El blanco es más ancho que el iris a propósito: si el
-    // iris lo tapa todo, el ojo se lee como un punto negro.
-    r(17, 16, 6, 1, P.pelo) +           // pestaña superior
-    r(17, 17, 6, 7, P.blanco) +
-    r(18, 18, 4, 5, P.ojo) +
-    r(18, 18, 4, 2, P.pelo) +           // pupila
-    r(21, 18, 1, 1, P.blanco) +         // brillo
-    r(18, 22, 3, 1, P.ojo_lt) +
-    r(26, 16, 6, 1, P.pelo) +
-    r(26, 17, 6, 7, P.blanco) +
-    r(27, 18, 4, 5, P.ojo) +
-    r(27, 18, 4, 2, P.pelo) +
-    r(30, 18, 1, 1, P.blanco) +
-    r(28, 22, 3, 1, P.ojo_lt) +
-    // Rubor y boca
-    r(15, 24, 2, 2, P.blush) +
-    r(31, 24, 2, 2, P.blush) +
-    r(23, 25, 3, 1, P.boca)
+    e.cejas() + e.ojos() + e.extra() + e.boca()
   );
+}
+
+/* ------------------------------------------------------------
+   Expresión automática según tu contexto real.
+   Este es el enganche con el motor: el avatar no es
+   decoración, reacciona a tu vida.
+
+   Prioridad (y el porqué de cada una):
+   1. Misión principal cumplida hoy → orgullo. Es EL momento.
+   2. Energía baja varios días      → cansado. Salud primero.
+   3. Parcial a ≤14 días            → concentrado.
+   4. Racha de 3+ días              → confiado.
+   5. Si no                          → tranquilo.
+   ------------------------------------------------------------ */
+export function expresionAutomatica() {
+  try {
+    const ctx = contextoActual();
+    if (ctx.principalCumplidaHoy) return "feliz";
+    if (ctx.energiaBaja) return "cansado";
+    if (ctx.parcialProximo) return "concentrado";
+    if (ctx.racha >= 3) return "confiado";
+  } catch {
+    // Si el motor no está listo todavía, cara tranquila.
+  }
+  return "normal";
 }
 
 /* ===================== ROPA (se gana) =====================
@@ -278,9 +379,10 @@ function textoRequisito(prenda) {
    Dibujo completo del avatar.
    Orden de capas: piernas → cuerpo → cabeza → pelo.
    ------------------------------------------------------------ */
-export function dibujarAvatar(escala = 1) {
+export function dibujarAvatar(escala = 1, expr = null) {
   if (!data) return ""; // todavía no se inicializó
   const a = data.perfil.avatar;
+  const gesto = expr || expresionAutomatica();
   const pelo = PELOS[a.pelo] || PELOS.largo;
   const remera = REMERAS[a.remera] || REMERAS.oversize;
   const pantalon = PANTALONES[a.pantalon] || PANTALONES.jogging;
@@ -299,10 +401,10 @@ export function dibujarAvatar(escala = 1) {
     remera.dibujo() +
     r(3, 52, 7, 7, P.piel) +            // manos
     r(38, 52, 7, 7, P.piel) +
-    dibujarCara() +
+    dibujarCara(gesto) +
     pelo.adelante();
 
-  return `<svg viewBox="0 0 48 80" width="${48 * escala}" shape-rendering="crispEdges" role="img" aria-label="Tu avatar">${piezas}</svg>`;
+  return `<svg viewBox="0 0 48 80" width="${48 * escala}" shape-rendering="crispEdges" role="img" aria-label="Tu avatar, expresión ${gesto}">${piezas}</svg>`;
 }
 
 /* ------------------------------------------------------------
@@ -323,8 +425,12 @@ function opcionesHTML(grupo, coleccion, actual) {
 }
 
 export function renderAvatar() {
+  const gesto = expresionAutomatica();
   const vista = document.getElementById("avatar-preview");
-  if (vista) vista.innerHTML = dibujarAvatar(2);
+  if (vista) {
+    vista.innerHTML = dibujarAvatar(2, gesto) +
+      `<p class="avatar-gesto">${NOMBRES_EXPRESION[gesto]}</p>`;
+  }
 
   const panel = document.getElementById("avatar-opciones");
   if (!panel) return;
@@ -359,5 +465,11 @@ export function setDatosAvatar(appData) {
 export function initAvatar(appData) {
   data = appData;
   document.getElementById("view-vos").addEventListener("click", accion);
+
+  // Cuando cambia algo que afecta la expresión (completar una
+  // misión, cerrar el diario), otros módulos avisan con este
+  // evento y el avatar se vuelve a dibujar con la cara nueva.
+  document.addEventListener("contexto-cambiado", renderAvatar);
+
   renderAvatar();
 }
