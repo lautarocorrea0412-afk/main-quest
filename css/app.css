@@ -1,31 +1,41 @@
 /* ============================================================
    MAIN QUEST — app.css
    ------------------------------------------------------------
-   Sistema de diseño "Habitación de noche": oscuridad cálida,
-   luz de lámpara ámbar, sakura para lo especial, matcha para
-   lo cumplido. JRPG adulto y acogedor, nunca infantil.
-   Cambiar la estética de toda la app = tocar estas variables.
+   Identidad "Atardecer": tu cuarto con la lámpara prendida.
+   Oscuro cálido + formas redondas + botones apretables +
+   rebote en todo. JRPG acogedor, no dashboard elegante.
+
+   Reglas de la piel (si algo se ve "corporativo", es porque
+   rompió una de estas):
+   - Bordes de 2px, nunca de 1px.
+   - Botones RELLENOS de color, nunca outline.
+   - Esquinas generosas: 18px paneles, 14px controles.
+   - Todo lo que aparece, rebota.
    ============================================================ */
 
 :root {
-  /* Paleta — anochecer cálido */
-  --bg:        #201B26;  /* carbón violeta, cielo de anochecer */
-  --bg-panel:  #2A2433;  /* paneles: la misma penumbra, un paso arriba */
-  --bg-raise:  #342D3E;  /* elementos elevados */
-  --accent:    #F2A65A;  /* ámbar lámpara: el color de la acción */
-  --sakura:    #E88CA5;  /* momentos especiales: parciales, niveles */
-  --matcha:    #A5C98B;  /* lo cumplido */
-  --ink:       #F5EEE1;  /* blanco papel washi */
-  --ink-dim:   #A399AD;  /* texto secundario */
-  --line:      #3C3546;  /* bordes sutiles */
+  /* Paleta — atardecer cálido */
+  --bg:        #2A2130;  /* ciruela oscuro, cálido */
+  --bg-panel:  #372E40;  /* paneles */
+  --bg-raise:  #443A4E;  /* elevados */
+  --accent:    #FFB067;  /* durazno: el color de la acción */
+  --sakura:    #F58EA8;  /* momentos especiales */
+  --matcha:    #8FD6A9;  /* lo cumplido */
+  --oro:       #FFD98E;  /* monedas */
+  --ink:       #FBF0E4;  /* crema */
+  --ink-dim:   #B3A5BC;  /* secundario */
+  --line:      #554A5F;  /* bordes (siempre 2px) */
 
-  /* Tipografía: display redondeada cálida + cuerpo limpio */
-  --font-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
+  /* Tipografía: redonda y gordita para títulos */
+  --font-display: "Baloo 2", "Zen Maru Gothic", sans-serif;
   --font-body: "Outfit", -apple-system, system-ui, sans-serif;
 
-  /* Geometría: esquinas generosas, sin ángulos agresivos */
   --pad: 18px;
   --radius: 14px;
+  --radius-panel: 18px;
+
+  /* Curva con rebote: la firma de movimiento de la app */
+  --bounce: cubic-bezier(0.34, 1.7, 0.5, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -50,68 +60,63 @@ header {
   padding: 20px var(--pad) 8px;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
 }
 
 .wordmark {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 24px;
-  letter-spacing: 0.5px;
-  display: inline-block;
+  font-weight: 800;
+  font-size: 25px;
+  letter-spacing: 0.3px;
+  color: var(--accent);
 }
 
-.wordmark .slash { color: var(--accent); }
+.wordmark .slash { color: var(--sakura); }
 
 /* ============ Vistas ============ */
 
-main {
-  padding: 8px var(--pad) 110px; /* espacio para la tab bar */
-}
+main { padding: 8px var(--pad) 110px; }
 
 .view { display: none; }
-.view.active { display: block; animation: viewIn 0.22s ease-out; }
+.view.active { display: block; animation: viewIn 0.3s var(--bounce); }
 
 @keyframes viewIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* ============ Paneles ============ */
 
 .panel {
   background: var(--bg-panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-panel);
   padding: var(--pad);
   margin-bottom: 14px;
 }
 
-/* La misión principal es LA protagonista: panel elevado
-   con borde ámbar, como iluminado por la lámpara. */
+/* La misión principal: iluminada por la lámpara */
 .panel--main {
   background: var(--bg-raise);
-  border: 1px solid var(--accent);
-  box-shadow: 0 0 24px rgba(242, 166, 90, 0.08);
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 30px rgba(255, 176, 103, 0.12);
 }
 
 .panel__label {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 12px;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--accent);
   margin-bottom: 8px;
 }
 
-.panel--main .panel__label { color: var(--accent); }
-
 .panel h2 {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: 0.3px;
+  font-weight: 800;
+  font-size: 21px;
+  line-height: 1.3;
   margin-bottom: 6px;
 }
 
@@ -133,12 +138,12 @@ main {
   align-items: center;
   gap: 12px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
 }
 
 .arbol:last-child { border-bottom: none; }
 
-.arbol__emoji { font-size: 22px; width: 32px; text-align: center; }
+.arbol__emoji { font-size: 24px; width: 34px; text-align: center; }
 
 .arbol__info { flex: 1; }
 
@@ -152,16 +157,16 @@ main {
 
 .arbol__nivel {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: 800;
+  font-size: 13px;
   color: var(--accent);
-  letter-spacing: 1px;
 }
 
 .barra {
-  height: 6px;
+  height: 9px;
   background: var(--bg);
-  border-radius: 3px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
   overflow: hidden;
 }
 
@@ -169,36 +174,45 @@ main {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, var(--accent), var(--sakura));
-  border-radius: 3px;
-  transition: width 0.5s ease;
+  border-radius: 999px;
+  transition: width 0.6s var(--bounce);
 }
 
-/* ============ Botones ============ */
+/* ============ Botones: RELLENOS y apretables ============ */
 
 .btn {
   display: block;
   width: 100%;
-  padding: 14px;
-  font-family: var(--font-body);
-  font-size: 15px;
-  font-weight: 600;
+  padding: 15px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  color: var(--bg);
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  /* Sombra sólida abajo: el botón tiene cuerpo, se hunde */
+  box-shadow: 0 4px 0 #C97F3D;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #C97F3D;
+}
+
+.btn--ghost {
   color: var(--ink);
   background: var(--bg-raise);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: transform 0.1s ease, background 0.15s ease;
+  box-shadow: 0 4px 0 var(--line);
 }
 
-.btn:active { transform: scale(0.98); background: var(--accent); color: var(--bg); }
+.btn--ghost:active { box-shadow: 0 0 0 var(--line); }
 
-.btn--ghost { border-color: var(--line); background: var(--bg-panel); }
-
-.btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
+.btn:focus-visible { outline: 3px solid var(--sakura); outline-offset: 3px; }
 
 /* ============ Tab bar ============ */
 
@@ -206,10 +220,10 @@ nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   display: flex;
-  background: rgba(32, 27, 38, 0.92);
+  background: rgba(42, 33, 48, 0.94);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  border-top: 1px solid var(--line);
+  border-top: 2px solid var(--line);
   padding-bottom: env(safe-area-inset-bottom);
 }
 
@@ -219,36 +233,29 @@ nav {
   background: none;
   border: none;
   color: var(--ink-dim);
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3px;
+  transition: color 0.15s ease;
 }
 
-.tab__icon { font-size: 20px; line-height: 1; }
+.tab__icon {
+  font-size: 22px;
+  line-height: 1;
+  transition: transform 0.3s var(--bounce);
+}
 
 .tab.active { color: var(--accent); }
 
-.tab.active .tab__nombre { position: relative; }
+/* La pestaña activa salta */
+.tab.active .tab__icon { transform: translateY(-3px) scale(1.15); }
 
-.tab.active .tab__nombre::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -6px;
-  width: 16px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--accent);
-}
-
-.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.tab:focus-visible { outline: 3px solid var(--sakura); outline-offset: -3px; }
 
 /* ============ Misiones ============ */
 
@@ -257,11 +264,11 @@ nav {
   min-width: 0;
   padding: 12px 14px;
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: 2px solid var(--line);
   border-radius: var(--radius);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 16px; /* 16px evita que iOS haga zoom al enfocar */
+  font-size: 16px; /* evita el zoom de iOS al enfocar */
 }
 
 .campo:focus { outline: none; border-color: var(--accent); }
@@ -271,21 +278,24 @@ nav {
 
 .btn-mini {
   flex: none;
-  width: 48px;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--ink);
-  background: var(--bg-raise);
-  border: 1px solid var(--accent);
+  width: 50px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--bg);
+  background: var(--accent);
+  border: none;
   border-radius: var(--radius);
+  box-shadow: 0 4px 0 #C97F3D;
   cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
-.btn-mini:active { background: var(--accent); color: var(--bg); }
-.btn-mini:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-mini:active { transform: translateY(4px); box-shadow: 0 0 0 #C97F3D; }
+.btn-mini:focus-visible { outline: 3px solid var(--sakura); outline-offset: 3px; }
 
 .mp-titulo {
-  font-size: 25px !important;
+  font-size: 26px !important;
   line-height: 1.25;
   margin: 4px 0 14px !important;
 }
@@ -296,11 +306,11 @@ nav {
 
 .panel--cumplida { border-color: var(--matcha); box-shadow: none; }
 
-/* ===== El hanko: sello japonés de misión cumplida =====
-   La firma visual de la app. Un sello circular sakura con
-   el kanji 完 ("completo"), estampado con golpe de escala.
-   Es UN momento japonés, ganado — no ambientación. */
+/* ===== El hanko: sello de misión cumplida =====
+   Cae rotando y rebota. Las partículas de sakura salen
+   disparadas alrededor. Es EL momento del día. */
 .hanko-fila {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -309,48 +319,66 @@ nav {
 
 .hanko {
   flex: none;
-  width: 46px;
-  height: 46px;
-  border: 2.5px solid var(--sakura);
+  width: 52px;
+  height: 52px;
+  background: var(--sakura);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 22px;
-  color: var(--sakura);
-  transform: rotate(-8deg);
-  animation: hankoIn 0.4s cubic-bezier(0.2, 1.6, 0.4, 1);
+  font-weight: 800;
+  font-size: 26px;
+  color: #5A2233;
+  transform: rotate(-9deg);
+  animation: hankoIn 0.5s var(--bounce);
 }
 
 @keyframes hankoIn {
-  from { opacity: 0; transform: rotate(-30deg) scale(2.6); }
-  to   { opacity: 1; transform: rotate(-8deg) scale(1); }
+  0%   { opacity: 0; transform: rotate(-40deg) scale(3); }
+  60%  { opacity: 1; transform: rotate(-4deg) scale(0.88); }
+  100% { opacity: 1; transform: rotate(-9deg) scale(1); }
 }
 
 .hanko-texto {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 1px;
+  font-weight: 800;
+  font-size: 17px;
   color: var(--matcha);
 }
 
-/* Sello simple (lo usa el diario) */
+/* Partículas de sakura que estallan al estampar */
+.petalo {
+  position: absolute;
+  left: 26px;
+  top: 26px;
+  width: 7px;
+  height: 7px;
+  background: var(--sakura);
+  border-radius: 50% 0 50% 50%;
+  pointer-events: none;
+  animation: petalo 0.75s ease-out forwards;
+}
+
+@keyframes petalo {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3) rotate(180deg); }
+}
+
+/* Sello simple (diario) */
 .stamp {
   display: inline-block;
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 1.5px;
+  font-weight: 800;
+  font-size: 17px;
   color: var(--matcha);
-  animation: stampIn 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
+  animation: stampIn 0.45s var(--bounce);
 }
 
 @keyframes stampIn {
-  from { opacity: 0; transform: scale(2.2); }
-  to   { opacity: 1; transform: scale(1); }
+  0%   { opacity: 0; transform: scale(2.4); }
+  60%  { opacity: 1; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 .mp-cierre { margin-top: 10px; font-size: 14px !important; }
@@ -377,26 +405,26 @@ nav {
   align-items: center;
   gap: 12px;
   padding: 11px 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
 }
 
 .secundaria:last-child { border-bottom: none; }
 
 .secundaria__check {
   flex: none;
-  width: 24px;
-  height: 24px;
-  background: none;
-  border: 2px solid var(--accent);
-  border-radius: 8px;
+  width: 26px;
+  height: 26px;
+  background: var(--bg);
+  border: 2.5px solid var(--accent);
+  border-radius: 9px;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.2s var(--bounce), transform 0.2s var(--bounce);
 }
 
 .secundaria.hecha .secundaria__check {
   background: var(--matcha);
   border-color: var(--matcha);
-  box-shadow: 0 0 10px rgba(165, 201, 139, 0.4);
+  transform: scale(1.12);
 }
 
 .secundaria__titulo { flex: 1; font-size: 15px; }
@@ -411,7 +439,7 @@ nav {
   background: none;
   border: none;
   color: var(--ink-dim);
-  font-size: 20px;
+  font-size: 22px;
   padding: 4px 10px;
   cursor: pointer;
 }
@@ -431,31 +459,31 @@ nav {
 
 .chip {
   flex: none;
-  padding: 8px 14px;
+  padding: 9px 15px;
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
   color: var(--ink-dim);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: 2px solid var(--line);
   border-radius: 999px;
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition: all 0.2s var(--bounce);
 }
 
 .chip.activa {
-  color: var(--ink);
+  color: var(--bg);
+  background: var(--accent);
   border-color: var(--accent);
-  background: var(--bg-panel);
-  box-shadow: 0 0 8px rgba(242, 166, 90, 0.3);
+  transform: scale(1.06);
 }
 
 .select-arbol {
   flex: none;
-  width: 54px;
+  width: 56px;
   padding: 0 6px;
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: 2px solid var(--line);
   border-radius: var(--radius);
   color: var(--ink);
   font-size: 16px;
@@ -469,71 +497,90 @@ nav {
 .tag-arbol {
   display: inline-block;
   font-size: 13px;
-  color: var(--ink-dim);
+  font-weight: 600;
+  color: var(--ink);
   background: var(--bg-panel);
-  border: 1px solid var(--line);
+  border: 2px solid var(--line);
   border-radius: 999px;
-  padding: 4px 12px;
+  padding: 5px 13px;
   margin-bottom: 12px;
 }
 
 .secundaria__arbol { font-size: 13px; }
 
-/* XP flotante: luz cálida que sube y se apaga */
+/* XP flotante */
 .xp-float {
   position: fixed;
   transform: translateX(-50%);
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0.5px;
-  color: var(--accent);
-  text-shadow: 0 0 12px rgba(242, 166, 90, 0.55);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--oro);
+  text-shadow: 0 0 14px rgba(255, 217, 142, 0.6);
   pointer-events: none;
   z-index: 99;
-  animation: xpFloat 1s ease-out forwards;
+  animation: xpFloat 1.1s var(--bounce) forwards;
 }
 
 @keyframes xpFloat {
-  0%   { opacity: 0; translate: 0 6px; }
-  15%  { opacity: 1; translate: 0 0; }
-  100% { opacity: 0; translate: 0 -44px; }
+  0%   { opacity: 0; translate: 0 8px; scale: 0.6; }
+  20%  { opacity: 1; translate: 0 0; scale: 1.15; }
+  35%  { scale: 1; }
+  100% { opacity: 0; translate: 0 -50px; scale: 1; }
 }
 
 /* ============ Motor de contexto ============ */
 
+/* El mensaje del día: burbuja de diálogo del compañero */
 .mensaje {
   position: relative;
-  margin: 0 0 18px;
-  padding: 10px 14px 10px 16px;
-  border-left: 3px solid var(--accent);
+  margin: 0 0 20px;
+  padding: 13px 16px;
+  background: var(--bg-panel);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-panel);
+}
+
+/* Colita de globo de diálogo, abajo a la izquierda */
+.mensaje::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  bottom: -9px;
+  width: 14px;
+  height: 14px;
+  background: var(--bg-panel);
+  border-right: 2px solid var(--line);
+  border-bottom: 2px solid var(--line);
+  transform: rotate(45deg);
 }
 
 .mensaje p {
   font-size: 15px;
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--ink);
 }
 
-.mensaje--parcial { border-left-color: var(--sakura); }
+.mensaje--parcial { border-color: var(--sakura); }
+.mensaje--parcial::after { border-color: var(--sakura); }
 
 .pill-parcial {
   display: inline-block;
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 11px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--sakura);
-  border: 1px solid var(--sakura);
+  color: #5A2233;
+  background: var(--sakura);
   border-radius: 999px;
-  padding: 3px 10px;
-  margin-bottom: 8px;
+  padding: 4px 12px;
+  margin-bottom: 9px;
 }
 
 .campo--fecha {
   flex: none;
-  width: 128px;
+  width: 132px;
   color-scheme: dark;
 }
 
@@ -560,21 +607,21 @@ nav {
 
 .energia {
   flex: 1;
-  padding: 10px 0;
-  font-size: 22px;
+  padding: 11px 0;
+  font-size: 24px;
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: 2px solid var(--line);
   border-radius: var(--radius);
   cursor: pointer;
-  filter: grayscale(1) opacity(0.55);
-  transition: filter 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  filter: grayscale(1) opacity(0.5);
+  transition: all 0.25s var(--bounce);
 }
 
 .energia.activa {
   filter: none;
   border-color: var(--accent);
-  transform: scale(1.08);
-  box-shadow: 0 0 10px rgba(242, 166, 90, 0.35);
+  background: var(--bg-raise);
+  transform: scale(1.18) translateY(-2px);
 }
 
 .campo--diario {
@@ -595,14 +642,13 @@ nav {
 
 .monedas {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  color: var(--accent);
-  background: var(--bg-panel);
-  border: 1px solid var(--line);
+  font-weight: 800;
+  font-size: 15px;
+  color: #5A3A10;
+  background: var(--oro);
   border-radius: 999px;
-  padding: 4px 12px;
+  padding: 5px 14px;
+  box-shadow: 0 3px 0 #C9A85F;
 }
 
 .tienda {
@@ -615,44 +661,50 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 14px 8px;
+  gap: 7px;
+  padding: 15px 8px;
   background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-panel);
   text-align: center;
+  transition: transform 0.2s var(--bounce);
 }
 
-.tienda__item--tuyo { border-color: var(--matcha); }
+.tienda__item--tuyo { border-color: var(--matcha); background: var(--bg-panel); }
 
-.tienda__emoji { font-size: 34px; }
+.tienda__emoji { font-size: 36px; }
 
 .tienda__nombre { font-size: 14px; font-weight: 600; }
 
 .btn-comprar {
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink);
-  background: var(--bg-raise);
-  border: 1px solid var(--accent);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--bg);
+  background: var(--accent);
+  border: none;
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 8px 15px;
+  box-shadow: 0 3px 0 #C97F3D;
   cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
-.btn-comprar:active { background: var(--accent); color: var(--bg); }
+.btn-comprar:active { transform: translateY(3px); box-shadow: 0 0 0 #C97F3D; }
 
 .tienda__estado {
-  font-size: 12px;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
   color: var(--matcha);
-  padding: 6px 0;
+  padding: 7px 0;
 }
 
 .tienda__estado--falta {
   color: var(--ink-dim);
+  font-family: var(--font-body);
   font-weight: 400;
+  font-size: 12px;
 }
 
 /* ============ Detalles ============ */

@@ -109,6 +109,29 @@ function renderPrincipal() {
 }
 
 /* ------------------------------------------------------------
+   Pétalos de sakura: estallan alrededor del hanko cuando se
+   estampa. Puro adorno del momento más importante del día —
+   el único lugar de la app donde hay decoración por gusto.
+   Se autodestruyen: no dejan basura en la página.
+   ------------------------------------------------------------ */
+function estallarPetalos() {
+  const fila = document.querySelector(".hanko-fila");
+  if (!fila) return;
+
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement("div");
+    p.className = "petalo";
+    const angulo = (Math.PI * 2 * i) / 8 + Math.random() * 0.4;
+    const dist = 34 + Math.random() * 22;
+    p.style.setProperty("--dx", `${Math.cos(angulo) * dist}px`);
+    p.style.setProperty("--dy", `${Math.sin(angulo) * dist}px`);
+    p.style.animationDelay = `${Math.random() * 0.08}s`;
+    fila.appendChild(p);
+    p.addEventListener("animationend", () => p.remove());
+  }
+}
+
+/* ------------------------------------------------------------
    Render de las misiones secundarias.
    ------------------------------------------------------------ */
 function renderSecundarias() {
@@ -197,7 +220,10 @@ function accion(e) {
         renderArboles(data);
       }
       flotarXp(texto, btn);
-      break;
+      save(data);
+      render();
+      estallarPetalos(); // después del render: el hanko ya existe en pantalla
+      return;
     }
 
     case "deshacer-principal": {

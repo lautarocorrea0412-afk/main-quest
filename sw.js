@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-fase2-rediseno";
+const CACHE_VERSION = "mq-fase2-atardecer";
 
 const CORE = [
   "./",
