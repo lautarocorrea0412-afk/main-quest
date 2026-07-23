@@ -762,6 +762,68 @@ nav {
   100% { opacity: 1; transform: scale(1); }
 }
 
+/* ============ Avatar (Fase 3 · Paso 1) ============ */
+
+.avatar-fila { display: flex; gap: 14px; align-items: flex-start; }
+
+.avatar-preview {
+  flex: none;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px;
+  line-height: 0;
+}
+
+.avatar-opciones { flex: 1; min-width: 0; }
+
+.avatar-opciones .diario-pregunta { margin: 4px 0 6px; }
+
+.opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.opcion {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-dim);
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s var(--bounce);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.opcion.activa {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: scale(1.05);
+}
+
+/* Prenda todavía no ganada: se ve, con su requisito a la vista.
+   Mostrar lo que falta motiva más que esconderlo. */
+.opcion.trabada {
+  opacity: 0.55;
+  cursor: default;
+  border-style: dashed;
+}
+
+.opcion__req {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--sakura);
+}
+
 /* ============ Detalles ============ */
 
 .meta {

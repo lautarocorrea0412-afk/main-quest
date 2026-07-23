@@ -97,13 +97,15 @@ r(70, 27, 12, 2, C["amber"])
 r(74, 21, 4, 4, C["cream"])
 g_close()
 
+# La planta vive en el rincón delantero izquierdo: ahí no la
+# tapa el avatar, que se para sobre la alfombra.
 g_open("planta")
-r(50, 84, 10, 8, C["wood_dk"])         # maceta
-r(52, 82, 6, 2, C["wood"])
-r(53, 74, 4, 8, C["green_dk"])         # tallo
-r(48, 70, 6, 6, C["green"])            # hojas
-r(56, 72, 6, 6, C["green"])
-r(52, 66, 6, 6, C["green"])
+r(4, 100, 12, 10, C["wood_dk"])        # maceta
+r(6, 97, 8, 3, C["wood"])
+r(8, 88, 4, 9, C["green_dk"])          # tallo
+r(2, 84, 7, 6, C["green"])             # hojas
+r(11, 86, 7, 6, C["green"])
+r(6, 79, 7, 6, C["green"])
 g_close()
 
 g_open("biblioteca")

@@ -17,6 +17,8 @@
    iPhone), y cambiar un color del cuarto es editar una línea.
    ============================================================ */
 
+import { dibujarAvatar } from "./avatar.js";
+
 let data;
 let svgCargado = false;
 
@@ -47,6 +49,8 @@ function aplicarInventario() {
     }
   }
 
+  dibujarEnEscena();
+
   const total = grupos.length;
   const info = document.getElementById("cuarto-progreso");
   if (info) {
@@ -54,6 +58,30 @@ function aplicarInventario() {
       ? "Tu cuarto arranca simple. Todo lo demás se gana."
       : `${comprados.size} de ${total} cosas desbloqueadas`;
   }
+}
+
+/* ------------------------------------------------------------
+   Mete tu avatar dentro de la escena, parado al lado de la
+   cama. El cuarto mide 160x120 y el avatar 32x48, así que
+   se ubica con un <g transform>: sos parte del dibujo, no
+   una imagen pegada encima.
+   ------------------------------------------------------------ */
+function dibujarEnEscena() {
+  const svg = document.querySelector("#cuarto svg");
+  if (!svg) return;
+
+  const anterior = document.getElementById("avatar-en-cuarto");
+  if (anterior) anterior.remove();
+
+  const cuerpo = dibujarAvatar()
+    .replace(/^<svg[^>]*>/, "")
+    .replace(/<\/svg>$/, "");
+
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  g.id = "avatar-en-cuarto";
+  g.setAttribute("transform", "translate(42, 73) scale(0.78)");
+  g.innerHTML = cuerpo;
+  svg.appendChild(g); // último = adelante de los muebles
 }
 
 /* ------------------------------------------------------------
@@ -105,5 +133,9 @@ export function setDatosCuarto(appData) {
 
 export function initCuarto(appData) {
   data = appData;
+
+  // Si cambiás de ropa en VOS, el avatar del cuarto se actualiza.
+  document.addEventListener("avatar-cambiado", dibujarEnEscena);
+
   cargarCuarto();
 }

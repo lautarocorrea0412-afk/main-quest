@@ -16,6 +16,7 @@ import { initEngine, setDatosEngine } from "./engine.js";
 import { initDiario, setDatosDiario } from "./journal.js";
 import { initEconomia, setDatosEconomia } from "./economy.js";
 import { initCuarto, setDatosCuarto } from "./room.js";
+import { initAvatar, setDatosAvatar } from "./avatar.js";
 
 let data = load();
 
@@ -52,7 +53,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Fase 2 · Paso 2b · datos v" + data.version;
+    "MAIN QUEST · Fase 3 · Paso 1 · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -93,6 +94,7 @@ inputImportar.addEventListener("change", async () => {
     setDatosDiario(data);
     setDatosEconomia(data);
     setDatosCuarto(data);
+    setDatosAvatar(data);
     alert("Backup restaurado. Bienvenido de vuelta.");
   } catch (err) {
     alert("No se pudo importar: " + err.message);
@@ -113,4 +115,5 @@ initMisiones(data);
 initEngine(data);
 initDiario(data);
 initEconomia(data);
+initAvatar(data);
 initCuarto(data);
