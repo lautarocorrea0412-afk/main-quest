@@ -18,36 +18,9 @@
    ============================================================ */
 
 import { save } from "./store.js";
+import { hoyISO, diasHasta, escapar } from "./util.js";
 
 let data;
-
-/* ------------------------------------------------------------
-   Helpers de fecha. (Si un tercer módulo los necesita,
-   los extraemos a js/fechas.js; por ahora la duplicación
-   con missions.js es de 5 líneas y no justifica un archivo.)
-   ------------------------------------------------------------ */
-function hoyISO() {
-  const d = new Date();
-  const mes = String(d.getMonth() + 1).padStart(2, "0");
-  const dia = String(d.getDate()).padStart(2, "0");
-  return `${d.getFullYear()}-${mes}-${dia}`;
-}
-
-/* Días de diferencia entre hoy y una fecha YYYY-MM-DD,
-   comparando días calendario locales (no horas exactas). */
-function diasHasta(fechaISO) {
-  const [y, m, d] = fechaISO.split("-").map(Number);
-  const objetivo = new Date(y, m - 1, d);
-  const ahora = new Date();
-  const hoy0 = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
-  return Math.round((objetivo - hoy0) / 86400000);
-}
-
-function escapar(texto) {
-  const div = document.createElement("div");
-  div.textContent = texto;
-  return div.innerHTML;
-}
 
 /* ------------------------------------------------------------
    Racha: días calendario consecutivos con la misión
@@ -98,8 +71,17 @@ function armarContexto() {
     if (dia.principal && dia.principal.completada) totalPrincipales += 1;
   }
 
+  /* Energía de las últimas 3 entradas del diario.
+     "Energía baja" = al menos 2 entradas y promedio ≤ 2.
+     Es la señal de que hay que bajar un cambio. */
+  const ultimas = data.diario.slice(-3).filter((e) => e.energia);
+  const energiaBaja =
+    ultimas.length >= 2 &&
+    ultimas.reduce((suma, e) => suma + e.energia, 0) / ultimas.length <= 2;
+
   return {
     parcialProximo,               // { materia, fecha, dias } o null
+    energiaBaja,
     racha: calcularRacha(),
     totalPrincipales,
     mesesJapon: Math.max(0, mesesJapon),
@@ -123,6 +105,14 @@ function armarContexto() {
    ============================================================ */
 
 const PLANTILLAS = [
+
+  /* ===== MODO ENERGÍA BAJA (salud primero, regla 15) ===== */
+  { modo: "energia",
+    texto: () => `Venís con el tanque bajo estos días. Hoy la mejor misión puede ser corta: comer bien, dormir bien, y mañana se retoma.` },
+  { modo: "energia",
+    texto: () => `La energía se recupera, no se exige. Bajá un cambio hoy: una misión chica también suma, y descansar también construye.` },
+  { modo: "energia",
+    texto: () => `Semana pesada, se nota. Elegí la misión más liviana que igual te deje conforme. Con eso alcanza por hoy.` },
 
   /* ===== MODO PARCIAL (regla de las 2 semanas) ===== */
   { modo: "parcial", cond: (c) => c.parcialProximo.dias > 10,
@@ -210,11 +200,21 @@ function hashDeTexto(str) {
 export function elegirMensaje() {
   const ctx = armarContexto();
 
+  /* Jerarquía de modos (sigue la sección 15 del PRD):
+     1. Energía baja (salud es la prioridad 1)... salvo que
+        el parcial sea hoy o mañana: esos mensajes ya son
+        de cuidado ("repaso liviano y a dormir").
+     2. Modo parcial (regla de las 2 semanas).
+     3. General. */
+  const parcialInminente = ctx.parcialProximo && ctx.parcialProximo.dias <= 1;
+
   let pool;
-  if (ctx.parcialProximo) {
+  if (ctx.energiaBaja && !parcialInminente) {
+    pool = PLANTILLAS.filter((p) => p.modo === "energia");
+  } else if (ctx.parcialProximo) {
     pool = PLANTILLAS.filter((p) => p.modo === "parcial" && (!p.cond || p.cond(ctx)));
   } else {
-    pool = PLANTILLAS.filter((p) => p.modo !== "parcial" && (!p.cond || p.cond(ctx)));
+    pool = PLANTILLAS.filter((p) => !p.modo && (!p.cond || p.cond(ctx)));
   }
   if (pool.length === 0) return { texto: "Hoy también se construye.", ctx };
 

@@ -509,6 +509,53 @@ nav {
   margin-top: 2px;
 }
 
+/* ============ Diario nocturno (Fase 1 · Paso 4) ============ */
+
+.diario-pregunta {
+  font-size: 14px;
+  color: var(--ink-dim);
+  margin-bottom: 8px;
+}
+
+.energia-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.energia {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 22px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  filter: grayscale(1) opacity(0.55);
+  transition: filter 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.energia.activa {
+  filter: none;
+  border-color: var(--accent);
+  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(61, 123, 255, 0.4);
+}
+
+.campo--diario {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.panel--diario-cerrado { border-color: var(--cyan); }
+
+.diario-eco {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
 /* ============ Detalles ============ */
 
 .meta {

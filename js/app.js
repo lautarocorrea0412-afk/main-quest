@@ -13,6 +13,7 @@ import { load, save, exportar, importar } from "./store.js";
 import { initMisiones, setDatos } from "./missions.js";
 import { renderArboles } from "./xp.js";
 import { initEngine, setDatosEngine } from "./engine.js";
+import { initDiario, setDatosDiario } from "./journal.js";
 
 let data = load();
 
@@ -49,7 +50,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Fase 1 · Paso 3 · datos v" + data.version;
+    "MAIN QUEST · Fase 1 · Paso 4 · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -87,6 +88,7 @@ inputImportar.addEventListener("change", async () => {
     render();
     setDatos(data);
     setDatosEngine(data);
+    setDatosDiario(data);
     alert("Backup restaurado. Bienvenido de vuelta.");
   } catch (err) {
     alert("No se pudo importar: " + err.message);
@@ -105,3 +107,4 @@ if ("serviceWorker" in navigator) {
 render();
 initMisiones(data);
 initEngine(data);
+initDiario(data);

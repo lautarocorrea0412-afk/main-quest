@@ -14,37 +14,13 @@
    ============================================================ */
 
 import { save } from "./store.js";
+import { hoyISO, escapar } from "./util.js";
 import {
   ARBOLES_META, XP_PRINCIPAL, XP_SECUNDARIA,
   ganarXp, quitarXp, renderArboles, flotarXp
 } from "./xp.js";
 
 let data; // referencia a los datos de la app (los llena initMisiones)
-
-/* ------------------------------------------------------------
-   Fecha local en formato YYYY-MM-DD.
-   OJO: no usamos toISOString() porque devuelve la fecha en
-   UTC. A la noche en Argentina (UTC-3), UTC ya es "mañana"
-   y el día se archivaría 3 horas antes de tiempo.
-   ------------------------------------------------------------ */
-function hoyISO() {
-  const d = new Date();
-  const mes = String(d.getMonth() + 1).padStart(2, "0");
-  const dia = String(d.getDate()).padStart(2, "0");
-  return `${d.getFullYear()}-${mes}-${dia}`;
-}
-
-/* ------------------------------------------------------------
-   Seguridad básica: el texto que escribe el usuario se
-   inserta en HTML. Escapamos los caracteres especiales para
-   que un título como <b>hola</b> se muestre tal cual y no
-   se interprete como código.
-   ------------------------------------------------------------ */
-function escapar(texto) {
-  const div = document.createElement("div");
-  div.textContent = texto;
-  return div.innerHTML;
-}
 
 /* ------------------------------------------------------------
    Cambio de día.
