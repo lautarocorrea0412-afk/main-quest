@@ -11,21 +11,13 @@
 
 import { load, save, exportar, importar } from "./store.js";
 import { initMisiones, setDatos } from "./missions.js";
+import { renderArboles } from "./xp.js";
 
 let data = load();
 
 /* ------------------------------------------------------------
    Render inicial
    ------------------------------------------------------------ */
-
-const ARBOLES_META = {
-  fitness:   { emoji: "🏋️", nombre: "Fitness" },
-  edicion:   { emoji: "🎬", nombre: "Edición" },
-  facultad:  { emoji: "📚", nombre: "Facultad" },
-  japones:   { emoji: "🇯🇵", nombre: "Japonés" },
-  finanzas:  { emoji: "💰", nombre: "Finanzas" },
-  streaming: { emoji: "🎥", nombre: "Streaming" }
-};
 
 function render() {
   // Saludo según la hora del día
@@ -38,24 +30,8 @@ function render() {
   document.getElementById("saludo").innerHTML =
     hora < 6 ? saludo : `${saludo}, <strong>${data.perfil.nombre}</strong>.`;
 
-  // Árboles de habilidades
-  const cont = document.getElementById("arboles");
-  cont.innerHTML = "";
-  for (const [id, meta] of Object.entries(ARBOLES_META)) {
-    const arbol = data.arboles[id];
-    cont.insertAdjacentHTML("beforeend", `
-      <div class="arbol">
-        <div class="arbol__emoji">${meta.emoji}</div>
-        <div class="arbol__info">
-          <div class="arbol__nombre">
-            <span>${meta.nombre}</span>
-            <span class="arbol__nivel">NV ${arbol.nivel}</span>
-          </div>
-          <div class="barra"><div class="barra__fill" style="width:0%"></div></div>
-        </div>
-      </div>
-    `);
-  }
+  // Árboles de habilidades (los dibuja el módulo de XP)
+  renderArboles(data);
 
   // Objetivo Japón
   const japon = data.contexto.objetivo_japon;
@@ -72,7 +48,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Fase 1 · Paso 1 · datos v" + data.version;
+    "MAIN QUEST · Fase 1 · Paso 2 · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------

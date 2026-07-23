@@ -13,7 +13,7 @@ const STORAGE_KEY = "mainquest_data";
    placeholder y guardan { fecha, principal, secundarias }.
    completarFaltantes() ya agrega los campos nuevos a los
    datos viejos, así que la migración es automática. */
-const DATA_VERSION = 2;
+const DATA_VERSION = 3;
 
 /* ------------------------------------------------------------
    Estado inicial (el "personaje nivel 1").

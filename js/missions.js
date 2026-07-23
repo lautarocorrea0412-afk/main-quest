@@ -14,6 +14,10 @@
    ============================================================ */
 
 import { save } from "./store.js";
+import {
+  ARBOLES_META, XP_PRINCIPAL, XP_SECUNDARIA,
+  ganarXp, quitarXp, renderArboles, flotarXp
+} from "./xp.js";
 
 let data; // referencia a los datos de la app (los llena initMisiones)
 
@@ -74,11 +78,17 @@ function renderPrincipal() {
   const p = data.misiones.hoy.principal;
 
   if (!p) {
+    const chips = Object.entries(ARBOLES_META).map(([id, m]) => `
+      <button class="chip" data-action="elegir-arbol" data-arbol="${id}">
+        ${m.emoji} ${m.nombre}
+      </button>`).join("");
+
     cont.innerHTML = `
       <div class="panel panel--main">
         <div class="panel__label">Misión principal</div>
         <h2>¿Cuál es LA misión de hoy?</h2>
         <p>Una sola. La que más te acerque a quien querés ser.</p>
+        <div class="chips" id="chips-arbol">${chips}</div>
         <div class="agregar">
           <input type="text" id="input-principal" class="campo"
                  placeholder="Ej: Estudiar Anatomía 2 horas" maxlength="80"
@@ -89,11 +99,17 @@ function renderPrincipal() {
     return;
   }
 
+  const arbolMeta = ARBOLES_META[p.arbol];
+  const tagArbol = arbolMeta
+    ? `<span class="tag-arbol">${arbolMeta.emoji} ${arbolMeta.nombre} · +${XP_PRINCIPAL} XP</span>`
+    : "";
+
   if (!p.completada) {
     cont.innerHTML = `
       <div class="panel panel--main">
         <div class="panel__label">Misión principal</div>
         <h2 class="mp-titulo">${escapar(p.titulo)}</h2>
+        ${tagArbol}
         <button class="btn btn--completar" data-action="completar-principal">
           Completar misión
         </button>
@@ -106,6 +122,7 @@ function renderPrincipal() {
       <div class="panel__label">Misión principal</div>
       <h2 class="mp-titulo mp-titulo--hecha">${escapar(p.titulo)}</h2>
       <div class="stamp">✦ Cumplida</div>
+      ${tagArbol}
       <p class="mp-cierre">Un paso más. Mañana hay otra misión esperando.</p>
       <button class="deshacer" data-action="deshacer-principal">deshacer</button>
     </div>`;
@@ -123,14 +140,17 @@ function renderSecundarias() {
     return;
   }
 
-  lista.innerHTML = items.map((s) => `
+  lista.innerHTML = items.map((s) => {
+    const m = ARBOLES_META[s.arbol];
+    return `
     <li class="secundaria ${s.completada ? "hecha" : ""}">
       <button class="secundaria__check" data-action="toggle-secundaria" data-id="${s.id}"
               aria-label="${s.completada ? "Desmarcar" : "Completar"} ${escapar(s.titulo)}"></button>
-      <span class="secundaria__titulo">${escapar(s.titulo)}</span>
+      <span class="secundaria__titulo">${escapar(s.titulo)}${m ? ` <span class="secundaria__arbol">${m.emoji}</span>` : ""}</span>
       <button class="secundaria__borrar" data-action="borrar-secundaria" data-id="${s.id}"
               aria-label="Borrar ${escapar(s.titulo)}">×</button>
-    </li>`).join("");
+    </li>`;
+  }).join("");
 }
 
 function render() {
@@ -144,6 +164,11 @@ function render() {
    seguido, escuchar en el contenedor padre evita tener que
    reconectar botones después de cada render.
    ------------------------------------------------------------ */
+/* Árbol elegido para la próxima misión principal.
+   Vive en una variable (no en los datos) porque es un
+   estado temporal de la pantalla, no algo a guardar. */
+let arbolSeleccionado = null;
+
 function accion(e) {
   const btn = e.target.closest("[data-action]");
   if (!btn) return;
@@ -152,23 +177,53 @@ function accion(e) {
 
   switch (btn.dataset.action) {
 
+    /* Elegir árbol NO redibuja el panel: si lo hiciera,
+       borraría lo que ya escribiste en el campo de texto.
+       Actualizamos las clases de los chips a mano y listo. */
+    case "elegir-arbol": {
+      const id = btn.dataset.arbol;
+      arbolSeleccionado = (arbolSeleccionado === id) ? null : id;
+      document.querySelectorAll("#chips-arbol .chip").forEach((c) => {
+        c.classList.toggle("activa", c.dataset.arbol === arbolSeleccionado);
+      });
+      return; // sin save ni render
+    }
+
     case "fijar-principal": {
       const input = document.getElementById("input-principal");
       const titulo = input.value.trim();
       if (!titulo) return;
-      hoy.principal = { titulo, completada: false, completada_en: null };
+      hoy.principal = {
+        titulo,
+        arbol: arbolSeleccionado,
+        completada: false,
+        completada_en: null
+      };
+      arbolSeleccionado = null;
       break;
     }
 
     case "completar-principal": {
       hoy.principal.completada = true;
       hoy.principal.completada_en = new Date().toISOString();
+      const res = ganarXp(data, hoy.principal.arbol, XP_PRINCIPAL);
+      if (res) {
+        const nombre = ARBOLES_META[res.arbolId].nombre;
+        flotarXp(
+          res.subioNivel ? `+${XP_PRINCIPAL} · ¡${nombre} NV ${res.nivel}!`
+                         : `+${XP_PRINCIPAL} ${nombre}`,
+          btn
+        );
+        renderArboles(data);
+      }
       break;
     }
 
     case "deshacer-principal": {
       hoy.principal.completada = false;
       hoy.principal.completada_en = null;
+      quitarXp(data, hoy.principal.arbol, XP_PRINCIPAL);
+      renderArboles(data);
       break;
     }
 
@@ -176,18 +231,49 @@ function accion(e) {
       const input = document.getElementById("input-secundaria");
       const titulo = input.value.trim();
       if (!titulo) return;
-      hoy.secundarias.push({ id: crypto.randomUUID(), titulo, completada: false });
+      const selArbol = document.getElementById("select-arbol-secundaria");
+      hoy.secundarias.push({
+        id: crypto.randomUUID(),
+        titulo,
+        arbol: selArbol.value || null,
+        completada: false
+      });
       input.value = "";
+      selArbol.value = "";
       break;
     }
 
     case "toggle-secundaria": {
       const s = hoy.secundarias.find((x) => x.id === btn.dataset.id);
-      if (s) s.completada = !s.completada;
+      if (!s) return;
+      s.completada = !s.completada;
+      if (s.completada) {
+        const res = ganarXp(data, s.arbol, XP_SECUNDARIA);
+        if (res) {
+          const nombre = ARBOLES_META[res.arbolId].nombre;
+          flotarXp(
+            res.subioNivel ? `+${XP_SECUNDARIA} · ¡${nombre} NV ${res.nivel}!`
+                           : `+${XP_SECUNDARIA} ${nombre}`,
+            btn
+          );
+          renderArboles(data);
+        }
+      } else {
+        quitarXp(data, s.arbol, XP_SECUNDARIA);
+        renderArboles(data);
+      }
       break;
     }
 
     case "borrar-secundaria": {
+      const s = hoy.secundarias.find((x) => x.id === btn.dataset.id);
+      // Si borrás una secundaria ya completada, su XP se
+      // devuelve: borrar no debe ser una forma de "cobrar
+      // dos veces" creando y borrando misiones.
+      if (s && s.completada) {
+        quitarXp(data, s.arbol, XP_SECUNDARIA);
+        renderArboles(data);
+      }
       hoy.secundarias = hoy.secundarias.filter((x) => x.id !== btn.dataset.id);
       break;
     }

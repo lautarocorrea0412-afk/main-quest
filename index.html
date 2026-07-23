@@ -38,6 +38,15 @@
         <div class="panel__label">Misiones secundarias</div>
         <ul id="lista-secundarias" class="secundarias"></ul>
         <div class="agregar">
+          <select id="select-arbol-secundaria" class="select-arbol" aria-label="Árbol de la secundaria">
+            <option value="">◇</option>
+            <option value="fitness">🏋️</option>
+            <option value="edicion">🎬</option>
+            <option value="facultad">📚</option>
+            <option value="japones">🇯🇵</option>
+            <option value="finanzas">💰</option>
+            <option value="streaming">🎥</option>
+          </select>
           <input type="text" id="input-secundaria" class="campo"
                  placeholder="Agregar secundaria" maxlength="80" enterkeyhint="done">
           <button class="btn-mini" data-action="agregar-secundaria" aria-label="Agregar misión secundaria">+</button>
