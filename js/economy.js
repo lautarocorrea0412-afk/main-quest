@@ -94,6 +94,7 @@ function comprar(itemId) {
   renderMonedas();
   renderTienda();
   refrescarCuarto(); // lo comprado aparece en el cuarto al instante
+  document.dispatchEvent(new CustomEvent("contexto-cambiado"));
 }
 
 /* ===================== RENDER ===================== */

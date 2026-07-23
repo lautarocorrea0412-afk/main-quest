@@ -1,4 +1,5 @@
-Fase 3 · Paso 1c — Avatar protagonista + expresiones
-Caché SW: mq-fase3-paso1c
-La app debe mostrar en VOS: 'Fase 3 · Paso 1c · datos v4'
-Modificados: js/avatar.js, js/engine.js, js/room.js, js/missions.js, js/journal.js, css/app.css, js/app.js, sw.js
+Fase 3 · Paso 2 — Logros
+Caché SW: mq-fase3-paso2
+La app debe mostrar en VOS: 'Fase 3 · Paso 2 · datos v4'
+Nuevos: js/achievements.js
+Modificados: index.html, css/app.css, js/app.js, js/economy.js, sw.js
