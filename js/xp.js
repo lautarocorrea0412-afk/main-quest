@@ -107,26 +107,12 @@ export function quitarXp(data, arbolId, cantidad) {
    ------------------------------------------------------------ */
 /* Árboles con la línea abierta (estado de pantalla, no se guarda) */
 const lineasAbiertas = new Set();
-let listenerLineas = false;
 let ultimoData = null;
 
 export function renderArboles(data) {
   const cont = document.getElementById("arboles");
   if (!cont) return;
   ultimoData = data;
-
-  // Tocar un árbol despliega su línea de evolución completa.
-  // El listener se conecta una sola vez.
-  if (!listenerLineas) {
-    listenerLineas = true;
-    cont.addEventListener("click", (e) => {
-      const fila = e.target.closest("[data-arbol]");
-      if (!fila) return;
-      const id = fila.dataset.arbol;
-      lineasAbiertas.has(id) ? lineasAbiertas.delete(id) : lineasAbiertas.add(id);
-      renderArboles(ultimoData);
-    });
-  }
 
   cont.innerHTML = "";
   for (const [id, meta] of Object.entries(ARBOLES_META)) {
@@ -149,6 +135,19 @@ export function renderArboles(data) {
         </div>
       </button>
     `);
+  }
+
+  /* Handler DIRECTO en cada botón, sin delegación: la
+     delegación en el contenedor falló dos veces en Safari
+     de iPhone. onclick directo no tiene forma de fallar,
+     y como es asignación (no addEventListener), cada
+     re-render lo pisa sin acumular handlers. */
+  for (const btn of cont.querySelectorAll("[data-arbol]")) {
+    btn.onclick = () => {
+      const id = btn.dataset.arbol;
+      lineasAbiertas.has(id) ? lineasAbiertas.delete(id) : lineasAbiertas.add(id);
+      renderArboles(ultimoData);
+    };
   }
 }
 

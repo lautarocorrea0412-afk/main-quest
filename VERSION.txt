@@ -1,4 +1,4 @@
-Fase 3 · Paso 3c — Header fijo + líneas de evolución tocables en iOS
-Caché SW: mq-fase3-paso3c
-La app debe mostrar en VOS: 'Fase 3 · Paso 3c · datos v5'
-Modificados: index.html, css/app.css, js/xp.js, js/app.js, sw.js
+Fase 3 · Paso 3d — Despliegue de árboles con handler directo (fix definitivo iOS)
+Caché SW: mq-fase3-paso3d
+La app debe mostrar en VOS: 'Fase 3 · Paso 3d · datos v5'
+Modificados: js/xp.js, js/app.js, sw.js
