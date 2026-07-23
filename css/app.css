@@ -768,12 +768,15 @@ nav {
 
 .avatar-preview {
   flex: none;
+  width: 108px;
   background: var(--bg);
   border: 2px solid var(--line);
   border-radius: var(--radius);
   padding: 8px;
   line-height: 0;
 }
+
+.avatar-preview > svg { width: 100%; height: auto; aspect-ratio: 48 / 80; }
 
 .avatar-opciones { flex: 1; min-width: 0; }
 

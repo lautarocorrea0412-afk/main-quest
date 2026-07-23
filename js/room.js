@@ -61,10 +61,10 @@ function aplicarInventario() {
 }
 
 /* ------------------------------------------------------------
-   Mete tu avatar dentro de la escena, parado al lado de la
-   cama. El cuarto mide 160x120 y el avatar 32x48, así que
-   se ubica con un <g transform>: sos parte del dibujo, no
-   una imagen pegada encima.
+   Mete tu avatar dentro de la escena, parado sobre la
+   alfombra. El cuarto mide 160x120 y el avatar 48x80; la
+   escala 0.625 lo deja de 30x50, que es la mitad del alto
+   de la pared: presencia de protagonista, no de NPC.
    ------------------------------------------------------------ */
 function dibujarEnEscena() {
   const svg = document.querySelector("#cuarto svg");
@@ -79,7 +79,7 @@ function dibujarEnEscena() {
 
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   g.id = "avatar-en-cuarto";
-  g.setAttribute("transform", "translate(42, 73) scale(0.78)");
+  g.setAttribute("transform", "translate(38, 62) scale(0.625)");
   g.innerHTML = cuerpo;
   svg.appendChild(g); // último = adelante de los muebles
 }

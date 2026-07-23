@@ -53,7 +53,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Fase 3 · Paso 1 · datos v" + data.version;
+    "MAIN QUEST · Fase 3 · Paso 1b · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------

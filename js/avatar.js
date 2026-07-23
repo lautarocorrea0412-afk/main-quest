@@ -21,116 +21,209 @@ let data;
 
 /* ===================== PALETA ===================== */
 const P = {
-  piel:      "#E8B88A",
-  piel_sh:   "#C9946A",
-  pelo:      "#241E2A",
-  pelo_lt:   "#3A3145",
+  piel:      "#F0C39A",
+  piel_sh:   "#D9A277",
+  blush:     "#E89A9E",
+  pelo:      "#211C28",
+  pelo_lt:   "#3B3247",   // brillo del pelo (le da volumen)
+  pelo_dk:   "#161219",
+  ojo:       "#6B4530",
+  ojo_lt:    "#A87A52",
+  blanco:    "#FBF0E4",
+  boca:      "#B5766A",
   negro:     "#2E2836",
-  gris:      "#6B6478",
+  negro_lt:  "#403A4A",
+  gris:      "#6E6779",
+  gris_dk:   "#524C5E",
   crema:     "#FBF0E4",
+  crema_dk:  "#D9CDBC",
   denim:     "#4A5A78",
+  denim_dk:  "#3A4A66",
   jogging:   "#3E3346",
+  jogging_dk:"#2E2636",
+  cargo:     "#5A5340",
+  cargo_dk:  "#4A4433",
   amber:     "#FFB067",
   sakura:    "#F58EA8",
+  sakura_dk: "#D4708A",
   matcha:    "#8FD6A9",
-  rojo:      "#E05A5A"
+  suela:     "#E8DCC8"
 };
 
 function r(x, y, w, h, c) {
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
 }
 
-/* ===================== PEINADOS (gratis) ===================== */
+/* ===================== PEINADOS (gratis) =====================
+   Cada peinado tiene DOS capas: "atras" (la melena que cae
+   detrás del cuerpo, se dibuja primero) y "adelante" (flequillo
+   y mechones que tapan la cara y los hombros).
+   En pixel art el pelo es lo que más identifica a un personaje:
+   por eso es lo que más detalle tiene de todo el avatar. */
 const PELOS = {
   largo: {
     nombre: "Largo",
-    dibujo: () => // el de siempre: negro, hasta los hombros
-      r(9, 4, 14, 5, P.pelo) +
-      r(8, 6, 3, 14, P.pelo) +
-      r(21, 6, 3, 14, P.pelo) +
-      r(9, 4, 14, 2, P.pelo_lt)
+    atras: () =>
+      r(11, 12, 26, 42, P.pelo) +      // melena ancha detrás
+      r(9, 18, 4, 32, P.pelo_dk) +
+      r(35, 18, 4, 32, P.pelo_dk) +
+      r(13, 50, 22, 6, P.pelo_dk),     // puntas
+    adelante: () =>
+      r(12, 2, 24, 8, P.pelo) +        // techo
+      r(10, 6, 5, 46, P.pelo) +        // mechón izquierdo largo
+      r(33, 6, 5, 46, P.pelo) +        // mechón derecho largo
+      r(11, 48, 5, 6, P.pelo_dk) +     // puntas de los mechones
+      r(32, 48, 5, 6, P.pelo_dk) +
+      r(13, 8, 22, 5, P.pelo) +        // flequillo
+      r(15, 12, 7, 3, P.pelo) +        // caídas del flequillo
+      r(26, 12, 7, 3, P.pelo) +
+      r(21, 12, 4, 2, P.pelo) +
+      r(14, 3, 16, 3, P.pelo_lt) +     // brillo (volumen)
+      r(12, 14, 3, 20, P.pelo_lt)
   },
   corto: {
     nombre: "Corto",
-    dibujo: () =>
-      r(9, 4, 14, 4, P.pelo) +
-      r(8, 5, 2, 5, P.pelo) +
-      r(22, 5, 2, 5, P.pelo) +
-      r(9, 4, 14, 1, P.pelo_lt)
+    atras: () => r(13, 12, 22, 12, P.pelo),
+    adelante: () =>
+      r(12, 2, 24, 9, P.pelo) +
+      r(10, 6, 4, 18, P.pelo) +
+      r(34, 6, 4, 18, P.pelo) +
+      r(13, 9, 22, 4, P.pelo) +
+      r(16, 12, 6, 3, P.pelo) +
+      r(27, 12, 6, 3, P.pelo) +
+      r(14, 3, 16, 3, P.pelo_lt)
   },
   tomado: {
     nombre: "Tomado",
-    dibujo: () =>
-      r(9, 4, 14, 4, P.pelo) +
-      r(8, 5, 2, 6, P.pelo) +
-      r(22, 5, 2, 6, P.pelo) +
-      r(23, 8, 4, 7, P.pelo) + // colita atrás
-      r(9, 4, 14, 1, P.pelo_lt)
+    atras: () =>
+      r(13, 12, 22, 12, P.pelo) +
+      r(35, 16, 7, 34, P.pelo) +       // la colita, bien larga
+      r(36, 46, 6, 7, P.pelo_dk) +
+      r(36, 20, 3, 20, P.pelo_lt),
+    adelante: () =>
+      r(12, 2, 24, 9, P.pelo) +
+      r(10, 6, 4, 16, P.pelo) +
+      r(34, 6, 4, 14, P.pelo) +
+      r(13, 9, 22, 4, P.pelo) +
+      r(15, 12, 7, 3, P.pelo) +
+      r(27, 12, 6, 3, P.pelo) +
+      r(14, 3, 16, 3, P.pelo_lt)
   },
   gorra: {
     nombre: "Con gorra",
-    dibujo: () =>
-      r(9, 3, 14, 5, P.negro) +
-      r(7, 7, 18, 2, P.negro) +
-      r(14, 4, 4, 3, P.amber) +
-      r(8, 8, 3, 12, P.pelo) +
-      r(21, 8, 3, 12, P.pelo)
+    atras: () => r(11, 14, 26, 40, P.pelo) + r(13, 50, 22, 5, P.pelo_dk),
+    adelante: () =>
+      r(11, 1, 26, 9, P.negro) +       // copa
+      r(8, 9, 32, 3, P.negro) +        // visera
+      r(21, 3, 6, 5, P.amber) +        // logo
+      r(11, 1, 26, 2, P.negro_lt) +
+      r(10, 10, 5, 42, P.pelo) +       // el pelo largo asoma igual
+      r(33, 10, 5, 42, P.pelo) +
+      r(11, 48, 5, 6, P.pelo_dk) +
+      r(32, 48, 5, 6, P.pelo_dk)
   }
 };
 
-/* ===================== ROPA (se gana) ===================== */
+/* ===================== CARA ===================== */
+function dibujarCara() {
+  return (
+    r(15, 8, 18, 22, P.piel) +          // óvalo
+    r(15, 27, 18, 3, P.piel_sh) +       // mentón sombreado
+    r(20, 29, 8, 5, P.piel_sh) +        // cuello
+    // Cejas
+    r(17, 14, 6, 1, P.pelo) +
+    r(26, 14, 6, 1, P.pelo) +
+    // Ojos grandes estilo anime: blanco + iris + pupila + brillo.
+    // El blanco es más ancho que el iris a propósito: si el
+    // iris lo tapa todo, el ojo se lee como un punto negro.
+    r(17, 16, 6, 1, P.pelo) +           // pestaña superior
+    r(17, 17, 6, 7, P.blanco) +
+    r(18, 18, 4, 5, P.ojo) +
+    r(18, 18, 4, 2, P.pelo) +           // pupila
+    r(21, 18, 1, 1, P.blanco) +         // brillo
+    r(18, 22, 3, 1, P.ojo_lt) +
+    r(26, 16, 6, 1, P.pelo) +
+    r(26, 17, 6, 7, P.blanco) +
+    r(27, 18, 4, 5, P.ojo) +
+    r(27, 18, 4, 2, P.pelo) +
+    r(30, 18, 1, 1, P.blanco) +
+    r(28, 22, 3, 1, P.ojo_lt) +
+    // Rubor y boca
+    r(15, 24, 2, 2, P.blush) +
+    r(31, 24, 2, 2, P.blush) +
+    r(23, 25, 3, 1, P.boca)
+  );
+}
+
+/* ===================== ROPA (se gana) =====================
+   Todo es OVERSIZE: el torso es más ancho que la cabeza y las
+   mangas caen largas. Eso da la silueta que pediste. */
 const REMERAS = {
   oversize: {
     nombre: "Remera oversize",
-    req: null, // la de arranque
+    req: null,
     dibujo: () =>
-      r(8, 20, 16, 14, P.negro) +   // cuerpo ancho (oversize)
-      r(6, 21, 3, 10, P.negro) +    // mangas caídas
-      r(23, 21, 3, 10, P.negro) +
-      r(13, 20, 6, 2, P.gris)       // cuello
+      r(9, 32, 30, 25, P.negro) +
+      r(4, 34, 6, 20, P.negro) +        // mangas caídas
+      r(38, 34, 6, 20, P.negro) +
+      r(9, 32, 30, 2, P.negro_lt) +     // hombros
+      r(19, 32, 10, 3, P.gris) +        // cuello ancho
+      r(9, 54, 30, 3, P.negro_lt)       // ruedo
   },
   hoodie: {
     nombre: "Hoodie",
     req: { arbol: "edicion", nivel: 2 },
     dibujo: () =>
-      r(8, 20, 16, 15, P.gris) +
-      r(6, 21, 3, 11, P.gris) +
-      r(23, 21, 3, 11, P.gris) +
-      r(11, 18, 10, 4, P.gris) +    // capucha
-      r(14, 26, 4, 6, "#5A5468") +  // bolsillo canguro
-      r(15, 22, 1, 5, P.crema) +    // cordones
-      r(17, 22, 1, 5, P.crema)
+      r(14, 27, 20, 7, P.gris_dk) +     // capucha detrás del cuello
+      r(9, 32, 30, 27, P.gris) +
+      r(4, 34, 6, 22, P.gris) +
+      r(38, 34, 6, 22, P.gris) +
+      r(9, 32, 30, 2, "#7E7789") +
+      r(17, 45, 14, 9, P.gris_dk) +     // bolsillo canguro
+      r(20, 35, 2, 8, P.crema) +        // cordones
+      r(26, 35, 2, 8, P.crema) +
+      r(9, 56, 30, 3, P.gris_dk) +      // elástico
+      r(4, 53, 6, 3, P.gris_dk) +       // puños
+      r(38, 53, 6, 3, P.gris_dk)
   },
   camisa: {
     nombre: "Camisa",
     req: { arbol: "facultad", nivel: 2 },
     dibujo: () =>
-      r(8, 20, 16, 14, P.crema) +
-      r(6, 21, 3, 10, P.crema) +
-      r(23, 21, 3, 10, P.crema) +
-      r(15, 20, 2, 14, "#D9CDBC") + // botonadura
-      r(12, 20, 3, 3, "#D9CDBC") +  // cuello
-      r(17, 20, 3, 3, "#D9CDBC")
+      r(9, 32, 30, 25, P.crema) +
+      r(4, 34, 6, 20, P.crema) +
+      r(38, 34, 6, 20, P.crema) +
+      r(22, 32, 4, 25, P.crema_dk) +    // botonadura
+      r(23, 38, 2, 1, P.gris) +
+      r(23, 45, 2, 1, P.gris) +
+      r(17, 31, 6, 4, P.crema_dk) +     // cuello
+      r(25, 31, 6, 4, P.crema_dk)
   },
   jersey: {
     nombre: "Jersey deportivo",
     req: { arbol: "fitness", nivel: 2 },
     dibujo: () =>
-      r(8, 20, 16, 14, P.matcha) +
-      r(6, 21, 3, 6, P.matcha) +
-      r(23, 21, 3, 6, P.matcha) +
-      r(8, 20, 16, 2, P.crema) +
-      r(14, 24, 4, 5, P.crema)      // número
+      r(9, 32, 30, 25, P.matcha) +
+      r(4, 34, 6, 10, P.matcha) +       // manga corta
+      r(38, 34, 6, 10, P.matcha) +
+      r(9, 32, 30, 3, P.crema) +
+      r(19, 32, 10, 3, "#6FB88A") +
+      r(20, 41, 8, 9, P.crema) +        // número
+      r(9, 54, 30, 3, "#6FB88A")
   },
   campera: {
     nombre: "Campera bomber",
     req: { arbol: "streaming", nivel: 2 },
     dibujo: () =>
-      r(8, 20, 16, 14, P.sakura) +
-      r(6, 21, 3, 11, P.sakura) +
-      r(23, 21, 3, 11, P.sakura) +
-      r(8, 32, 16, 2, P.negro) +    // elástico
-      r(15, 20, 2, 12, P.negro)     // cierre
+      r(9, 32, 30, 25, P.sakura) +
+      r(4, 34, 6, 20, P.sakura) +
+      r(38, 34, 6, 20, P.sakura) +
+      r(17, 31, 14, 3, P.negro) +       // cuello bomber
+      r(22, 34, 3, 21, P.negro) +       // cierre
+      r(9, 54, 30, 3, P.negro) +
+      r(4, 51, 6, 3, P.negro) +
+      r(38, 51, 6, 3, P.negro) +
+      r(11, 45, 6, 2, P.sakura_dk)      // bolsillo
   }
 };
 
@@ -139,26 +232,31 @@ const PANTALONES = {
     nombre: "Jogging",
     req: null,
     dibujo: () =>
-      r(10, 34, 5, 10, P.jogging) +
-      r(17, 34, 5, 10, P.jogging) +
-      r(10, 34, 12, 1, "#2A2130")
+      r(16, 57, 7, 20, P.jogging) +     // piernas flacas
+      r(25, 57, 7, 20, P.jogging) +
+      r(16, 57, 16, 2, P.jogging_dk) +
+      r(16, 73, 7, 3, P.jogging_dk) +   // puños del jogging
+      r(25, 73, 7, 3, P.jogging_dk)
   },
   jean: {
     nombre: "Jean",
     req: { arbol: "finanzas", nivel: 2 },
     dibujo: () =>
-      r(10, 34, 5, 10, P.denim) +
-      r(17, 34, 5, 10, P.denim) +
-      r(10, 34, 12, 2, "#3A4A66")
+      r(16, 57, 7, 20, P.denim) +
+      r(25, 57, 7, 20, P.denim) +
+      r(16, 57, 16, 3, P.denim_dk) +
+      r(17, 62, 1, 8, P.denim_dk) +
+      r(30, 62, 1, 8, P.denim_dk)
   },
   cargo: {
     nombre: "Cargo",
     req: { arbol: "japones", nivel: 2 },
     dibujo: () =>
-      r(10, 34, 5, 10, "#5A5340") +
-      r(17, 34, 5, 10, "#5A5340") +
-      r(10, 38, 2, 3, "#4A4433") +  // bolsillos laterales
-      r(20, 38, 2, 3, "#4A4433")
+      r(16, 57, 7, 20, P.cargo) +
+      r(25, 57, 7, 20, P.cargo) +
+      r(16, 57, 16, 2, P.cargo_dk) +
+      r(16, 64, 3, 5, P.cargo_dk) +     // bolsillos laterales
+      r(29, 64, 3, 5, P.cargo_dk)
   }
 };
 
@@ -187,20 +285,24 @@ export function dibujarAvatar(escala = 1) {
   const remera = REMERAS[a.remera] || REMERAS.oversize;
   const pantalon = PANTALONES[a.pantalon] || PANTALONES.jogging;
 
+  /* Orden de capas: lo de atrás primero.
+     melena trasera → piernas → zapatillas → torso → manos →
+     cara → pelo delantero. El pelo va último para que caiga
+     por delante de los hombros: eso es lo que da la silueta. */
   const piezas =
+    pelo.atras() +
     pantalon.dibujo() +
-    r(11, 44, 4, 2, P.negro) +      // zapatillas
-    r(17, 44, 4, 2, P.negro) +
+    r(14, 76, 10, 4, P.negro) +         // zapatillas
+    r(24, 76, 10, 4, P.negro) +
+    r(14, 79, 10, 1, P.suela) +
+    r(24, 79, 10, 1, P.suela) +
     remera.dibujo() +
-    r(9, 30, 3, 5, P.piel) +        // manos
-    r(20, 30, 3, 5, P.piel) +
-    r(11, 8, 10, 11, P.piel) +      // cara
-    r(11, 17, 10, 4, P.piel_sh) +   // cuello
-    r(13, 12, 2, 2, P.pelo) +       // ojos
-    r(17, 12, 2, 2, P.pelo) +
-    pelo.dibujo();
+    r(3, 52, 7, 7, P.piel) +            // manos
+    r(38, 52, 7, 7, P.piel) +
+    dibujarCara() +
+    pelo.adelante();
 
-  return `<svg viewBox="0 0 32 48" width="${32 * escala}" shape-rendering="crispEdges" role="img" aria-label="Tu avatar">${piezas}</svg>`;
+  return `<svg viewBox="0 0 48 80" width="${48 * escala}" shape-rendering="crispEdges" role="img" aria-label="Tu avatar">${piezas}</svg>`;
 }
 
 /* ------------------------------------------------------------
@@ -222,7 +324,7 @@ function opcionesHTML(grupo, coleccion, actual) {
 
 export function renderAvatar() {
   const vista = document.getElementById("avatar-preview");
-  if (vista) vista.innerHTML = dibujarAvatar(3);
+  if (vista) vista.innerHTML = dibujarAvatar(2);
 
   const panel = document.getElementById("avatar-opciones");
   if (!panel) return;
