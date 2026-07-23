@@ -1,30 +1,31 @@
 /* ============================================================
    MAIN QUEST — app.css
    ------------------------------------------------------------
-   Sistema de diseño. Todos los colores, tipografías y
-   espaciados viven como variables acá arriba: cambiar la
-   estética de toda la app = tocar estas líneas.
+   Sistema de diseño "Habitación de noche": oscuridad cálida,
+   luz de lámpara ámbar, sakura para lo especial, matcha para
+   lo cumplido. JRPG adulto y acogedor, nunca infantil.
+   Cambiar la estética de toda la app = tocar estas variables.
    ============================================================ */
 
 :root {
-  /* Paleta */
-  --bg:        #0A0A0F;  /* negro base */
-  --bg-panel:  #12141D;  /* paneles */
-  --bg-raise:  #1A2340;  /* azul profundo (elementos elevados) */
-  --accent:    #3D7BFF;  /* azul eléctrico */
-  --cyan:      #46E0E0;  /* acento secundario */
-  --ink:       #F2F5FF;  /* texto principal */
-  --ink-dim:   #8A93AD;  /* texto secundario */
-  --line:      #232838;  /* bordes sutiles */
+  /* Paleta — anochecer cálido */
+  --bg:        #201B26;  /* carbón violeta, cielo de anochecer */
+  --bg-panel:  #2A2433;  /* paneles: la misma penumbra, un paso arriba */
+  --bg-raise:  #342D3E;  /* elementos elevados */
+  --accent:    #F2A65A;  /* ámbar lámpara: el color de la acción */
+  --sakura:    #E88CA5;  /* momentos especiales: parciales, niveles */
+  --matcha:    #A5C98B;  /* lo cumplido */
+  --ink:       #F5EEE1;  /* blanco papel washi */
+  --ink-dim:   #A399AD;  /* texto secundario */
+  --line:      #3C3546;  /* bordes sutiles */
 
-  /* Tipografía */
-  --font-display: "Anton", "Arial Narrow", sans-serif;
+  /* Tipografía: display redondeada cálida + cuerpo limpio */
+  --font-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
   --font-body: "Outfit", -apple-system, system-ui, sans-serif;
 
-  /* Geometría */
-  --cut: 14px;           /* tamaño del corte diagonal (firma visual) */
+  /* Geometría: esquinas generosas, sin ángulos agresivos */
   --pad: 18px;
-  --radius: 10px;
+  --radius: 14px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,7 +39,6 @@ body {
   font-size: 16px;
   line-height: 1.5;
   min-height: 100dvh;
-  /* Respeta el notch del iPhone */
   padding-top: env(safe-area-inset-top);
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;
@@ -55,14 +55,13 @@ header {
 
 .wordmark {
   font-family: var(--font-display);
-  font-size: 26px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  font-style: italic;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.5px;
   display: inline-block;
 }
 
-.wordmark .slash { color: var(--accent); font-style: normal; }
+.wordmark .slash { color: var(--accent); }
 
 /* ============ Vistas ============ */
 
@@ -88,20 +87,17 @@ main {
   margin-bottom: 14px;
 }
 
-/* Firma visual: el panel de la misión principal lleva
-   corte diagonal y borde azul. Solo él. */
+/* La misión principal es LA protagonista: panel elevado
+   con borde ámbar, como iluminado por la lámpara. */
 .panel--main {
   background: var(--bg-raise);
   border: 1px solid var(--accent);
-  border-radius: 0;
-  clip-path: polygon(
-    var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)),
-    calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)
-  );
+  box-shadow: 0 0 24px rgba(242, 166, 90, 0.08);
 }
 
 .panel__label {
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -109,13 +105,13 @@ main {
   margin-bottom: 8px;
 }
 
-.panel--main .panel__label { color: var(--cyan); }
+.panel--main .panel__label { color: var(--accent); }
 
 .panel h2 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 700;
   font-size: 20px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   margin-bottom: 6px;
 }
 
@@ -156,6 +152,7 @@ main {
 
 .arbol__nivel {
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: 12px;
   color: var(--accent);
   letter-spacing: 1px;
@@ -171,7 +168,7 @@ main {
 .barra__fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--accent), var(--cyan));
+  background: linear-gradient(90deg, var(--accent), var(--sakura));
   border-radius: 3px;
   transition: width 0.5s ease;
 }
@@ -194,12 +191,12 @@ main {
   transition: transform 0.1s ease, background 0.15s ease;
 }
 
-.btn:active { transform: scale(0.98); background: var(--accent); }
+.btn:active { transform: scale(0.98); background: var(--accent); color: var(--bg); }
 
 .btn--ghost { border-color: var(--line); background: var(--bg-panel); }
 
 .btn:focus-visible {
-  outline: 2px solid var(--cyan);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -209,7 +206,7 @@ nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   display: flex;
-  background: rgba(10, 10, 15, 0.92);
+  background: rgba(32, 27, 38, 0.92);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--line);
@@ -243,18 +240,18 @@ nav {
   content: "";
   position: absolute;
   left: 50%;
-  transform: translateX(-50%) skewX(-20deg);
+  transform: translateX(-50%);
   bottom: -6px;
-  width: 18px;
+  width: 16px;
   height: 3px;
+  border-radius: 2px;
   background: var(--accent);
 }
 
-.tab:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
-/* ============ Misiones (Fase 1 · Paso 1) ============ */
+/* ============ Misiones ============ */
 
-/* Campos de texto */
 .campo {
   flex: 1;
   min-width: 0;
@@ -284,13 +281,12 @@ nav {
   cursor: pointer;
 }
 
-.btn-mini:active { background: var(--accent); }
-.btn-mini:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.btn-mini:active { background: var(--accent); color: var(--bg); }
+.btn-mini:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* Misión principal: título grande, es LA protagonista */
 .mp-titulo {
-  font-size: 26px !important;
-  line-height: 1.2;
+  font-size: 25px !important;
+  line-height: 1.25;
   margin: 4px 0 14px !important;
 }
 
@@ -298,24 +294,63 @@ nav {
 
 .btn--completar { margin-bottom: 0; }
 
-.panel--cumplida { border-color: var(--cyan); }
+.panel--cumplida { border-color: var(--matcha); box-shadow: none; }
 
-/* Sello "Cumplida": la firma visual del momento más
-   importante del día. Entra con un golpe de escala. */
+/* ===== El hanko: sello japonés de misión cumplida =====
+   La firma visual de la app. Un sello circular sakura con
+   el kanji 完 ("completo"), estampado con golpe de escala.
+   Es UN momento japonés, ganado — no ambientación. */
+.hanko-fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.hanko {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border: 2.5px solid var(--sakura);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--sakura);
+  transform: rotate(-8deg);
+  animation: hankoIn 0.4s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+@keyframes hankoIn {
+  from { opacity: 0; transform: rotate(-30deg) scale(2.6); }
+  to   { opacity: 1; transform: rotate(-8deg) scale(1); }
+}
+
+.hanko-texto {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: var(--matcha);
+}
+
+/* Sello simple (lo usa el diario) */
 .stamp {
   display: inline-block;
   font-family: var(--font-display);
-  font-size: 18px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--cyan);
-  transform: skewX(-12deg);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  color: var(--matcha);
   animation: stampIn 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
 }
 
 @keyframes stampIn {
-  from { opacity: 0; transform: skewX(-12deg) scale(2.4); }
-  to   { opacity: 1; transform: skewX(-12deg) scale(1); }
+  from { opacity: 0; transform: scale(2.2); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 .mp-cierre { margin-top: 10px; font-size: 14px !important; }
@@ -353,14 +388,15 @@ nav {
   height: 24px;
   background: none;
   border: 2px solid var(--accent);
-  border-radius: 7px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .secundaria.hecha .secundaria__check {
-  background: var(--accent);
-  box-shadow: 0 0 10px rgba(61, 123, 255, 0.5);
+  background: var(--matcha);
+  border-color: var(--matcha);
+  box-shadow: 0 0 10px rgba(165, 201, 139, 0.4);
 }
 
 .secundaria__titulo { flex: 1; font-size: 15px; }
@@ -380,9 +416,8 @@ nav {
   cursor: pointer;
 }
 
-/* ============ XP y árboles (Fase 1 · Paso 2) ============ */
+/* ============ XP y árboles ============ */
 
-/* Chips para elegir el árbol de la misión principal */
 .chips {
   display: flex;
   gap: 8px;
@@ -412,10 +447,9 @@ nav {
   color: var(--ink);
   border-color: var(--accent);
   background: var(--bg-panel);
-  box-shadow: 0 0 8px rgba(61, 123, 255, 0.35);
+  box-shadow: 0 0 8px rgba(242, 166, 90, 0.3);
 }
 
-/* Selector compacto de árbol para secundarias */
 .select-arbol {
   flex: none;
   width: 54px;
@@ -432,7 +466,6 @@ nav {
 
 .select-arbol:focus { outline: none; border-color: var(--accent); }
 
-/* Etiqueta de árbol en la misión principal */
 .tag-arbol {
   display: inline-block;
   font-size: 13px;
@@ -446,15 +479,16 @@ nav {
 
 .secundaria__arbol { font-size: 13px; }
 
-/* XP flotante: nace donde tocaste, sube y se desvanece */
+/* XP flotante: luz cálida que sube y se apaga */
 .xp-float {
   position: fixed;
   transform: translateX(-50%);
   font-family: var(--font-display);
-  font-size: 16px;
-  letter-spacing: 1px;
-  color: var(--cyan);
-  text-shadow: 0 0 12px rgba(70, 224, 224, 0.6);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  text-shadow: 0 0 12px rgba(242, 166, 90, 0.55);
   pointer-events: none;
   z-index: 99;
   animation: xpFloat 1s ease-out forwards;
@@ -466,10 +500,8 @@ nav {
   100% { opacity: 0; translate: 0 -44px; }
 }
 
-/* ============ Motor de contexto (Fase 1 · Paso 3) ============ */
+/* ============ Motor de contexto ============ */
 
-/* El mensaje del día: la voz de la app. Barra de acento a la
-   izquierda, sin caja pesada — habla, no grita. */
 .mensaje {
   position: relative;
   margin: 0 0 18px;
@@ -483,26 +515,26 @@ nav {
   color: var(--ink);
 }
 
-.mensaje--parcial { border-left-color: var(--cyan); }
+.mensaje--parcial { border-left-color: var(--sakura); }
 
 .pill-parcial {
   display: inline-block;
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--cyan);
-  border: 1px solid var(--cyan);
+  color: var(--sakura);
+  border: 1px solid var(--sakura);
   border-radius: 999px;
   padding: 3px 10px;
   margin-bottom: 8px;
 }
 
-/* Parciales en VOS */
 .campo--fecha {
   flex: none;
   width: 128px;
-  color-scheme: dark; /* el datepicker de iOS en oscuro */
+  color-scheme: dark;
 }
 
 .parcial-fecha {
@@ -512,7 +544,7 @@ nav {
   margin-top: 2px;
 }
 
-/* ============ Diario nocturno (Fase 1 · Paso 4) ============ */
+/* ============ Diario nocturno ============ */
 
 .diario-pregunta {
   font-size: 14px;
@@ -542,7 +574,7 @@ nav {
   filter: none;
   border-color: var(--accent);
   transform: scale(1.08);
-  box-shadow: 0 0 10px rgba(61, 123, 255, 0.4);
+  box-shadow: 0 0 10px rgba(242, 166, 90, 0.35);
 }
 
 .campo--diario {
@@ -551,7 +583,7 @@ nav {
   margin-bottom: 10px;
 }
 
-.panel--diario-cerrado { border-color: var(--cyan); }
+.panel--diario-cerrado { border-color: var(--matcha); }
 
 .diario-eco {
   margin-top: 10px;
@@ -559,21 +591,20 @@ nav {
   color: var(--ink-dim);
 }
 
-/* ============ Economía y tienda (Fase 2 · Paso 1) ============ */
+/* ============ Economía y tienda ============ */
 
-/* Billetera en el header: siempre visible */
 .monedas {
   font-family: var(--font-display);
-  font-size: 15px;
-  letter-spacing: 1px;
-  color: var(--ink);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  color: var(--accent);
   background: var(--bg-panel);
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 4px 12px;
 }
 
-/* Tienda: grilla de 2 columnas */
 .tienda {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -592,7 +623,7 @@ nav {
   text-align: center;
 }
 
-.tienda__item--tuyo { border-color: var(--cyan); }
+.tienda__item--tuyo { border-color: var(--matcha); }
 
 .tienda__emoji { font-size: 34px; }
 
@@ -610,12 +641,12 @@ nav {
   cursor: pointer;
 }
 
-.btn-comprar:active { background: var(--accent); }
+.btn-comprar:active { background: var(--accent); color: var(--bg); }
 
 .tienda__estado {
   font-size: 12px;
   font-weight: 700;
-  color: var(--cyan);
+  color: var(--matcha);
   padding: 6px 0;
 }
 

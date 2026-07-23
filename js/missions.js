@@ -98,7 +98,10 @@ function renderPrincipal() {
     <div class="panel panel--main panel--cumplida">
       <div class="panel__label">Misión principal</div>
       <h2 class="mp-titulo mp-titulo--hecha">${escapar(p.titulo)}</h2>
-      <div class="stamp">✦ Cumplida</div>
+      <div class="hanko-fila">
+        <div class="hanko">完</div>
+        <span class="hanko-texto">Cumplida</span>
+      </div>
       ${tagArbol}
       <p class="mp-cierre">Un paso más. Mañana hay otra misión esperando.</p>
       <button class="deshacer" data-action="deshacer-principal">deshacer</button>
