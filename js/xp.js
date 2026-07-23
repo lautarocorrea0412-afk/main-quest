@@ -133,8 +133,11 @@ export function renderArboles(data) {
     const arbol = data.arboles[id];
     const pct = Math.min(100, Math.round((arbol.xp / costoNivel(arbol.nivel)) * 100));
     const abierta = lineasAbiertas.has(id);
+    /* Fila como <button> de verdad, no como <div> clickeable:
+       Safari en iPhone a veces no entrega taps sobre divs a
+       un listener delegado. Los botones siempre los reciben. */
     cont.insertAdjacentHTML("beforeend", `
-      <div class="arbol" data-arbol="${id}" role="button" aria-expanded="${abierta}">
+      <button type="button" class="arbol" data-arbol="${id}" aria-expanded="${abierta}">
         <div class="arbol__emoji">${meta.emoji}</div>
         <div class="arbol__info">
           <div class="arbol__nombre">
@@ -144,7 +147,7 @@ export function renderArboles(data) {
           <div class="barra"><div class="barra__fill" style="width:${pct}%"></div></div>
           ${abierta ? lineaHTML(data, id) : proximoHTML(data, id)}
         </div>
-      </div>
+      </button>
     `);
   }
 }

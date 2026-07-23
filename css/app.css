@@ -49,19 +49,32 @@ body {
   font-size: 16px;
   line-height: 1.5;
   min-height: 100dvh;
-  padding-top: env(safe-area-inset-top);
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 /* ============ Cabecera ============ */
 
+/* Header fijo: título y monedas siempre a la vista.
+   Cubre también el notch (el safe-area vive acá ahora,
+   no en el body, para que el fondo llegue hasta arriba). */
 header {
-  padding: 20px var(--pad) 8px;
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: calc(env(safe-area-inset-top) + 12px) var(--pad) 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: rgba(42, 33, 48, 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--line);
 }
+
+.topbar-marca { display: flex; align-items: center; gap: 10px; }
+
+.topbar-icono { border-radius: 9px; display: block; }
 
 .wordmark {
   font-family: var(--font-display);
@@ -966,8 +979,20 @@ nav {
   100% { transform: scale(1); }
 }
 
-/* Los árboles son tocables: despliegan su línea completa */
-.arbol { cursor: pointer; }
+/* Los árboles son tocables: despliegan su línea completa.
+   Como ahora son <button>, se resetea el estilo nativo. */
+.arbol {
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 2px solid var(--line);
+  color: inherit;
+  font: inherit;
+}
+
+.arbol:focus-visible { outline: 3px solid var(--sakura); outline-offset: -3px; }
 
 .arbol__flecha { color: var(--ink-dim); font-size: 11px; }
 
