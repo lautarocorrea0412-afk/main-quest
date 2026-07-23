@@ -16,7 +16,7 @@
    ============================================================ */
 
 import { save } from "./store.js";
-import { proximaRecompensa, nuevasEntre, ICONO_TIPO } from "./progression.js";
+import { PROGRESION, proximaRecompensa, nuevasEntre, ICONO_TIPO } from "./progression.js";
 import { mostrarCartel } from "./ui.js";
 
 /* Metadatos de los árboles. Antes vivían en app.js;
@@ -105,22 +105,44 @@ export function quitarXp(data, arbolId, cantidad) {
    (Este código estaba en app.js con las barras en 0%;
    ahora las barras muestran el progreso real.)
    ------------------------------------------------------------ */
+/* Árboles con la línea abierta (estado de pantalla, no se guarda) */
+const lineasAbiertas = new Set();
+let listenerLineas = false;
+let ultimoData = null;
+
 export function renderArboles(data) {
   const cont = document.getElementById("arboles");
+  if (!cont) return;
+  ultimoData = data;
+
+  // Tocar un árbol despliega su línea de evolución completa.
+  // El listener se conecta una sola vez.
+  if (!listenerLineas) {
+    listenerLineas = true;
+    cont.addEventListener("click", (e) => {
+      const fila = e.target.closest("[data-arbol]");
+      if (!fila) return;
+      const id = fila.dataset.arbol;
+      lineasAbiertas.has(id) ? lineasAbiertas.delete(id) : lineasAbiertas.add(id);
+      renderArboles(ultimoData);
+    });
+  }
+
   cont.innerHTML = "";
   for (const [id, meta] of Object.entries(ARBOLES_META)) {
     const arbol = data.arboles[id];
     const pct = Math.min(100, Math.round((arbol.xp / costoNivel(arbol.nivel)) * 100));
+    const abierta = lineasAbiertas.has(id);
     cont.insertAdjacentHTML("beforeend", `
-      <div class="arbol">
+      <div class="arbol" data-arbol="${id}" role="button" aria-expanded="${abierta}">
         <div class="arbol__emoji">${meta.emoji}</div>
         <div class="arbol__info">
           <div class="arbol__nombre">
-            <span>${meta.nombre}</span>
+            <span>${meta.nombre} <span class="arbol__flecha">${abierta ? "▾" : "▸"}</span></span>
             <span class="arbol__nivel">NV ${arbol.nivel} · ${arbol.xp}/${costoNivel(arbol.nivel)}</span>
           </div>
           <div class="barra"><div class="barra__fill" style="width:${pct}%"></div></div>
-          ${proximoHTML(data, id)}
+          ${abierta ? lineaHTML(data, id) : proximoHTML(data, id)}
         </div>
       </div>
     `);
@@ -136,6 +158,24 @@ function proximoHTML(data, arbolId) {
   return `<div class="arbol__proximo">Próximo: NV ${prox.nivel} · ${prox.nombre}</div>`;
 }
 
+/* La línea de evolución completa de un árbol, del NV2 al
+   NV10, con lo ganado tildado. Responde la pregunta que la
+   "zanahoria" sola no respondía: ¿hacia dónde va todo esto? */
+function lineaHTML(data, arbolId) {
+  const nivel = data.arboles[arbolId].nivel;
+  const filas = PROGRESION
+    .filter((e) => e.arbol === arbolId)
+    .sort((a, b) => a.nivel - b.nivel)
+    .map((e) => {
+      const tiene = nivel >= e.nivel;
+      return `<div class="linea__item ${tiene ? "linea__item--hecha" : ""}">
+        <span class="linea__nv">${tiene ? "✔" : `NV ${e.nivel}`}</span>
+        <span>${ICONO_TIPO[e.tipo]} ${e.nombre}</span>
+      </div>`;
+    }).join("");
+  return `<div class="arbol__linea">${filas}</div>`;
+}
+
 /* ------------------------------------------------------------
    Animación de XP flotante.
    Crea un texto sobre el elemento tocado que sube y se
@@ -148,8 +188,19 @@ export function flotarXp(texto, origenEl) {
   el.className = "xp-float";
   el.textContent = texto;
   el.style.left = rect.left + rect.width / 2 + "px";
-  el.style.top = rect.top + "px";
+  el.style.top = Math.max(rect.top, 70) + "px";
   document.body.appendChild(el);
+
+  // Clamp: si el botón está pegado al borde, el cartel
+  // centrado se saldría de la pantalla y no se leería.
+  // Con el elemento ya en el DOM sabemos su ancho real.
+  requestAnimationFrame(() => {
+    const mitad = el.offsetWidth / 2;
+    const x = rect.left + rect.width / 2;
+    const min = 10 + mitad;
+    const max = window.innerWidth - 10 - mitad;
+    el.style.left = Math.min(Math.max(x, min), max) + "px";
+  });
   el.addEventListener("animationend", () => el.remove());
   // Red de seguridad por si la animación está desactivada
   // (modo "reducir movimiento" del iPhone). Tiene que durar

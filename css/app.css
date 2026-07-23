@@ -832,7 +832,7 @@ nav {
 }
 
 .opcion__req {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   color: var(--sakura);
 }
@@ -953,6 +953,64 @@ nav {
   font-size: 13px;
   font-weight: 600;
   color: var(--oro);
+}
+
+/* ============ Revisión (Fase 3 · Paso 3b) ============ */
+
+/* El contador de monedas salta cuando cambia */
+.monedas.bump { animation: monedaBump 0.4s var(--bounce); }
+
+@keyframes monedaBump {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+/* Los árboles son tocables: despliegan su línea completa */
+.arbol { cursor: pointer; }
+
+.arbol__flecha { color: var(--ink-dim); font-size: 11px; }
+
+.arbol__linea {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: viewIn 0.25s var(--bounce);
+}
+
+.linea__item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+.linea__item--hecha { color: var(--ink); }
+
+.linea__nv {
+  flex: none;
+  min-width: 34px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.linea__item--hecha .linea__nv { color: var(--matcha); }
+
+/* El avatar respira: sube y baja 1px cada ~3 segundos.
+   Vida sin invadir — si mirás fijo lo ves; si no, no molesta. */
+.avatar-idle { animation: idleBob 3.4s ease-in-out infinite; }
+
+@keyframes idleBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-1.2px); }
 }
 
 /* ============ Detalles ============ */

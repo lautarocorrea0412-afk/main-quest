@@ -57,6 +57,7 @@ export function ganarMonedas(cantidad) {
   data.economia.monedas += cantidad;
   save(data);
   renderMonedas();
+  renderTienda(); // los "te faltan X" se recalculan con cada moneda
 }
 
 /* Con piso en 0: si gastaste y después deshacés una misión,
@@ -66,6 +67,7 @@ export function quitarMonedas(cantidad) {
   data.economia.monedas = Math.max(0, data.economia.monedas - cantidad);
   save(data);
   renderMonedas();
+  renderTienda();
 }
 
 function tiene(itemId) {
@@ -101,7 +103,15 @@ function comprar(itemId) {
 
 export function renderMonedas() {
   const el = document.getElementById("monedas-contador");
-  if (el) el.textContent = `🪙 ${data.economia.monedas}`;
+  if (!el) return;
+  const nuevo = `🪙 ${data.economia.monedas}`;
+  if (el.textContent === nuevo) return;
+  el.textContent = nuevo;
+  // Saltito al cambiar: reiniciar la animación requiere sacar
+  // la clase, forzar un reflow y volver a ponerla.
+  el.classList.remove("bump");
+  void el.offsetWidth;
+  el.classList.add("bump");
 }
 
 export function renderTienda() {

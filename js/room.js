@@ -93,7 +93,10 @@ function dibujarEnEscena() {
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   g.id = "avatar-en-cuarto";
   g.setAttribute("transform", "translate(30, 49) scale(0.79)");
-  g.innerHTML = cuerpo;
+  // La capa interna lleva la animación de "respiración": va
+  // en un grupo propio porque el grupo exterior ya usa su
+  // transform para posicionar, y el CSS lo pisaría.
+  g.innerHTML = `<g class="avatar-idle">${cuerpo}</g>`;
   svg.appendChild(g); // último = adelante de los muebles
 }
 
