@@ -23,6 +23,12 @@ import { MONEDAS_PRINCIPAL, MONEDAS_SECUNDARIA, ganarMonedas, quitarMonedas } fr
 
 let data; // referencia a los datos de la app (los llena initMisiones)
 
+/* El hanko solo debe animarse en el momento exacto en que
+   completás la misión. Sin esta bandera se volvía a estampar
+   en CADA render (al agregar una secundaria, por ejemplo),
+   porque el elemento se recrea de cero cada vez. */
+let recienCompletada = false;
+
 /* ------------------------------------------------------------
    Cambio de día.
    Si la última misión guardada es de una fecha anterior,
@@ -99,13 +105,15 @@ function renderPrincipal() {
       <div class="panel__label">Misión principal</div>
       <h2 class="mp-titulo mp-titulo--hecha">${escapar(p.titulo)}</h2>
       <div class="hanko-fila">
-        <div class="hanko">完</div>
+        <div class="hanko${recienCompletada ? " hanko--anim" : ""}">完</div>
         <span class="hanko-texto">Cumplida</span>
       </div>
       ${tagArbol}
       <p class="mp-cierre">Un paso más. Mañana hay otra misión esperando.</p>
       <button class="deshacer" data-action="deshacer-principal">deshacer</button>
     </div>`;
+
+  recienCompletada = false; // se consume: el próximo render ya no anima
 }
 
 /* ------------------------------------------------------------
@@ -207,6 +215,7 @@ function accion(e) {
     }
 
     case "completar-principal": {
+      recienCompletada = true;
       hoy.principal.completada = true;
       hoy.principal.completada_en = new Date().toISOString();
       ganarMonedas(MONEDAS_PRINCIPAL);

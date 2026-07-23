@@ -125,6 +125,8 @@ export function flotarXp(texto, origenEl) {
   document.body.appendChild(el);
   el.addEventListener("animationend", () => el.remove());
   // Red de seguridad por si la animación está desactivada
-  // (modo "reducir movimiento" del iPhone):
-  setTimeout(() => el.remove(), 1200);
+  // (modo "reducir movimiento" del iPhone). Tiene que durar
+  // MÁS que la animación (2.4s) o cortaría el cartelito
+  // antes de que termine de leerse.
+  setTimeout(() => el.remove(), 3200);
 }

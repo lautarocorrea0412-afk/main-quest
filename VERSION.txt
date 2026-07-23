@@ -1,5 +1,5 @@
-Fase 2 · Paso 2 — La habitación pixel art
-Caché SW: mq-fase2-paso2
-La app debe mostrar en VOS: 'Fase 2 · Paso 2 · datos v3'
-Nuevos: js/room.js, assets/cuarto.svg
-Modificados: index.html, css/app.css, js/app.js, js/economy.js, sw.js, VERSION.txt
+Fase 2 · Paso 2b — Correcciones (cartelito, hanko, cuarto en iOS)
+Caché SW: mq-fase2-paso2b
+La app debe mostrar en VOS: 'Fase 2 · Paso 2b · datos v3'
+Modificados: css/app.css, js/missions.js, js/xp.js, js/room.js, js/app.js, sw.js, assets/cuarto.svg, tools/gen_cuarto.py, VERSION.txt
+IMPORTANTE: assets/cuarto.svg debe estar subido al repo.

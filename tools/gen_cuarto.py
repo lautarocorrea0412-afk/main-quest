@@ -188,7 +188,7 @@ g_close()
 
 svg = (
     f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" '
-    f'width="100%" shape-rendering="crispEdges" '
+    f'shape-rendering="crispEdges" '
     f'style="display:block;border-radius:14px" '
     f'role="img" aria-label="Tu habitación">\n  '
     + "\n  ".join(out)

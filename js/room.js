@@ -66,11 +66,23 @@ async function cargarCuarto() {
 
   try {
     const resp = await fetch("./assets/cuarto.svg");
-    cont.innerHTML = await resp.text();
+
+    // fetch NO falla solo por un 404: devuelve la página de
+    // error. Sin este chequeo, inyectábamos el HTML del 404
+    // en el cuarto y quedaba en blanco sin decir por qué.
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const texto = await resp.text();
+    if (!texto.trim().startsWith("<svg")) throw new Error("no es un SVG");
+
+    cont.innerHTML = texto;
     svgCargado = true;
     aplicarInventario();
-  } catch {
-    cont.innerHTML = `<p class="secundarias-vacio">No se pudo cargar el cuarto. Probá abrir la app con internet una vez.</p>`;
+  } catch (err) {
+    cont.innerHTML = `<p class="secundarias-vacio">
+      No se pudo cargar el cuarto (${err.message}).<br>
+      Revisá que <strong>assets/cuarto.svg</strong> esté subido al repo.
+    </p>`;
   }
 }
 
