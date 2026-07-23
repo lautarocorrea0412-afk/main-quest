@@ -31,6 +31,9 @@
     <section id="view-hoy" class="view active">
       <p class="saludo" id="saludo"></p>
 
+      <!-- engine.js dibuja acá el mensaje del día -->
+      <div id="mensaje-dia"></div>
+
       <!-- missions.js dibuja acá la misión principal -->
       <div id="mision-principal"></div>
 
@@ -84,6 +87,18 @@
         <div class="panel__label">Perfil</div>
         <h2 id="perfil-nombre"></h2>
         <p id="perfil-desde"></p>
+      </div>
+
+      <div class="panel">
+        <div class="panel__label">Mis parciales</div>
+        <ul id="lista-parciales" class="secundarias"></ul>
+        <div class="agregar">
+          <input type="text" id="input-parcial-materia" class="campo"
+                 placeholder="Materia" maxlength="40">
+          <input type="date" id="input-parcial-fecha" class="campo campo--fecha"
+                 aria-label="Fecha del parcial">
+          <button class="btn-mini" data-action="agregar-parcial" aria-label="Agregar parcial">+</button>
+        </div>
       </div>
 
       <div class="panel">

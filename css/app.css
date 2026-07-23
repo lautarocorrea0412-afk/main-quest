@@ -463,6 +463,52 @@ nav {
   100% { opacity: 0; translate: 0 -44px; }
 }
 
+/* ============ Motor de contexto (Fase 1 · Paso 3) ============ */
+
+/* El mensaje del día: la voz de la app. Barra de acento a la
+   izquierda, sin caja pesada — habla, no grita. */
+.mensaje {
+  position: relative;
+  margin: 0 0 18px;
+  padding: 10px 14px 10px 16px;
+  border-left: 3px solid var(--accent);
+}
+
+.mensaje p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.mensaje--parcial { border-left-color: var(--cyan); }
+
+.pill-parcial {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  border-radius: 999px;
+  padding: 3px 10px;
+  margin-bottom: 8px;
+}
+
+/* Parciales en VOS */
+.campo--fecha {
+  flex: none;
+  width: 128px;
+  color-scheme: dark; /* el datepicker de iOS en oscuro */
+}
+
+.parcial-fecha {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 2px;
+}
+
 /* ============ Detalles ============ */
 
 .meta {
