@@ -16,6 +16,8 @@
    ============================================================ */
 
 import { save } from "./store.js";
+import { proximaRecompensa, nuevasEntre, ICONO_TIPO } from "./progression.js";
+import { mostrarCartel } from "./ui.js";
 
 /* Metadatos de los árboles. Antes vivían en app.js;
    ahora que el XP tiene módulo propio, se mudan acá. */
@@ -34,13 +36,17 @@ export const XP_PRINCIPAL = 50;
 export const XP_SECUNDARIA = 15;
 
 /* ------------------------------------------------------------
-   Curva de niveles: subir del nivel N al N+1 cuesta 100×N.
-   NV1→2: 100 · NV2→3: 200 · NV3→4: 300...
+   Curva de niveles: subir del nivel N al N+1 cuesta 60×N + 40.
+   NV1→2: 100 · NV2→3: 160 · NV5→6: 340 · NV9→10: 580.
+   Total del NV1 al NV10: 3060 XP ≈ un año de dedicación real
+   a un árbol (~60 XP/semana). Recalibrada de la curva 100×N
+   original, que hacía el NV10 casi inalcanzable.
+   Los niveles ya ganados con la curva vieja se respetan.
    Cada árbol guarda { xp, nivel } donde xp es el progreso
    DENTRO del nivel actual (no el total histórico).
    ------------------------------------------------------------ */
 export function costoNivel(nivel) {
-  return 100 * nivel;
+  return 60 * nivel + 40;
 }
 
 /* ------------------------------------------------------------
@@ -53,6 +59,7 @@ export function ganarXp(data, arbolId, cantidad) {
 
   arbol.xp += cantidad;
 
+  const nivelViejo = arbol.nivel;
   let subioNivel = false;
   while (arbol.xp >= costoNivel(arbol.nivel)) {
     arbol.xp -= costoNivel(arbol.nivel);
@@ -61,6 +68,16 @@ export function ganarXp(data, arbolId, cantidad) {
   }
 
   save(data);
+
+  /* Si el nivel nuevo desbloqueó recompensas de evolución,
+     se celebran acá: la subida de nivel es el momento. */
+  if (subioNivel) {
+    for (const rec of nuevasEntre(arbolId, nivelViejo, arbol.nivel)) {
+      mostrarCartel(ICONO_TIPO[rec.tipo], `¡Desbloqueaste: ${rec.nombre}!`,
+        `${ARBOLES_META[arbolId].emoji} ${ARBOLES_META[arbolId].nombre} NV ${rec.nivel}`);
+    }
+  }
+
   return { arbolId, cantidad, subioNivel, nivel: arbol.nivel };
 }
 
@@ -103,10 +120,20 @@ export function renderArboles(data) {
             <span class="arbol__nivel">NV ${arbol.nivel} · ${arbol.xp}/${costoNivel(arbol.nivel)}</span>
           </div>
           <div class="barra"><div class="barra__fill" style="width:${pct}%"></div></div>
+          ${proximoHTML(data, id)}
         </div>
       </div>
     `);
   }
+}
+
+/* La zanahoria: qué desbloquea el próximo nivel con premio.
+   Esto es lo que convierte "subió un número" en "me estoy
+   convirtiendo en alguien más avanzado". */
+function proximoHTML(data, arbolId) {
+  const prox = proximaRecompensa(data, arbolId);
+  if (!prox) return `<div class="arbol__proximo arbol__proximo--fin">Línea completa ✦</div>`;
+  return `<div class="arbol__proximo">Próximo: NV ${prox.nivel} · ${prox.nombre}</div>`;
 }
 
 /* ------------------------------------------------------------

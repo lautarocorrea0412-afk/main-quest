@@ -18,6 +18,7 @@
    ============================================================ */
 
 import { dibujarAvatar } from "./avatar.js";
+import { desbloqueosCuarto } from "./progression.js";
 
 let data;
 let svgCargado = false;
@@ -47,6 +48,16 @@ function aplicarInventario() {
       g.style.display = "none";
       delete g.dataset.visto;
     }
+  }
+
+  /* Segunda familia: los grupos "nivel-" se encienden por
+     nivel de árbol (progression.js), nunca por compra.
+     Misma mecánica, fuente distinta: esa es la separación
+     entre tienda y evolución. */
+  const porNivel = desbloqueosCuarto(data);
+  for (const g of document.querySelectorAll("#cuarto [id^='nivel-']")) {
+    const id = g.id.replace("nivel-", "");
+    g.style.display = porNivel.has(id) ? "" : "none";
   }
 
   dibujarEnEscena();
@@ -138,7 +149,7 @@ export function initCuarto(appData) {
 
   // Si cambiás de ropa en VOS, el avatar del cuarto se actualiza.
   document.addEventListener("avatar-cambiado", dibujarEnEscena);
-  document.addEventListener("contexto-cambiado", dibujarEnEscena);
+  document.addEventListener("contexto-cambiado", () => { if (svgCargado) aplicarInventario(); });
 
   cargarCuarto();
 }

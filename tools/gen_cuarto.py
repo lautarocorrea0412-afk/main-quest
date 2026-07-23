@@ -3,7 +3,7 @@
 Cada ítem comprable es un grupo <g id="item-XXX"> que room.js
 enciende o apaga según el inventario."""
 
-W, H = 160, 120  # "pixeles" logicos
+W, H = 200, 120  # "pixeles" logicos (agrandado en Fase 3 para la progresion)
 
 C = {
     "wall":      "#3E3346",
@@ -186,6 +186,139 @@ r(139, 66, 10, 2, C["sakura"])         # RGB
 r(139, 69, 10, 2, C["amber"])
 r(140, 78, 8, 3, C["gray_dk"])
 r(141, 83, 6, 2, C["matcha"])
+g_close()
+
+
+# ============ RECOMPENSAS DE PROGRESION (grupos "nivel-") ============
+# NO son de la tienda: se encienden por nivel de arbol, nunca
+# por compra. La pared y el piso nuevos (x>=160) son su zona.
+
+def n_open(gid):
+    out.append(f'<g id="nivel-{gid}">')
+
+# --- Edicion NV5: placa de creador (pared, sobre el escritorio)
+n_open("placa-creador")
+r(133, 16, 12, 9, C["frame"])
+r(135, 18, 8, 5, C["dark"])
+r(137, 19, 3, 3, C["amber"])           # "play"
+g_close()
+
+# --- Fitness NV5: mancuernas (piso, zona nueva)
+n_open("mancuernas")
+r(164, 96, 4, 7, C["gray_dk"])
+r(174, 96, 4, 7, C["gray_dk"])
+r(167, 98, 8, 3, C["gray"])
+g_close()
+
+# --- Fitness NV10: barra y discos (piso, zona nueva)
+n_open("barra-discos")
+r(158, 109, 40, 3, C["gray"])
+r(155, 104, 6, 12, C["dark"])
+r(195, 104, 6, 12, C["dark"])
+r(161, 106, 3, 8, C["gray_dk"])
+r(192, 106, 3, 8, C["gray_dk"])
+g_close()
+
+# --- Facultad NV5: pila de apuntes (sobre el estante)
+n_open("apuntes")
+r(116, 24, 12, 2, C["cream"])
+r(117, 22, 10, 2, C["sakura"])
+r(116, 20, 12, 2, C["cream"])
+r(118, 18, 8, 2, C["matcha"])
+g_close()
+
+# --- Facultad NV10: diploma (pared nueva)
+n_open("diploma")
+r(158, 12, 18, 15, C["wood"])
+r(160, 14, 14, 11, C["cream"])
+r(163, 17, 8, 1, C["gray"])
+r(163, 20, 8, 1, C["gray"])
+r(169, 22, 3, 3, C["sakura"])          # sello
+g_close()
+
+# --- Japones NV5: cuadro con kanji (pared nueva)
+n_open("kanji")
+r(180, 12, 14, 17, C["dark"])
+r(182, 14, 10, 13, C["cream"])
+r(186, 16, 2, 4, C["dark"])            # trazos (abstraccion de 夢)
+r(184, 18, 6, 2, C["dark"])
+r(185, 22, 4, 2, C["dark"])
+r(187, 24, 2, 2, C["dark"])
+g_close()
+
+# --- Finanzas NV5: alcancia (piso, delante de la cama)
+n_open("alcancia")
+r(74, 105, 12, 7, C["sakura"])
+r(72, 107, 3, 4, C["sakura"])          # trompa
+r(76, 103, 3, 2, C["sakura"])          # oreja
+r(78, 105, 4, 1, C["dark"])            # ranura
+r(75, 112, 2, 2, "#D4708A")            # patas
+r(82, 112, 2, 2, "#D4708A")
+g_close()
+
+# --- Finanzas NV10: mapa de viajes con chinchetas (pared nueva)
+n_open("mapa")
+r(156, 32, 28, 18, C["cream"])
+r(156, 32, 28, 2, C["wood_dk"])
+r(160, 38, 7, 5, C["green"])           # continentes sugeridos
+r(170, 36, 6, 4, C["green"])
+r(176, 42, 5, 4, C["green"])
+r(163, 39, 2, 2, C["red"])             # chincheta: Argentina
+r(179, 38, 2, 2, C["red"])             # chincheta: Japon
+g_close()
+
+# --- Streaming NV5: camara con tripode (piso, zona nueva)
+n_open("camara")
+r(164, 62, 12, 8, C["dark"])
+r(174, 64, 4, 4, C["gray_dk"])         # lente
+r(166, 60, 3, 2, C["red"])             # luz rec
+r(168, 70, 4, 22, C["gray_dk"])        # columna
+r(162, 90, 6, 3, C["gray_dk"])         # patas
+r(172, 90, 6, 3, C["gray_dk"])
+g_close()
+
+# --- Streaming NV10: neon ON AIR (pared nueva, arriba)
+n_open("neon")
+r(158, 2, 38, 8, C["dark"])
+r(160, 4, 15, 4, C["sakura"])          # ON
+r(178, 4, 15, 4, C["amber"])           # AIR
+r(158, 2, 38, 1, C["sakura"])
+r(158, 9, 38, 1, C["sakura"])
+g_close()
+
+# ============ EFECTOS (grupos "nivel-fx-") ============
+
+# --- Edicion NV10: la estacion se enciende
+n_open("fx-monitores")
+r(100, 48, 16, 8, "#A8E0FF")           # notebook brillante
+r(102, 50, 8, 1, C["cream"])           # timeline sugerida
+r(102, 52, 12, 1, C["amber"])
+r(124, 44, 20, 12, "#A8E0FF")          # monitor 2 brillante
+r(126, 46, 10, 1, C["cream"])
+r(126, 49, 16, 1, C["sakura"])
+r(126, 52, 13, 1, C["amber"])
+g_close()
+
+# --- Japones NV10: la ventana ahora mira a Tokio de noche
+n_open("fx-tokio")
+r(24, 10, 34, 32, "#2A3550")           # cielo nocturno
+r(28, 13, 2, 2, C["cream"])            # estrellas
+r(48, 16, 2, 2, C["cream"])
+r(38, 12, 1, 1, C["cream"])
+r(52, 26, 4, 4, C["gold"])             # luna
+r(38, 22, 6, 20, "#E05A5A")            # Torre de Tokio
+r(36, 30, 10, 12, "#E05A5A")
+r(39, 18, 4, 4, "#E05A5A")
+r(40, 14, 2, 4, "#E05A5A")
+r(38, 26, 6, 2, C["cream"])            # plataformas iluminadas
+r(37, 34, 8, 2, C["cream"])
+r(26, 36, 6, 6, "#3A4A66")             # skyline
+r(50, 34, 6, 8, "#3A4A66")
+r(27, 38, 1, 1, C["gold"])             # ventanitas
+r(52, 36, 1, 1, C["gold"])
+r(54, 39, 1, 1, C["gold"])
+r(40, 10, 2, 32, C["frame"])           # crucetas de la ventana encima
+r(24, 24, 34, 2, C["frame"])
 g_close()
 
 svg = (

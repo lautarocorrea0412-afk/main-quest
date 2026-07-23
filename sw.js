@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-fase3-paso2";
+const CACHE_VERSION = "mq-fase3-paso3";
 
 const CORE = [
   "./",
@@ -27,6 +27,8 @@ const CORE = [
   "./js/room.js",
   "./js/avatar.js",
   "./js/achievements.js",
+  "./js/progression.js",
+  "./js/ui.js",
   "./assets/cuarto.svg",
   "./js/util.js",
   "./assets/icons/icon-192.png",

@@ -20,6 +20,7 @@ import { save } from "./store.js";
 import { hoyISO, diasHasta, escapar } from "./util.js";
 import { ganarMonedas } from "./economy.js";
 import { contextoActual } from "./engine.js";
+import { mostrarCartel } from "./ui.js";
 
 let data;
 
@@ -188,37 +189,10 @@ export function verificarLogros({ celebrar = true } = {}) {
   if (hubo) renderLogros();
 }
 
-/* ------------------------------------------------------------
-   Celebración: un cartel que baja desde arriba.
-   Si se desbloquean varios de una, se encolan.
-   ------------------------------------------------------------ */
-const cola = [];
-let mostrando = false;
-
+/* La celebración vive en ui.js: es el mismo cartel que usan
+   las subidas de nivel. */
 function mostrarCelebracion(logro) {
-  cola.push(logro);
-  if (!mostrando) siguienteCelebracion();
-}
-
-function siguienteCelebracion() {
-  const logro = cola.shift();
-  if (!logro) { mostrando = false; return; }
-  mostrando = true;
-
-  const el = document.createElement("div");
-  el.className = "celebracion";
-  el.innerHTML = `
-    <span class="celebracion__icono">${logro.icono}</span>
-    <span class="celebracion__texto">
-      <strong>${escapar(logro.nombre)}</strong>
-      <em>+${logro.premio} 🪙</em>
-    </span>`;
-  document.body.appendChild(el);
-
-  setTimeout(() => {
-    el.classList.add("saliendo");
-    setTimeout(() => { el.remove(); siguienteCelebracion(); }, 400);
-  }, 2600);
+  mostrarCartel(logro.icono, `Logro: ${logro.nombre}`, `+${logro.premio} 🪙`);
 }
 
 /* ------------------------------------------------------------

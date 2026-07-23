@@ -741,7 +741,7 @@ nav {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 160 / 120;
+  aspect-ratio: 200 / 120;
 }
 
 .cuarto-progreso {
@@ -836,6 +836,15 @@ nav {
   font-weight: 400;
   color: var(--sakura);
 }
+
+/* La zanahoria de cada árbol */
+.arbol__proximo {
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 4px;
+}
+
+.arbol__proximo--fin { color: var(--matcha); font-weight: 600; }
 
 /* ============ Logros (Fase 3 · Paso 2) ============ */
 

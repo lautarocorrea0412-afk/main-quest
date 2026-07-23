@@ -17,6 +17,7 @@
 import { save } from "./store.js";
 import { ARBOLES_META } from "./xp.js";
 import { contextoActual } from "./engine.js";
+import { requisitoDe } from "./progression.js";
 
 let data;
 
@@ -48,7 +49,8 @@ const P = {
   sakura:    "#F58EA8",
   sakura_dk: "#D4708A",
   matcha:    "#8FD6A9",
-  suela:     "#E8DCC8"
+  suela:     "#E8DCC8",
+  oro:       "#FFD98E"
 };
 
 function r(x, y, w, h, c) {
@@ -262,7 +264,6 @@ export function expresionAutomatica() {
 const REMERAS = {
   oversize: {
     nombre: "Remera oversize",
-    req: null,
     dibujo: () =>
       r(9, 32, 30, 25, P.negro) +
       r(4, 34, 6, 20, P.negro) +        // mangas caídas
@@ -273,7 +274,6 @@ const REMERAS = {
   },
   hoodie: {
     nombre: "Hoodie",
-    req: { arbol: "edicion", nivel: 2 },
     dibujo: () =>
       r(14, 27, 20, 7, P.gris_dk) +     // capucha detrás del cuello
       r(9, 32, 30, 27, P.gris) +
@@ -289,7 +289,6 @@ const REMERAS = {
   },
   camisa: {
     nombre: "Camisa",
-    req: { arbol: "facultad", nivel: 2 },
     dibujo: () =>
       r(9, 32, 30, 25, P.crema) +
       r(4, 34, 6, 20, P.crema) +
@@ -302,7 +301,6 @@ const REMERAS = {
   },
   jersey: {
     nombre: "Jersey deportivo",
-    req: { arbol: "fitness", nivel: 2 },
     dibujo: () =>
       r(9, 32, 30, 25, P.matcha) +
       r(4, 34, 6, 10, P.matcha) +       // manga corta
@@ -314,7 +312,6 @@ const REMERAS = {
   },
   campera: {
     nombre: "Campera bomber",
-    req: { arbol: "streaming", nivel: 2 },
     dibujo: () =>
       r(9, 32, 30, 25, P.sakura) +
       r(4, 34, 6, 20, P.sakura) +
@@ -325,13 +322,92 @@ const REMERAS = {
       r(4, 51, 6, 3, P.negro) +
       r(38, 51, 6, 3, P.negro) +
       r(11, 45, 6, 2, P.sakura_dk)      // bolsillo
+  },
+  tecnica: {
+    nombre: "Campera técnica",
+    dibujo: () =>
+      r(9, 32, 30, 27, P.negro) +
+      r(4, 34, 6, 22, P.negro) +
+      r(38, 34, 6, 22, P.negro) +
+      r(22, 32, 3, 24, P.amber) +       // cierre ámbar
+      r(9, 32, 30, 2, P.negro_lt) +
+      r(11, 42, 7, 6, P.negro_lt) +     // bolsillos técnicos
+      r(30, 42, 7, 6, P.negro_lt) +
+      r(12, 43, 5, 1, P.amber) +
+      r(31, 43, 5, 1, P.amber) +
+      r(9, 56, 30, 3, P.negro_lt)
+  },
+  training: {
+    nombre: "Conjunto training",
+    dibujo: () =>
+      r(9, 32, 30, 25, "#5FA87A") +
+      r(4, 34, 6, 20, "#5FA87A") +
+      r(38, 34, 6, 20, "#5FA87A") +
+      r(4, 34, 6, 2, P.crema) +         // franjas en las mangas
+      r(38, 34, 6, 2, P.crema) +
+      r(4, 40, 6, 2, P.crema) +
+      r(38, 40, 6, 2, P.crema) +
+      r(22, 32, 3, 25, "#4A8862") +
+      r(9, 54, 30, 3, "#4A8862")
+  },
+  sweater: {
+    nombre: "Sweater universitario",
+    dibujo: () =>
+      r(9, 32, 30, 25, "#5E4A6B") +
+      r(4, 34, 6, 20, "#5E4A6B") +
+      r(38, 34, 6, 20, "#5E4A6B") +
+      r(16, 31, 6, 4, P.crema) +        // cuello de camisa asomando
+      r(26, 31, 6, 4, P.crema) +
+      r(22, 33, 4, 3, P.crema) +
+      r(9, 54, 30, 3, "#4A3A56") +      // puño del sweater
+      r(4, 51, 6, 3, "#4A3A56") +
+      r(38, 51, 6, 3, "#4A3A56") +
+      r(17, 42, 14, 2, "#4A3A56")       // trenzado sugerido
+  },
+  haori: {
+    nombre: "Haori",
+    dibujo: () =>
+      r(8, 32, 32, 27, P.negro_lt) +    // caída amplia
+      r(3, 34, 7, 24, P.negro_lt) +     // mangas anchas
+      r(38, 34, 7, 24, P.negro_lt) +
+      r(3, 56, 7, 2, P.crema) +         // borde de las mangas
+      r(38, 56, 7, 2, P.crema) +
+      r(14, 32, 3, 27, P.crema) +       // solapas
+      r(31, 32, 3, 27, P.crema) +
+      r(17, 34, 14, 23, P.negro) +      // interior oscuro
+      r(19, 48, 3, 3, P.sakura) +       // detalle sakura
+      r(8, 57, 32, 2, P.negro)
+  },
+  blazer: {
+    nombre: "Blazer",
+    dibujo: () =>
+      r(9, 32, 30, 25, P.gris_dk) +
+      r(4, 34, 6, 20, P.gris_dk) +
+      r(38, 34, 6, 20, P.gris_dk) +
+      r(19, 32, 10, 22, P.crema) +      // camisa abajo
+      r(14, 32, 5, 20, "#433D4E") +     // solapas
+      r(29, 32, 5, 20, "#433D4E") +
+      r(23, 36, 2, 8, P.amber) +        // corbata fina? no: botón
+      r(9, 54, 30, 3, "#433D4E")
+  },
+  varsity: {
+    nombre: "Campera varsity",
+    dibujo: () =>
+      r(9, 32, 30, 25, P.sakura) +
+      r(4, 34, 6, 20, P.crema) +        // mangas crema clásicas
+      r(38, 34, 6, 20, P.crema) +
+      r(17, 31, 14, 3, P.negro) +
+      r(22, 34, 3, 21, P.negro) +
+      r(9, 54, 30, 3, P.negro) +
+      r(4, 51, 6, 3, P.negro) +
+      r(38, 51, 6, 3, P.negro) +
+      r(12, 38, 5, 6, P.crema)          // letra del equipo
   }
 };
 
 const PANTALONES = {
   jogging: {
     nombre: "Jogging",
-    req: null,
     dibujo: () =>
       r(16, 57, 7, 20, P.jogging) +     // piernas flacas
       r(25, 57, 7, 20, P.jogging) +
@@ -341,7 +417,6 @@ const PANTALONES = {
   },
   jean: {
     nombre: "Jean",
-    req: { arbol: "finanzas", nivel: 2 },
     dibujo: () =>
       r(16, 57, 7, 20, P.denim) +
       r(25, 57, 7, 20, P.denim) +
@@ -351,7 +426,6 @@ const PANTALONES = {
   },
   cargo: {
     nombre: "Cargo",
-    req: { arbol: "japones", nivel: 2 },
     dibujo: () =>
       r(16, 57, 7, 20, P.cargo) +
       r(25, 57, 7, 20, P.cargo) +
@@ -361,18 +435,82 @@ const PANTALONES = {
   }
 };
 
+
+/* ===================== ACCESORIOS (se ganan) =====================
+   Capa que se dibuja ÚLTIMA, por encima de todo. Un solo
+   accesorio a la vez: en pixel art, dos accesorios juntos
+   se pisan y ninguno se lee. */
+const ACCESORIOS = {
+  ninguno: {
+    nombre: "Ninguno",
+    dibujo: () => ""
+  },
+  auriculares: {
+    nombre: "Auriculares",
+    dibujo: () =>
+      r(12, 5, 24, 2, P.gris_dk) +      // vincha sobre el pelo
+      r(11, 15, 4, 8, P.negro) +        // almohadillas
+      r(33, 15, 4, 8, P.negro) +
+      r(11, 17, 1, 4, P.amber) +        // detalle ámbar
+      r(36, 17, 1, 4, P.amber)
+  },
+  munequera: {
+    nombre: "Muñequera",
+    dibujo: () =>
+      r(38, 51, 7, 3, P.matcha) +
+      r(38, 51, 7, 1, "#6BAF85")
+  },
+  mochila: {
+    nombre: "Mochila",
+    dibujo: () =>
+      r(13, 33, 3, 12, P.cargo_dk) +    // correas al pecho
+      r(32, 33, 3, 12, P.cargo_dk) +
+      r(13, 38, 3, 2, P.amber) +        // hebillas
+      r(32, 38, 3, 2, P.amber) +
+      r(6, 33, 3, 3, P.cargo) +         // la mochila asoma a los costados
+      r(39, 33, 3, 3, P.cargo)
+  },
+  rinonera: {
+    nombre: "Riñonera",
+    dibujo: () =>
+      r(13, 34, 3, 2, P.negro) + r(16, 36, 3, 2, P.negro) +
+      r(19, 38, 3, 2, P.negro) + r(22, 40, 3, 2, P.negro) +
+      r(25, 42, 3, 2, P.negro) + r(28, 44, 3, 2, P.negro) +
+      r(28, 46, 9, 6, P.amber) +        // el bolsito
+      r(28, 46, 9, 2, "#C97F3D")
+  },
+  reloj: {
+    nombre: "Reloj",
+    dibujo: () =>
+      r(3, 53, 7, 3, P.negro) +
+      r(5, 53, 3, 3, P.oro)
+  },
+  anteojos: {
+    nombre: "Anteojos",
+    dibujo: () =>
+      r(15, 16, 9, 1, P.negro_lt) + r(24, 16, 9, 1, P.negro_lt) +
+      r(15, 17, 1, 6, P.negro_lt) + r(23, 17, 1, 6, P.negro_lt) +
+      r(24, 17, 1, 6, P.negro_lt) + r(32, 17, 1, 6, P.negro_lt) +
+      r(15, 23, 9, 1, P.negro_lt) + r(24, 23, 9, 1, P.negro_lt) +
+      r(23, 19, 2, 1, P.negro_lt)       // puente
+  }
+};
+
+
 /* ------------------------------------------------------------
    ¿Está desbloqueada esta prenda?
    ------------------------------------------------------------ */
-export function desbloqueada(prenda) {
-  if (!prenda.req) return true;
-  return data.arboles[prenda.req.arbol].nivel >= prenda.req.nivel;
+export function desbloqueada(id) {
+  const req = requisitoDe(id);      // null = pieza libre
+  if (!req) return true;
+  return data.arboles[req.arbol].nivel >= req.nivel;
 }
 
-function textoRequisito(prenda) {
-  if (!prenda.req) return "";
-  const meta = ARBOLES_META[prenda.req.arbol];
-  return `${meta.emoji} ${meta.nombre} NV ${prenda.req.nivel}`;
+function textoRequisito(id) {
+  const req = requisitoDe(id);
+  if (!req) return "";
+  const meta = ARBOLES_META[req.arbol];
+  return `${meta.emoji} ${meta.nombre} NV ${req.nivel}`;
 }
 
 /* ------------------------------------------------------------
@@ -386,6 +524,7 @@ export function dibujarAvatar(escala = 1, expr = null) {
   const pelo = PELOS[a.pelo] || PELOS.largo;
   const remera = REMERAS[a.remera] || REMERAS.oversize;
   const pantalon = PANTALONES[a.pantalon] || PANTALONES.jogging;
+  const accesorio = ACCESORIOS[a.accesorio] || ACCESORIOS.ninguno;
 
   /* Orden de capas: lo de atrás primero.
      melena trasera → piernas → zapatillas → torso → manos →
@@ -402,7 +541,8 @@ export function dibujarAvatar(escala = 1, expr = null) {
     r(3, 52, 7, 7, P.piel) +            // manos
     r(38, 52, 7, 7, P.piel) +
     dibujarCara(gesto) +
-    pelo.adelante();
+    pelo.adelante() +
+    accesorio.dibujo();
 
   return `<svg viewBox="0 0 48 80" width="${48 * escala}" shape-rendering="crispEdges" role="img" aria-label="Tu avatar, expresión ${gesto}">${piezas}</svg>`;
 }
@@ -412,14 +552,14 @@ export function dibujarAvatar(escala = 1, expr = null) {
    ------------------------------------------------------------ */
 function opcionesHTML(grupo, coleccion, actual) {
   return Object.entries(coleccion).map(([id, item]) => {
-    const libre = desbloqueada(item);
+    const libre = desbloqueada(id);
     const activa = actual === id;
     return `
       <button class="opcion ${activa ? "activa" : ""} ${libre ? "" : "trabada"}"
               data-action="elegir-look" data-grupo="${grupo}" data-id="${id}"
               ${libre ? "" : "disabled"}>
         <span class="opcion__nombre">${item.nombre}</span>
-        ${libre ? "" : `<span class="opcion__req">${textoRequisito(item)}</span>`}
+        ${libre ? "" : `<span class="opcion__req">${textoRequisito(id)}</span>`}
       </button>`;
   }).join("");
 }
@@ -442,7 +582,9 @@ export function renderAvatar() {
     <p class="diario-pregunta">Ropa</p>
     <div class="opciones">${opcionesHTML("remera", REMERAS, a.remera)}</div>
     <p class="diario-pregunta">Pantalón</p>
-    <div class="opciones">${opcionesHTML("pantalon", PANTALONES, a.pantalon)}</div>`;
+    <div class="opciones">${opcionesHTML("pantalon", PANTALONES, a.pantalon)}</div>
+    <p class="diario-pregunta">Accesorio</p>
+    <div class="opciones">${opcionesHTML("accesorio", ACCESORIOS, a.accesorio)}</div>`;
 }
 
 function accion(e) {

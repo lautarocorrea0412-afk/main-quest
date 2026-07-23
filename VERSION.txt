@@ -1,5 +1,5 @@
-Fase 3 · Paso 2 — Logros
-Caché SW: mq-fase3-paso2
-La app debe mostrar en VOS: 'Fase 3 · Paso 2 · datos v4'
-Nuevos: js/achievements.js
-Modificados: index.html, css/app.css, js/app.js, js/economy.js, sw.js
+Fase 3 · Paso 3 — Líneas de evolución RPG (30 recompensas)
+Caché SW: mq-fase3-paso3
+La app debe mostrar en VOS: 'Fase 3 · Paso 3 · datos v5'
+Nuevos: js/progression.js, js/ui.js
+Modificados: js/xp.js (curva nueva), js/avatar.js, js/room.js, js/achievements.js, js/store.js (v5), css/app.css, js/app.js, sw.js, assets/cuarto.svg (escena 200px), tools/gen_cuarto.py

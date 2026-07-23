@@ -14,9 +14,10 @@ const STORAGE_KEY = "mainquest_data";
    v2 — las misiones guardan { fecha, principal, secundarias }
    v3 — las misiones guardan su árbol de habilidad
    v4 — el perfil guarda el look del avatar
+   v5 — el look suma el slot de accesorio
    completarFaltantes() agrega los campos nuevos a los datos
    viejos, así que las migraciones son automáticas. */
-const DATA_VERSION = 4;
+const DATA_VERSION = 5;
 
 /* ------------------------------------------------------------
    Estado inicial (el "personaje nivel 1").
@@ -30,7 +31,7 @@ const DEFAULT_DATA = {
     creado_en: null, // se fija la primera vez que se abre la app
     // El look de arranque, tal como te describiste en el PRD:
     // pelo negro largo, ropa oversize.
-    avatar: { pelo: "largo", remera: "oversize", pantalon: "jogging" }
+    avatar: { pelo: "largo", remera: "oversize", pantalon: "jogging", accesorio: "ninguno" }
   },
   arboles: {
     fitness:   { xp: 0, nivel: 1 },

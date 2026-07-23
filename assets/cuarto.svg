@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" shape-rendering="crispEdges" style="display:block;border-radius:14px" role="img" aria-label="Tu habitación">
-  <rect x="0" y="0" width="160" height="80" fill="#3E3346"/>
-  <rect x="0" y="0" width="160" height="6" fill="#332A3A"/>
-  <rect x="0" y="80" width="160" height="40" fill="#6B4B3E"/>
-  <rect x="0" y="80" width="160" height="2" fill="#5A3E33"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" shape-rendering="crispEdges" style="display:block;border-radius:14px" role="img" aria-label="Tu habitación">
+  <rect x="0" y="0" width="200" height="80" fill="#3E3346"/>
+  <rect x="0" y="0" width="200" height="6" fill="#332A3A"/>
+  <rect x="0" y="80" width="200" height="40" fill="#6B4B3E"/>
+  <rect x="0" y="80" width="200" height="2" fill="#5A3E33"/>
   <rect x="0" y="82" width="1" height="38" fill="#5A3E33"/>
   <rect x="16" y="82" width="1" height="38" fill="#5A3E33"/>
   <rect x="32" y="82" width="1" height="38" fill="#5A3E33"/>
@@ -13,6 +13,9 @@
   <rect x="112" y="82" width="1" height="38" fill="#5A3E33"/>
   <rect x="128" y="82" width="1" height="38" fill="#5A3E33"/>
   <rect x="144" y="82" width="1" height="38" fill="#5A3E33"/>
+  <rect x="160" y="82" width="1" height="38" fill="#5A3E33"/>
+  <rect x="176" y="82" width="1" height="38" fill="#5A3E33"/>
+  <rect x="192" y="82" width="1" height="38" fill="#5A3E33"/>
   <rect x="22" y="8" width="38" height="36" fill="#4A3D52"/>
   <rect x="24" y="10" width="34" height="32" fill="#F58EA8"/>
   <rect x="24" y="22" width="34" height="12" fill="#FFB067"/>
@@ -124,5 +127,104 @@
   <rect x="139" y="69" width="10" height="2" fill="#FFB067"/>
   <rect x="140" y="78" width="8" height="3" fill="#5A5364"/>
   <rect x="141" y="83" width="6" height="2" fill="#8FD6A9"/>
+  </g>
+  <g id="nivel-placa-creador">
+  <rect x="133" y="16" width="12" height="9" fill="#4A3D52"/>
+  <rect x="135" y="18" width="8" height="5" fill="#241E2A"/>
+  <rect x="137" y="19" width="3" height="3" fill="#FFB067"/>
+  </g>
+  <g id="nivel-mancuernas">
+  <rect x="164" y="96" width="4" height="7" fill="#5A5364"/>
+  <rect x="174" y="96" width="4" height="7" fill="#5A5364"/>
+  <rect x="167" y="98" width="8" height="3" fill="#8A8194"/>
+  </g>
+  <g id="nivel-barra-discos">
+  <rect x="158" y="109" width="40" height="3" fill="#8A8194"/>
+  <rect x="155" y="104" width="6" height="12" fill="#241E2A"/>
+  <rect x="195" y="104" width="6" height="12" fill="#241E2A"/>
+  <rect x="161" y="106" width="3" height="8" fill="#5A5364"/>
+  <rect x="192" y="106" width="3" height="8" fill="#5A5364"/>
+  </g>
+  <g id="nivel-apuntes">
+  <rect x="116" y="24" width="12" height="2" fill="#FBF0E4"/>
+  <rect x="117" y="22" width="10" height="2" fill="#F58EA8"/>
+  <rect x="116" y="20" width="12" height="2" fill="#FBF0E4"/>
+  <rect x="118" y="18" width="8" height="2" fill="#8FD6A9"/>
+  </g>
+  <g id="nivel-diploma">
+  <rect x="158" y="12" width="18" height="15" fill="#8A6248"/>
+  <rect x="160" y="14" width="14" height="11" fill="#FBF0E4"/>
+  <rect x="163" y="17" width="8" height="1" fill="#8A8194"/>
+  <rect x="163" y="20" width="8" height="1" fill="#8A8194"/>
+  <rect x="169" y="22" width="3" height="3" fill="#F58EA8"/>
+  </g>
+  <g id="nivel-kanji">
+  <rect x="180" y="12" width="14" height="17" fill="#241E2A"/>
+  <rect x="182" y="14" width="10" height="13" fill="#FBF0E4"/>
+  <rect x="186" y="16" width="2" height="4" fill="#241E2A"/>
+  <rect x="184" y="18" width="6" height="2" fill="#241E2A"/>
+  <rect x="185" y="22" width="4" height="2" fill="#241E2A"/>
+  <rect x="187" y="24" width="2" height="2" fill="#241E2A"/>
+  </g>
+  <g id="nivel-alcancia">
+  <rect x="74" y="105" width="12" height="7" fill="#F58EA8"/>
+  <rect x="72" y="107" width="3" height="4" fill="#F58EA8"/>
+  <rect x="76" y="103" width="3" height="2" fill="#F58EA8"/>
+  <rect x="78" y="105" width="4" height="1" fill="#241E2A"/>
+  <rect x="75" y="112" width="2" height="2" fill="#D4708A"/>
+  <rect x="82" y="112" width="2" height="2" fill="#D4708A"/>
+  </g>
+  <g id="nivel-mapa">
+  <rect x="156" y="32" width="28" height="18" fill="#FBF0E4"/>
+  <rect x="156" y="32" width="28" height="2" fill="#6B4A36"/>
+  <rect x="160" y="38" width="7" height="5" fill="#6BA85F"/>
+  <rect x="170" y="36" width="6" height="4" fill="#6BA85F"/>
+  <rect x="176" y="42" width="5" height="4" fill="#6BA85F"/>
+  <rect x="163" y="39" width="2" height="2" fill="#E05A5A"/>
+  <rect x="179" y="38" width="2" height="2" fill="#E05A5A"/>
+  </g>
+  <g id="nivel-camara">
+  <rect x="164" y="62" width="12" height="8" fill="#241E2A"/>
+  <rect x="174" y="64" width="4" height="4" fill="#5A5364"/>
+  <rect x="166" y="60" width="3" height="2" fill="#E05A5A"/>
+  <rect x="168" y="70" width="4" height="22" fill="#5A5364"/>
+  <rect x="162" y="90" width="6" height="3" fill="#5A5364"/>
+  <rect x="172" y="90" width="6" height="3" fill="#5A5364"/>
+  </g>
+  <g id="nivel-neon">
+  <rect x="158" y="2" width="38" height="8" fill="#241E2A"/>
+  <rect x="160" y="4" width="15" height="4" fill="#F58EA8"/>
+  <rect x="178" y="4" width="15" height="4" fill="#FFB067"/>
+  <rect x="158" y="2" width="38" height="1" fill="#F58EA8"/>
+  <rect x="158" y="9" width="38" height="1" fill="#F58EA8"/>
+  </g>
+  <g id="nivel-fx-monitores">
+  <rect x="100" y="48" width="16" height="8" fill="#A8E0FF"/>
+  <rect x="102" y="50" width="8" height="1" fill="#FBF0E4"/>
+  <rect x="102" y="52" width="12" height="1" fill="#FFB067"/>
+  <rect x="124" y="44" width="20" height="12" fill="#A8E0FF"/>
+  <rect x="126" y="46" width="10" height="1" fill="#FBF0E4"/>
+  <rect x="126" y="49" width="16" height="1" fill="#F58EA8"/>
+  <rect x="126" y="52" width="13" height="1" fill="#FFB067"/>
+  </g>
+  <g id="nivel-fx-tokio">
+  <rect x="24" y="10" width="34" height="32" fill="#2A3550"/>
+  <rect x="28" y="13" width="2" height="2" fill="#FBF0E4"/>
+  <rect x="48" y="16" width="2" height="2" fill="#FBF0E4"/>
+  <rect x="38" y="12" width="1" height="1" fill="#FBF0E4"/>
+  <rect x="52" y="26" width="4" height="4" fill="#FFD98E"/>
+  <rect x="38" y="22" width="6" height="20" fill="#E05A5A"/>
+  <rect x="36" y="30" width="10" height="12" fill="#E05A5A"/>
+  <rect x="39" y="18" width="4" height="4" fill="#E05A5A"/>
+  <rect x="40" y="14" width="2" height="4" fill="#E05A5A"/>
+  <rect x="38" y="26" width="6" height="2" fill="#FBF0E4"/>
+  <rect x="37" y="34" width="8" height="2" fill="#FBF0E4"/>
+  <rect x="26" y="36" width="6" height="6" fill="#3A4A66"/>
+  <rect x="50" y="34" width="6" height="8" fill="#3A4A66"/>
+  <rect x="27" y="38" width="1" height="1" fill="#FFD98E"/>
+  <rect x="52" y="36" width="1" height="1" fill="#FFD98E"/>
+  <rect x="54" y="39" width="1" height="1" fill="#FFD98E"/>
+  <rect x="40" y="10" width="2" height="32" fill="#4A3D52"/>
+  <rect x="24" y="24" width="34" height="2" fill="#4A3D52"/>
   </g>
 </svg>
