@@ -1,4 +1,5 @@
-Fase 2 · Atardecer — Identidad visual anime/JRPG cálida
-Caché SW: mq-fase2-atardecer
-La app debe mostrar en VOS: 'Fase 2 · Atardecer · datos v3'
-Archivos: css/app.css, index.html, manifest.json, js/missions.js, js/app.js, sw.js, VERSION.txt
+Fase 2 · Paso 2 — La habitación pixel art
+Caché SW: mq-fase2-paso2
+La app debe mostrar en VOS: 'Fase 2 · Paso 2 · datos v3'
+Nuevos: js/room.js, assets/cuarto.svg
+Modificados: index.html, css/app.css, js/app.js, js/economy.js, sw.js, VERSION.txt

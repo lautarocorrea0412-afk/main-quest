@@ -20,6 +20,7 @@
 
 import { save } from "./store.js";
 import { hoyISO } from "./util.js";
+import { refrescarCuarto } from "./room.js";
 
 let data;
 
@@ -92,6 +93,7 @@ function comprar(itemId) {
   save(data);
   renderMonedas();
   renderTienda();
+  refrescarCuarto(); // lo comprado aparece en el cuarto al instante
 }
 
 /* ===================== RENDER ===================== */
