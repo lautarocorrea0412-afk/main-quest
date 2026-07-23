@@ -19,6 +19,7 @@ import {
   ARBOLES_META, XP_PRINCIPAL, XP_SECUNDARIA,
   ganarXp, quitarXp, renderArboles, flotarXp
 } from "./xp.js";
+import { MONEDAS_PRINCIPAL, MONEDAS_SECUNDARIA, ganarMonedas, quitarMonedas } from "./economy.js";
 
 let data; // referencia a los datos de la app (los llena initMisiones)
 
@@ -182,22 +183,24 @@ function accion(e) {
     case "completar-principal": {
       hoy.principal.completada = true;
       hoy.principal.completada_en = new Date().toISOString();
+      ganarMonedas(MONEDAS_PRINCIPAL);
       const res = ganarXp(data, hoy.principal.arbol, XP_PRINCIPAL);
+      // Un solo texto flotante con todo lo ganado:
+      // monedas siempre; XP y nivel solo si la misión tiene árbol.
+      let texto = `+${MONEDAS_PRINCIPAL} 🪙`;
       if (res) {
         const nombre = ARBOLES_META[res.arbolId].nombre;
-        flotarXp(
-          res.subioNivel ? `+${XP_PRINCIPAL} · ¡${nombre} NV ${res.nivel}!`
-                         : `+${XP_PRINCIPAL} ${nombre}`,
-          btn
-        );
+        texto = (res.subioNivel ? `¡${nombre} NV ${res.nivel}! · ` : `+${XP_PRINCIPAL} ${nombre} · `) + texto;
         renderArboles(data);
       }
+      flotarXp(texto, btn);
       break;
     }
 
     case "deshacer-principal": {
       hoy.principal.completada = false;
       hoy.principal.completada_en = null;
+      quitarMonedas(MONEDAS_PRINCIPAL);
       quitarXp(data, hoy.principal.arbol, XP_PRINCIPAL);
       renderArboles(data);
       break;
@@ -224,17 +227,17 @@ function accion(e) {
       if (!s) return;
       s.completada = !s.completada;
       if (s.completada) {
+        ganarMonedas(MONEDAS_SECUNDARIA);
         const res = ganarXp(data, s.arbol, XP_SECUNDARIA);
+        let texto = `+${MONEDAS_SECUNDARIA} 🪙`;
         if (res) {
           const nombre = ARBOLES_META[res.arbolId].nombre;
-          flotarXp(
-            res.subioNivel ? `+${XP_SECUNDARIA} · ¡${nombre} NV ${res.nivel}!`
-                           : `+${XP_SECUNDARIA} ${nombre}`,
-            btn
-          );
+          texto = (res.subioNivel ? `¡${nombre} NV ${res.nivel}! · ` : `+${XP_SECUNDARIA} ${nombre} · `) + texto;
           renderArboles(data);
         }
+        flotarXp(texto, btn);
       } else {
+        quitarMonedas(MONEDAS_SECUNDARIA);
         quitarXp(data, s.arbol, XP_SECUNDARIA);
         renderArboles(data);
       }
@@ -247,6 +250,7 @@ function accion(e) {
       // devuelve: borrar no debe ser una forma de "cobrar
       // dos veces" creando y borrando misiones.
       if (s && s.completada) {
+        quitarMonedas(MONEDAS_SECUNDARIA);
         quitarXp(data, s.arbol, XP_SECUNDARIA);
         renderArboles(data);
       }

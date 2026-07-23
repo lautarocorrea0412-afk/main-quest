@@ -48,6 +48,9 @@ body {
 
 header {
   padding: 20px var(--pad) 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
 
 .wordmark {
@@ -554,6 +557,71 @@ nav {
   margin-top: 10px;
   font-size: 14px;
   color: var(--ink-dim);
+}
+
+/* ============ Economía y tienda (Fase 2 · Paso 1) ============ */
+
+/* Billetera en el header: siempre visible */
+.monedas {
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: var(--ink);
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+/* Tienda: grilla de 2 columnas */
+.tienda {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.tienda__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.tienda__item--tuyo { border-color: var(--cyan); }
+
+.tienda__emoji { font-size: 34px; }
+
+.tienda__nombre { font-size: 14px; font-weight: 600; }
+
+.btn-comprar {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--bg-raise);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.btn-comprar:active { background: var(--accent); }
+
+.tienda__estado {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cyan);
+  padding: 6px 0;
+}
+
+.tienda__estado--falta {
+  color: var(--ink-dim);
+  font-weight: 400;
 }
 
 /* ============ Detalles ============ */

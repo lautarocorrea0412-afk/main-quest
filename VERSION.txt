@@ -1,0 +1,4 @@
+Fase 2 · Paso 1 — Economía virtual + Tienda
+Caché SW: mq-fase2-paso1
+La app debe mostrar en VOS: 'Fase 2 · Paso 1 · datos v3'
+Archivos de este paso: economy.js (nuevo), missions.js, app.js, index.html, css/app.css, sw.js, VERSION.txt
