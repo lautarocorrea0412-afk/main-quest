@@ -1,0 +1,393 @@
+/* ============================================================
+   MAIN QUEST — app.css
+   ------------------------------------------------------------
+   Sistema de diseño. Todos los colores, tipografías y
+   espaciados viven como variables acá arriba: cambiar la
+   estética de toda la app = tocar estas líneas.
+   ============================================================ */
+
+:root {
+  /* Paleta */
+  --bg:        #0A0A0F;  /* negro base */
+  --bg-panel:  #12141D;  /* paneles */
+  --bg-raise:  #1A2340;  /* azul profundo (elementos elevados) */
+  --accent:    #3D7BFF;  /* azul eléctrico */
+  --cyan:      #46E0E0;  /* acento secundario */
+  --ink:       #F2F5FF;  /* texto principal */
+  --ink-dim:   #8A93AD;  /* texto secundario */
+  --line:      #232838;  /* bordes sutiles */
+
+  /* Tipografía */
+  --font-display: "Anton", "Arial Narrow", sans-serif;
+  --font-body: "Outfit", -apple-system, system-ui, sans-serif;
+
+  /* Geometría */
+  --cut: 14px;           /* tamaño del corte diagonal (firma visual) */
+  --pad: 18px;
+  --radius: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100dvh;
+  /* Respeta el notch del iPhone */
+  padding-top: env(safe-area-inset-top);
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============ Cabecera ============ */
+
+header {
+  padding: 20px var(--pad) 8px;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-style: italic;
+  display: inline-block;
+}
+
+.wordmark .slash { color: var(--accent); font-style: normal; }
+
+/* ============ Vistas ============ */
+
+main {
+  padding: 8px var(--pad) 110px; /* espacio para la tab bar */
+}
+
+.view { display: none; }
+.view.active { display: block; animation: viewIn 0.22s ease-out; }
+
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ Paneles ============ */
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--pad);
+  margin-bottom: 14px;
+}
+
+/* Firma visual: el panel de la misión principal lleva
+   corte diagonal y borde azul. Solo él. */
+.panel--main {
+  background: var(--bg-raise);
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  clip-path: polygon(
+    var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)
+  );
+}
+
+.panel__label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.panel--main .panel__label { color: var(--cyan); }
+
+.panel h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.panel p { color: var(--ink-dim); font-size: 15px; }
+.panel p strong { color: var(--ink); font-weight: 600; }
+
+.saludo {
+  font-size: 15px;
+  color: var(--ink-dim);
+  margin: 4px 0 16px;
+}
+
+.saludo strong { color: var(--ink); }
+
+/* ============ Árboles de habilidades ============ */
+
+.arbol {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.arbol:last-child { border-bottom: none; }
+
+.arbol__emoji { font-size: 22px; width: 32px; text-align: center; }
+
+.arbol__info { flex: 1; }
+
+.arbol__nombre {
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.arbol__nivel {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+
+.barra {
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.barra__fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--cyan));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* ============ Botones ============ */
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--bg-raise);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.btn:active { transform: scale(0.98); background: var(--accent); }
+
+.btn--ghost { border-color: var(--line); background: var(--bg-panel); }
+
+.btn:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* ============ Tab bar ============ */
+
+nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  background: rgba(10, 10, 15, 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab {
+  flex: 1;
+  padding: 12px 4px 10px;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.tab__icon { font-size: 20px; line-height: 1; }
+
+.tab.active { color: var(--accent); }
+
+.tab.active .tab__nombre { position: relative; }
+
+.tab.active .tab__nombre::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) skewX(-20deg);
+  bottom: -6px;
+  width: 18px;
+  height: 3px;
+  background: var(--accent);
+}
+
+.tab:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
+
+/* ============ Misiones (Fase 1 · Paso 1) ============ */
+
+/* Campos de texto */
+.campo {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px; /* 16px evita que iOS haga zoom al enfocar */
+}
+
+.campo:focus { outline: none; border-color: var(--accent); }
+.campo::placeholder { color: var(--ink-dim); }
+
+.agregar { display: flex; gap: 8px; margin-top: 12px; }
+
+.btn-mini {
+  flex: none;
+  width: 48px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--bg-raise);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.btn-mini:active { background: var(--accent); }
+.btn-mini:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+/* Misión principal: título grande, es LA protagonista */
+.mp-titulo {
+  font-size: 26px !important;
+  line-height: 1.2;
+  margin: 4px 0 14px !important;
+}
+
+.mp-titulo--hecha { color: var(--ink-dim); }
+
+.btn--completar { margin-bottom: 0; }
+
+.panel--cumplida { border-color: var(--cyan); }
+
+/* Sello "Cumplida": la firma visual del momento más
+   importante del día. Entra con un golpe de escala. */
+.stamp {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  transform: skewX(-12deg);
+  animation: stampIn 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+@keyframes stampIn {
+  from { opacity: 0; transform: skewX(-12deg) scale(2.4); }
+  to   { opacity: 1; transform: skewX(-12deg) scale(1); }
+}
+
+.mp-cierre { margin-top: 10px; font-size: 14px !important; }
+
+.deshacer {
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-family: var(--font-body);
+  font-size: 13px;
+  text-decoration: underline;
+  margin-top: 12px;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+/* Secundarias */
+.secundarias { list-style: none; }
+
+.secundarias-vacio { color: var(--ink-dim); font-size: 14px; }
+
+.secundaria {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.secundaria:last-child { border-bottom: none; }
+
+.secundaria__check {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: 2px solid var(--accent);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.secundaria.hecha .secundaria__check {
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(61, 123, 255, 0.5);
+}
+
+.secundaria__titulo { flex: 1; font-size: 15px; }
+
+.secundaria.hecha .secundaria__titulo {
+  color: var(--ink-dim);
+  text-decoration: line-through;
+}
+
+.secundaria__borrar {
+  flex: none;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-size: 20px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+/* ============ Detalles ============ */
+
+.meta {
+  font-size: 12px;
+  color: var(--ink-dim);
+  text-align: center;
+  margin-top: 20px;
+}
+
+input[type="file"] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
