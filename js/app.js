@@ -55,7 +55,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 2 · motivación · datos v" + data.version;
+    "MAIN QUEST · Entrega 3 · motor · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------

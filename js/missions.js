@@ -15,6 +15,7 @@
 
 import { save } from "./store.js";
 import { hoyISO, escapar } from "./util.js";
+import { sugerirMision } from "./engine.js";
 import {
   ARBOLES_META, XP_PRINCIPAL, XP_SECUNDARIA,
   ganarXp, quitarXp, renderArboles, flotarXp
@@ -33,6 +34,33 @@ let recienCompletada = false;
    y su texto se tacha con animación, UNA vez. Evento, no
    estado — sin esto, todo se re-animaría en cada render. */
 let secundariaAnimada = null;
+
+/* ------------------------------------------------------------
+   Misiones frecuentes (C-23): las que más repetiste entre
+   tus principales cumplidas. Se COMPUTAN del historial, no
+   se guardan: si dejás de usar una, desaparece sola, y la
+   lista jamás crece más allá de 3.
+   Exportada para poder testearla.
+   ------------------------------------------------------------ */
+export function misionesFrecuentes(datos) {
+  const conteo = new Map(); // clave normalizada -> { titulo, arbol, veces, ultima }
+  for (const dia of datos.misiones.historial) {
+    const p = dia.principal;
+    if (!p || !p.completada || !p.titulo) continue;
+    const clave = p.titulo.trim().toLowerCase();
+    const previo = conteo.get(clave) || { veces: 0 };
+    conteo.set(clave, {
+      titulo: p.titulo.trim(), // conserva la forma más reciente
+      arbol: p.arbol || null,
+      veces: previo.veces + 1,
+      ultima: dia.fecha
+    });
+  }
+  return [...conteo.values()]
+    .filter((f) => f.veces >= 2)
+    .sort((a, b) => b.veces - a.veces || b.ultima.localeCompare(a.ultima))
+    .slice(0, 3);
+}
 
 /* ------------------------------------------------------------
    Cambio de día.
@@ -71,19 +99,47 @@ function renderPrincipal() {
         ${m.emoji} ${m.nombre}
       </button>`).join("");
 
+    const sug = sugerirMision();
+    const frecuentes = misionesFrecuentes(data)
+      .filter((f) => f.titulo.toLowerCase() !== sug.titulo.toLowerCase());
+
+    const chipsFrec = frecuentes.map((f, i) => `
+      <button class="chip chip--frecuente" id="frec-${i}">↺ ${escapar(f.titulo)}</button>`).join("");
+
     cont.innerHTML = `
       <div class="panel panel--main">
         <div class="panel__label">Misión principal</div>
         <h2>¿Cuál es LA misión de hoy?</h2>
-        <p>Una sola. La que más te acerque a quien querés ser.</p>
+        <div class="sugerencia">
+          <span class="sugerencia__texto">💡 ${escapar(sug.titulo)}</span>
+          <button class="btn-usar" id="btn-usar-sugerencia">Usar</button>
+        </div>
+        ${chipsFrec ? `<div class="frecuentes">${chipsFrec}</div>` : ""}
         <div class="chips" id="chips-arbol">${chips}</div>
         <div class="agregar">
           <input type="text" id="input-principal" class="campo"
-                 placeholder="Ej: Estudiar Anatomía 2 horas" maxlength="80"
+                 placeholder="O escribí la tuya" maxlength="80"
                  enterkeyhint="done">
           <button class="btn-mini" data-action="fijar-principal" aria-label="Fijar misión principal">→</button>
         </div>
       </div>`;
+
+    /* onclick directo, la regla de la casa. La sugerencia y
+       las frecuentes PRECARGAN: el tap final sigue siendo tuyo. */
+    const prellenar = (titulo, arbol) => {
+      const input = document.getElementById("input-principal");
+      if (input) input.value = titulo;
+      arbolSeleccionado = arbol || null;
+      document.querySelectorAll("#chips-arbol .chip").forEach((c) => {
+        c.classList.toggle("activa", c.dataset.arbol === arbolSeleccionado);
+      });
+    };
+    const btnSug = document.getElementById("btn-usar-sugerencia");
+    if (btnSug) btnSug.onclick = () => prellenar(sug.titulo, sug.arbol);
+    frecuentes.forEach((f, i) => {
+      const btn = document.getElementById(`frec-${i}`);
+      if (btn) btn.onclick = () => prellenar(f.titulo, f.arbol);
+    });
     return;
   }
 

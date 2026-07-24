@@ -7,7 +7,7 @@
    ============================================================ */
 
 import { suite, test, assert, igual, noIncluye, crearDatos, hoyLocal } from "./helpers.js";
-import { setDatosEngine, contextoActual, elegirMensaje } from "../js/engine.js";
+import { setDatosEngine, contextoActual, elegirMensaje, sugerirMision } from "../js/engine.js";
 
 export function correr() {
   suite("Motor de contexto");
@@ -107,6 +107,68 @@ export function correr() {
       const { texto } = elegirMensaje();
       for (const frase of prohibidas) noIncluye(texto.toLowerCase(), frase, "mensaje con culpa");
     }
+  });
+
+  test("A-2: el mensaje matchea el árbol de la misión del día", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.hoy.principal = { titulo: "Editar el reel", arbol: "edicion", completada: false };
+    setDatosEngine(d);
+    igual(elegirMensaje().modo, "arbol", "con misión de edición, habla de edición");
+    d.misiones.hoy.principal.arbol = "facultad";
+    setDatosEngine(d);
+    igual(elegirMensaje().modo, "arbol", "con misión de facultad, ídem");
+  });
+
+  test("A-2: misión cumplida cambia el mensaje a modo festejo", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.hoy.principal = { titulo: "x", arbol: "edicion", completada: true };
+    setDatosEngine(d);
+    igual(elegirMensaje().modo, "cumplida", "el día sellado se celebra, no se empuja");
+  });
+
+  test("A-2: la jerarquía manda — energía y parcial le ganan a la misión", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.hoy.principal = { titulo: "x", arbol: "edicion", completada: false };
+    d.contexto.parciales = [{ id: "p", materia: "Fisio", fecha: hoyLocal(5) }];
+    setDatosEngine(d);
+    igual(elegirMensaje().modo, "parcial", "el parcial pisa a la misión");
+    d.diario = [{ fecha: "a", energia: 1 }, { fecha: "b", energia: 1 }];
+    setDatosEngine(d);
+    igual(elegirMensaje().modo, "energia", "y la salud pisa a todos");
+  });
+
+  test("C-22: con parcial cerca sugiere estudiar ESA materia", () => {
+    const d = crearDatos(hoyLocal());
+    d.contexto.parciales = [{ id: "p", materia: "Biomecánica", fecha: hoyLocal(6) }];
+    setDatosEngine(d);
+    const s = sugerirMision(new Date(2026, 6, 22)); // miércoles
+    igual(s.arbol, "facultad", "árbol facultad");
+    assert(s.titulo.includes("Biomecánica"), "con la materia real");
+    assert(s.titulo.includes("2 horas"), "a 6 días, intensidad alta");
+  });
+
+  test("C-22: SIN parcial, jamás sugiere facultad (regla de Lautaro)", () => {
+    const d = crearDatos(hoyLocal());
+    setDatosEngine(d);
+    for (const dia of [1, 2, 3, 4, 5, 6]) { // lunes a sábado
+      const s = sugerirMision(new Date(2026, 6, 20 + dia - 1));
+      assert(s.arbol !== "facultad", `el día ${dia} sugirió facultad sin parcial`);
+    }
+  });
+
+  test("C-22: el domingo sugiere planear la semana", () => {
+    setDatosEngine(crearDatos(hoyLocal()));
+    const s = sugerirMision(new Date(2026, 6, 26)); // domingo
+    assert(s.titulo.includes("Planear"), "domingo = planificación");
+  });
+
+  test("C-22: no repite el árbol de ayer si hay alternativa", () => {
+    const d = crearDatos(hoyLocal());
+    // Todos los árboles igual de atrasados; ayer fue edición.
+    d.misiones.historial = [{ fecha: hoyLocal(-1), principal: { titulo: "x", arbol: "edicion", completada: true } }];
+    setDatosEngine(d);
+    const s = sugerirMision(new Date(2026, 6, 22));
+    assert(s.arbol !== "edicion", "la semana tiene que tener variedad");
   });
 
   test("la racha cuenta días consecutivos terminando hoy o ayer", () => {

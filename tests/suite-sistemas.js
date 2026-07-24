@@ -13,6 +13,7 @@ import { PROGRESION, desbloqueosCuarto, proximaRecompensa, nuevasEntre, requisit
 import { CATALOGO, setDatosEconomia } from "../js/economy.js";
 import { setDatosEngine } from "../js/engine.js";
 import { setDatosAvatar, expresionAutomatica, dibujarAvatar, desbloqueada } from "../js/avatar.js";
+import { misionesFrecuentes } from "../js/missions.js";
 
 /* Prepara los módulos que comparten los mismos datos */
 function montar(d) {
@@ -222,6 +223,38 @@ export function correr() {
     for (const item of CATALOGO) {
       igual(requisitoDe(item.id), null, `el ítem de tienda "${item.id}" no debe depender del nivel`);
     }
+  });
+
+  /* ================= MISIONES FRECUENTES ================= */
+  suite("Misiones frecuentes");
+
+  test("C-23: top 3, mínimo 2 repeticiones, normaliza mayúsculas", () => {
+    const d = crearDatos(hoyLocal());
+    const dias = [
+      ["Entrenar", "fitness"], ["entrenar", "fitness"], ["ENTRENAR", "fitness"],
+      ["Editar video", "edicion"], ["Editar video", "edicion"],
+      ["Japonés", "japones"], ["Japonés", "japones"],
+      ["Leer", null], // una sola vez: no califica
+      ["Estudiar", "facultad"], ["Estudiar", "facultad"]
+    ];
+    d.misiones.historial = dias.map(([titulo, arbol], i) => ({
+      fecha: hoyLocal(-20 + i),
+      principal: { titulo, arbol, completada: true }
+    }));
+    const f = misionesFrecuentes(d);
+    igual(f.length, 3, "nunca más de 3");
+    igual(f[0].titulo.toLowerCase(), "entrenar", "la más repetida primera (3 veces, cualquier mayúscula)");
+    assert(!f.some((x) => x.titulo === "Leer"), "una sola vez no califica");
+    assert(f.every((x) => x.veces >= 2), "todas con 2 o más repeticiones");
+  });
+
+  test("C-23: las incompletas no cuentan", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.historial = [
+      { fecha: hoyLocal(-2), principal: { titulo: "Editar", arbol: "edicion", completada: false } },
+      { fecha: hoyLocal(-1), principal: { titulo: "Editar", arbol: "edicion", completada: false } }
+    ];
+    igual(misionesFrecuentes(d).length, 0, "prometido dos veces no es hecho dos veces");
   });
 
   /* ================= AVATAR ================= */

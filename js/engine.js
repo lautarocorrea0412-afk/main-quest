@@ -194,16 +194,16 @@ const PLANTILLAS = [
     texto: () => `Ya es tarde. Lo más productivo que podés hacer ahora por mañana es dormir. La misión puede esperar 8 horas.` },
 
   /* ===== EDICIÓN Y CLIENTES ===== */
-  { texto: () => `No estás aprendiendo Premiere. Estás construyendo la carrera que puede llevarte a trabajar con clientes de todo el mundo.` },
-  { texto: () => `USD 3000 por mes no empieza con diez clientes. Empieza con uno. Y ese uno empieza con el portfolio de hoy.` },
-  { texto: () => `Cada timeline que armás en Premiere es una hora menos de distancia entre vos y tu primer cliente internacional.` },
-  { cond: (c) => c.nivelEdicion >= 3,
+  { arbol: "edicion", texto: () => `No estás aprendiendo Premiere. Estás construyendo la carrera que puede llevarte a trabajar con clientes de todo el mundo.` },
+  { arbol: "edicion", texto: () => `USD 3000 por mes no empieza con diez clientes. Empieza con uno. Y ese uno empieza con el portfolio de hoy.` },
+  { arbol: "edicion", texto: () => `Cada timeline que armás en Premiere es una hora menos de distancia entre vos y tu primer cliente internacional.` },
+  { arbol: "edicion", cond: (c) => c.nivelEdicion >= 3,
     texto: (c) => `Edición nivel ${c.nivelEdicion}. Eso no lo regala la app: lo ganaste hora por hora. Seguí apilando.` },
 
   /* ===== GYM ===== */
-  { texto: () => `Entrenar hoy es un paso más hacia el físico que querés recuperar. Uno solo, pero tuyo.` },
-  { texto: () => `El cuerpo que buscás se construye 45 minutos a la vez. Hoy pueden ser esos 45.` },
-  { cond: (c) => c.diaSemana >= 1 && c.diaSemana <= 5,
+  { arbol: "fitness", texto: () => `Entrenar hoy es un paso más hacia el físico que querés recuperar. Uno solo, pero tuyo.` },
+  { arbol: "fitness", texto: () => `El cuerpo que buscás se construye 45 minutos a la vez. Hoy pueden ser esos 45.` },
+  { arbol: "fitness", cond: (c) => c.diaSemana >= 1 && c.diaSemana <= 5,
     texto: () => `Gym a la mañana = el resto del día ya arranca ganado. Vos lo sabés mejor que nadie.` },
 
   /* ===== JAPÓN ===== */
@@ -213,10 +213,40 @@ const PLANTILLAS = [
     texto: () => `Ya caminaste Tokio una vez. La próxima no es un sueño: es un plan con fecha. Hoy se financia con constancia.` },
 
   /* ===== JAPONÉS ===== */
-  { texto: () => `Diez minutos de japonés hoy valen más que dos horas "algún día". La próxima vez en Japón, pedís la comida sin señalar el menú.` },
+  { arbol: "japones", texto: () => `Diez minutos de japonés hoy valen más que dos horas "algún día". La próxima vez en Japón, pedís la comida sin señalar el menú.` },
 
   /* ===== FACULTAD (fuera de modo parcial, sin presión) ===== */
-  { texto: () => `Kinesiología no se aprueba en las semanas de parcial: se aprueba en las clases a las que ya estás yendo. Vas bien.` },
+  { arbol: "facultad", texto: () => `Kinesiología no se aprueba en las semanas de parcial: se aprueba en las clases a las que ya estás yendo. Vas bien.` },
+
+  /* ===== STREAMING ===== */
+  { arbol: "streaming",
+    texto: () => `El primer stream no tiene que ser perfecto: tiene que existir. Hoy acercate un paso.` },
+  { arbol: "streaming",
+    texto: () => `Cada prueba de setup, cada ensayo, es el detrás de escena del canal que querés tener.` },
+
+  /* ===== FINANZAS ===== */
+  { arbol: "finanzas",
+    texto: () => `Saber a dónde va tu plata es el primer sueldo que te pagás. Hoy, diez minutos de números.` },
+  { arbol: "finanzas",
+    texto: () => `Cada peso ordenado hoy es un pedacito de pasaje. Febrero 2027 se financia así.` },
+
+  /* ===== JAPONÉS (extra) ===== */
+  { arbol: "japones",
+    texto: () => `Hoy toca japonés: veinte minutos que tu próximo viaje te devuelve con intereses.` },
+
+  /* ===== FACULTAD (misión de facultad sin parcial cerca) ===== */
+  { arbol: "facultad",
+    texto: () => `Hoy la misión es de facultad. Sin drama: una sesión enfocada y a otra cosa.` },
+
+  /* ===== MISIÓN CUMPLIDA (el día ya está sellado) ===== */
+  { modo: "cumplida",
+    texto: () => `Misión del día: cumplida. Lo que venga ahora es yapa — disfrutala sin culpa.` },
+  { modo: "cumplida",
+    texto: (c) => c.racha >= 2
+      ? `Otra más a la racha (${c.racha}). Así, día por día, se construye la década.`
+      : `Ya está lo importante de hoy. El resto del día es tuyo.` },
+  { modo: "cumplida",
+    texto: () => `Lo de hoy ya quedó sellado. Mañana hay otra misión, pero ese es problema del Lautaro de mañana.` },
 
   /* ===== IDENTIDAD / GENERALES ===== */
   { texto: () => `No abriste una app. Abriste el mapa de hacia dónde vas. Elegí LA misión de hoy y dale.` },
@@ -241,26 +271,52 @@ function hashDeTexto(str) {
 export function elegirMensaje() {
   const ctx = armarContexto();
 
-  /* Jerarquía de modos (sigue la sección 15 del PRD):
-     1. Energía baja (salud es la prioridad 1)... salvo que
-        el parcial sea hoy o mañana: esos mensajes ya son
-        de cuidado ("repaso liviano y a dormir").
-     2. Modo parcial (regla de las 2 semanas).
-     3. General. */
+  /* Jerarquía de modos, reescrita en la Entrega 3 para que
+     el mensaje y la misión del día SE HABLEN:
+     1. Energía baja (salud primero)... salvo parcial hoy/mañana.
+     2. Parcial inminente (hoy o mañana).
+     3. Misión de hoy CUMPLIDA: el día está sellado, el
+        mensaje festeja en vez de empujar.
+     4. Modo parcial (regla de las 2 semanas).
+     5. El ÁRBOL de la misión de hoy: si tu misión es de
+        Anatomía, el motor no te habla de Premiere. Acá se
+        cosía la costura que se veía.
+     6. General.
+     Devuelve también el modo elegido: los tests lo verifican. */
   const parcialInminente = ctx.parcialProximo && ctx.parcialProximo.dias <= 1;
+  const misionArbol =
+    (!ctx.principalCumplidaHoy && data.misiones.hoy && data.misiones.hoy.principal
+      ? data.misiones.hoy.principal.arbol
+      : null) || null;
 
-  let pool;
+  let pool = [];
+  let modo = "general";
+
   if (ctx.energiaBaja && !parcialInminente) {
+    modo = "energia";
     pool = PLANTILLAS.filter((p) => p.modo === "energia");
-  } else if (ctx.parcialProximo) {
+  } else if (parcialInminente) {
+    modo = "parcial";
     pool = PLANTILLAS.filter((p) => p.modo === "parcial" && (!p.cond || p.cond(ctx)));
-  } else {
+  } else if (ctx.principalCumplidaHoy) {
+    modo = "cumplida";
+    pool = PLANTILLAS.filter((p) => p.modo === "cumplida" && (!p.cond || p.cond(ctx)));
+  } else if (ctx.parcialProximo) {
+    modo = "parcial";
+    pool = PLANTILLAS.filter((p) => p.modo === "parcial" && (!p.cond || p.cond(ctx)));
+  } else if (misionArbol) {
+    modo = "arbol";
+    pool = PLANTILLAS.filter((p) => p.arbol === misionArbol && !p.modo && (!p.cond || p.cond(ctx)));
+  }
+
+  if (pool.length === 0) {
+    modo = modo === "arbol" ? "general" : modo;
     pool = PLANTILLAS.filter((p) => !p.modo && (!p.cond || p.cond(ctx)));
   }
-  if (pool.length === 0) return { texto: "Hoy también se construye.", ctx };
+  if (pool.length === 0) return { texto: "Hoy también se construye.", ctx, modo };
 
   const idx = hashDeTexto(hoyISO()) % pool.length;
-  return { texto: pool[idx].texto(ctx), ctx };
+  return { texto: pool[idx].texto(ctx), ctx, modo };
 }
 
 /* ------------------------------------------------------------
@@ -283,6 +339,57 @@ function renderMensaje() {
       ${pill}
       <p>${texto}</p>
     </div>`;
+}
+
+/* ------------------------------------------------------------
+   Sugerencia de misión del día (C-22). La app PROPONE, no
+   impone: esto solo precarga el campo, siempre editable.
+
+   Reglas:
+   - Parcial a ≤14 días → estudiar esa materia, con la
+     intensidad según la cercanía.
+   - NUNCA facultad fuera del modo parcial: Lautaro estudia
+     cerca de los parciales, y la app lo respeta.
+   - Domingo → planear la semana.
+   - Resto → el árbol más atrasado, evitando repetir el de
+     ayer para que la semana tenga variedad.
+   Recibe la fecha para poder testearse con días fijos.
+   ------------------------------------------------------------ */
+export function sugerirMision(ahora = new Date()) {
+  const ctx = armarContexto();
+
+  if (ctx.parcialProximo) {
+    const p = ctx.parcialProximo;
+    const titulo = p.dias <= 2
+      ? `Repaso general de ${p.materia}`
+      : `Estudiar ${p.materia} (${p.dias <= 7 ? "2 horas" : "1 hora"})`;
+    return { titulo, arbol: "facultad" };
+  }
+
+  if (ahora.getDay() === 0) {
+    return { titulo: "Planear la semana (10 min)", arbol: null };
+  }
+
+  const TITULOS = {
+    edicion:   "Una hora de Premiere",
+    fitness:   "Entrenar (45 min)",
+    japones:   "20 minutos de japonés",
+    finanzas:  "Ordenar los números de la semana",
+    streaming: "Avanzar el setup del stream"
+  };
+
+  const ultimo = data.misiones.historial[data.misiones.historial.length - 1];
+  const arbolDeAyer = (ultimo && ultimo.principal && ultimo.principal.arbol) || null;
+
+  const orden = Object.keys(TITULOS)
+    .map((id) => ({ id, avance: data.arboles[id].nivel * 10000 + data.arboles[id].xp }))
+    .sort((a, b) => a.avance - b.avance)
+    .map((x) => x.id);
+
+  let elegido = orden[0];
+  if (elegido === arbolDeAyer && orden.length > 1) elegido = orden[1];
+
+  return { titulo: TITULOS[elegido], arbol: elegido };
 }
 
 /* ------------------------------------------------------------
@@ -389,7 +496,10 @@ export function initEngine(appData) {
   });
 
   // Completar o deshacer la misión mueve la racha al instante.
-  document.addEventListener("contexto-cambiado", renderRacha);
+  document.addEventListener("contexto-cambiado", () => {
+    renderRacha();
+    renderMensaje(); // fijar o cumplir la misión puede cambiar el modo del mensaje
+  });
 
   renderParciales();
   renderMensaje();

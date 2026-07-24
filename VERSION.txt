@@ -1,20 +1,17 @@
-Entrega 2 — Motivación diaria (A-1, A-8, A-9, A-11 + microanimaciones)
-Caché SW: mq-entrega2-motivacion
-La app debe mostrar en VOS: 'Entrega 2 · motivación · datos v5'
+Entrega 3 — El motor habla de tu día (A-2, C-22, C-23)
+Caché SW: mq-entrega3-motor
+La app debe mostrar en VOS: 'Entrega 3 · motor · datos v5'
 
 Modificados:
-  js/engine.js       (racha con perdón de 1 día + chip en HOY)
-  js/achievements.js (curva de premios nueva + progreso en bloqueados)
-  js/economy.js      (Cojín a 40, monedas voladoras, contador rodante)
-  js/xp.js           (barra de XP elástica al subir de nivel)
-  js/missions.js     (pop del check, tachado suave, vuelo de monedas)
-  js/avatar.js       (destello en prendas recién desbloqueadas)
-  index.html, css/app.css, tools/gen_cuarto.py, assets/cuarto.svg
-  tests/suite-engine.js, tests/suite-sistemas.js (6 tests nuevos)
-  sw.js
+  js/engine.js   (selección reescrita: el mensaje matchea la misión;
+                  modo "cumplida"; 9 plantillas nuevas; sugerirMision)
+  js/missions.js (sugerencia con botón Usar + hasta 3 misiones
+                  frecuentes computadas del historial)
+  css/app.css, tests/suite-engine.js, tests/suite-sistemas.js
+  sw.js, js/app.js
 
-Reglas de racha (decisión de Lautaro): se corta con DOS días
-seguidos sin misión principal; un día salteado no rompe ni suma;
-el día en curso nunca juega en contra.
+Jerarquía nueva del mensaje: energía baja > parcial inminente >
+misión cumplida > modo parcial > árbol de la misión de hoy > general.
+La sugerencia NUNCA propone facultad fuera del modo parcial.
 
-Suite: 61 tests de lógica + sintaxis + HTML + convenciones. Todo en verde.
+Suite: 70 tests. Todo en verde.
