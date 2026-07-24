@@ -10,7 +10,7 @@
    ============================================================ */
 
 import { load, save, exportar, importar } from "./store.js";
-import { franjaLuz } from "./util.js";
+import { franjaLuz, estadoBackup } from "./util.js";
 import { initMisiones, setDatos } from "./missions.js";
 import { renderArboles } from "./xp.js";
 import { initEngine, setDatosEngine } from "./engine.js";
@@ -19,6 +19,7 @@ import { initEconomia, setDatosEconomia } from "./economy.js";
 import { initCuarto, setDatosCuarto } from "./room.js";
 import { initAvatar, setDatosAvatar } from "./avatar.js";
 import { initLogros, setDatosLogros } from "./achievements.js";
+import { initHistoria, setDatosHistoria } from "./history.js";
 
 let data = load();
 
@@ -55,7 +56,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 3b · arreglo · datos v" + data.version;
+    "MAIN QUEST · Entrega 4 · historia · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -77,6 +78,7 @@ document.querySelectorAll(".tab").forEach((tab) => {
 
 document.getElementById("btn-exportar").addEventListener("click", () => {
   exportar(data);
+  renderBackup();
 });
 
 const inputImportar = document.getElementById("input-importar");
@@ -98,6 +100,8 @@ inputImportar.addEventListener("change", async () => {
     setDatosCuarto(data);
     setDatosAvatar(data);
     setDatosLogros(data);
+    setDatosHistoria(data);
+    renderBackup();
     alert("Backup restaurado. Bienvenido de vuelta.");
   } catch (err) {
     alert("No se pudo importar: " + err.message);
@@ -111,6 +115,35 @@ inputImportar.addEventListener("change", async () => {
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js");
+}
+
+/* ------------------------------------------------------------
+   Estado del backup (C-26). Aviso suave: un cartelito en el
+   panel de Backup y un puntito en la pestaña VOS. Nunca un
+   modal, nunca bloquea nada.
+   ------------------------------------------------------------ */
+function renderBackup() {
+  const est = estadoBackup(data.perfil.ultimo_backup, data.perfil.creado_en);
+
+  const cont = document.getElementById("backup-estado");
+  if (cont) {
+    const cuando = est.nunca
+      ? "Todavía no exportaste ninguno"
+      : est.dias === 0 ? "Exportado hoy"
+      : est.dias === 1 ? "Último backup: ayer"
+      : `Último backup: hace ${est.dias} días`;
+
+    const aviso = est.nivel === "ok" ? ""
+      : est.nivel === "conviene"
+        ? "<br>Buen momento para exportar uno nuevo."
+        : "<br>Pasó bastante: si borrás datos de Safari, se pierde todo.";
+
+    cont.innerHTML = `<div class="backup-estado backup-estado--${est.nivel}">${cuando}${aviso}</div>`;
+  }
+
+  // Puntito en la pestaña VOS, que se ve desde cualquier pantalla.
+  const tabVos = document.querySelector('.tab[data-view="vos"]');
+  if (tabVos) tabVos.classList.toggle("tab--aviso", est.nivel !== "ok");
 }
 
 /* Luz ambiente del fondo según la hora. Es sutil a propósito:
@@ -140,3 +173,5 @@ initEconomia(data);
 initAvatar(data);
 initCuarto(data);
 initLogros(data);
+initHistoria(data);
+renderBackup();

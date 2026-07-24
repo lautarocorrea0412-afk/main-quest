@@ -17,9 +17,10 @@ const STORAGE_KEY = "mainquest_data";
    v3 — las misiones guardan su árbol de habilidad
    v4 — el perfil guarda el look del avatar
    v5 — el look suma el slot de accesorio
+   v6 — el perfil recuerda la fecha del último backup
    completarFaltantes() agrega los campos nuevos a los datos
    viejos, así que las migraciones son automáticas. */
-const DATA_VERSION = 5;
+const DATA_VERSION = 6;
 
 /* ------------------------------------------------------------
    Estado inicial (el "personaje nivel 1").
@@ -33,7 +34,8 @@ const DEFAULT_DATA = {
     creado_en: null, // se fija la primera vez que se abre la app
     // El look de arranque, tal como te describiste en el PRD:
     // pelo negro largo, ropa oversize.
-    avatar: { pelo: "largo", remera: "oversize", pantalon: "jogging", accesorio: "ninguno" }
+    avatar: { pelo: "largo", remera: "oversize", pantalon: "jogging", accesorio: "ninguno" },
+    ultimo_backup: null // C-26: para avisar cuando pasó demasiado tiempo
   },
   arboles: {
     fitness:   { xp: 0, nivel: 1 },
@@ -111,6 +113,10 @@ export function save(data) {
    ------------------------------------------------------------ */
 
 export function exportar(data) {
+  // Queda registrado para el recordatorio mensual (C-26).
+  data.perfil.ultimo_backup = hoyISO();
+  save(data);
+
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");

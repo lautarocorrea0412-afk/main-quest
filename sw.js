@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega3b-arreglo";
+const CACHE_VERSION = "mq-entrega4-historia";
 
 const CORE = [
   "./",
@@ -27,6 +27,7 @@ const CORE = [
   "./js/room.js",
   "./js/avatar.js",
   "./js/achievements.js",
+  "./js/history.js",
   "./js/progression.js",
   "./js/ui.js",
   "./assets/cuarto.svg",

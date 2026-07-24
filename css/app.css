@@ -1242,6 +1242,116 @@ body.luz-noche {
   white-space: nowrap;
 }
 
+/* ============ Tu historia (Entrega 4) ============ */
+
+.historia { display: flex; flex-direction: column; }
+
+.hist__mes {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 14px 0 8px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid var(--line);
+}
+
+.hist__mes:first-child { margin-top: 0; }
+
+.hist__dia {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.hist__fecha {
+  flex: none;
+  width: 74px;
+  font-size: 12px;
+  color: var(--ink-dim);
+  text-transform: capitalize;
+  line-height: 1.4;
+  padding-top: 2px;
+}
+
+.hist__cuerpo { flex: 1; min-width: 0; }
+
+.hist__mision {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.hist__mision--libre { color: var(--ink-dim); font-size: 14px; }
+
+/* El hanko chiquito: el mismo sello del día que cumpliste,
+   ahora como marca en tu historia. */
+.hist__sello {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--sakura);
+  color: #5A2233;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-8deg);
+}
+
+.hist__sello--vacio {
+  background: none;
+  border: 2px dashed var(--line);
+  color: var(--ink-dim);
+}
+
+.hist__detalles {
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 3px;
+}
+
+.hist__evento {
+  font-size: 13px;
+  color: var(--matcha);
+  margin-top: 4px;
+}
+
+/* ============ Estado del backup ============ */
+
+.backup-estado {
+  font-size: 13px;
+  line-height: 1.5;
+  border-left: 3px solid var(--matcha);
+  padding: 6px 0 6px 12px;
+  margin-bottom: 12px;
+  color: var(--ink-dim);
+}
+
+.backup-estado--conviene { border-left-color: var(--accent); color: var(--ink); }
+.backup-estado--urgente { border-left-color: var(--sakura); color: var(--ink); }
+
+/* Puntito de aviso en la pestaña VOS */
+.tab--aviso .tab__icon { position: relative; }
+
+.tab--aviso .tab__icon::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sakura);
+  box-shadow: 0 0 6px rgba(245, 142, 168, 0.8);
+}
+
 /* ============ Detalles ============ */
 
 .meta {

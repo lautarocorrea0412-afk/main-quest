@@ -40,6 +40,31 @@ export function franjaLuz(hora) {
   return "noche";
 }
 
+/* Estado del backup, a partir de la última exportación y de
+   cuándo empezaste a usar la app. Tres niveles:
+   - "ok"       exportaste hace menos de 30 días
+   - "conviene" pasaron 30-60 días, o nunca exportaste y ya
+                llevás más de 14 días de uso
+   - "urgente"  más de 60 días sin backup
+   Nunca bloquea nada: avisa y sigue. Lautaro ya perdió datos
+   una vez borrando datos de Safari; esto es para que no
+   vuelva a pasar sin aviso. */
+export function estadoBackup(ultimoBackup, creadoEn) {
+  const diasDesde = (iso) => Math.abs(diasHasta(iso.slice(0, 10)));
+
+  if (!ultimoBackup) {
+    const antiguedad = creadoEn ? diasDesde(creadoEn) : 0;
+    if (antiguedad > 60) return { nivel: "urgente", dias: antiguedad, nunca: true };
+    if (antiguedad > 14) return { nivel: "conviene", dias: antiguedad, nunca: true };
+    return { nivel: "ok", dias: antiguedad, nunca: true };
+  }
+
+  const d = diasDesde(ultimoBackup);
+  if (d > 60) return { nivel: "urgente", dias: d, nunca: false };
+  if (d >= 30) return { nivel: "conviene", dias: d, nunca: false };
+  return { nivel: "ok", dias: d, nunca: false };
+}
+
 /* Escape de HTML: lo que escribe el usuario se muestra
    como texto, nunca se interpreta como código. */
 export function escapar(texto) {

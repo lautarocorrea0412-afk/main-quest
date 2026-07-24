@@ -1,24 +1,21 @@
-Entrega 3b — ARREGLO URGENTE del arranque roto en la Entrega 3
-Caché SW: mq-entrega3b-arreglo
-La app debe mostrar en VOS: 'Entrega 3b · arreglo · datos v5'
+Entrega 4 — Tu historia + recordatorio de backup (C-25, C-26 + E1)
+Caché SW: mq-entrega4-historia
+La app debe mostrar en VOS: 'Entrega 4 · historia · datos v6'
 
-EL BUG:
-En la Entrega 3, missions.js empezó a pedirle el contexto a engine.js,
-pero app.js inicializaba initMisiones ANTES que initEngine. Al abrir la
-app sin misión del día, missions.js explotaba y cortaba la secuencia de
-arranque: motor, diario, economía, avatar, cuarto y logros nunca se
-inicializaban.
+DATA_VERSION sube a 6: el perfil ahora recuerda la fecha del último
+backup. Migración automática, no se pierde nada.
 
-EL ARREGLO (tres capas):
-  1. js/app.js    — initEngine ahora va antes que initMisiones
-  2. js/engine.js — sugerirMision() devuelve null si no tiene datos,
-                    en vez de explotar
-  3. js/missions.js — la pantalla funciona igual sin sugerencia
+Nuevos:
+  js/history.js  (une misiones + diario + timeline en una vista navegable)
 
-EL AGUJERO TAPADO:
-  tests/suite-arranque.js (nuevo) — replica el arranque REAL de app.js,
-  leyendo el orden de init directamente del archivo. Si alguien vuelve a
-  reordenarlo, el test avisa.
+Modificados:
+  js/store.js  (v6 + exportar() registra la fecha del backup)
+  js/util.js   (estadoBackup)
+  js/app.js    (init de historia, aviso de backup, puntito en la pestaña VOS)
+  index.html, css/app.css, sw.js
+  tests/suite-store.js, tests/suite-arranque.js, tests/suite-historia.js (nuevo)
 
-Sin cambios de datos: sigue en v5.
-Suite: 75 tests. Todo en verde.
+Suite: 82 tests. Todo en verde.
+
+C-25 y E1 resueltos juntos: la timeline se venía llenando sola desde la
+Fase 2 (compras y logros) y nunca se veía. Ahora aparece dentro de cada día.
