@@ -341,4 +341,59 @@ svg = (
 with open("assets/cuarto.svg", "w") as f:
     f.write(svg)
 
+# ============ ICONOS DE TIENDA ============
+# Se recortan del MISMO dibujo del cuarto: el ícono de la
+# tienda no se parece al mueble, ES el mueble. Si mañana se
+# rediseña un objeto, su ícono cambia solo.
+
+import re as _re
+
+def _rects_de(gid, texto):
+    m = _re.search(rf'<g id="{gid}">(.*?)</g>', texto, _re.S)
+    if not m:
+        return []
+    return _re.findall(
+        r'<rect x="(-?\d+)" y="(-?\d+)" width="(\d+)" height="(\d+)" fill="([^"]+)"/>',
+        m.group(1))
+
+def generar_iconos(svg_texto):
+    entradas = []
+    for gid in [g for g in _re.findall(r'<g id="(item-[\w-]+)">', svg_texto)]:
+        rects = _rects_de(gid, svg_texto)
+        if not rects:
+            continue
+        xs = [int(r[0]) for r in rects]; ys = [int(r[1]) for r in rects]
+        x2 = [int(r[0]) + int(r[2]) for r in rects]
+        y2 = [int(r[1]) + int(r[3]) for r in rects]
+        x0, y0, x1, y1 = min(xs), min(ys), max(x2), max(y2)
+        # Margen de 1px para que no quede pegado al borde
+        x0 -= 1; y0 -= 1; x1 += 1; y1 += 1
+        ancho, alto = x1 - x0, y1 - y0
+        # Lienzo cuadrado: todos los iconos ocupan lo mismo
+        lado = max(ancho, alto)
+        ox = x0 - (lado - ancho) / 2
+        oy = y0 - (lado - alto) / 2
+        cuerpo = "".join(
+            f'<rect x="{r[0]}" y="{r[1]}" width="{r[2]}" height="{r[3]}" fill="{r[4]}"/>'
+            for r in rects)
+        icono = (f'<svg viewBox="{ox:g} {oy:g} {lado} {lado}" '
+                 f'shape-rendering="crispEdges" class="ico">{cuerpo}</svg>')
+        entradas.append(f'  "{gid.replace("item-", "")}": \'{icono}\'')
+    return (
+        "/* ============================================================\n"
+        "   MAIN QUEST - iconos-tienda.js  (GENERADO, no editar a mano)\n"
+        "   ------------------------------------------------------------\n"
+        "   Lo produce tools/gen_cuarto.py recortando cada mueble del\n"
+        "   propio SVG del cuarto. El icono de la tienda no se PARECE\n"
+        "   al mueble: es el mueble. Si el objeto se rediseña, su\n"
+        "   icono cambia solo.\n"
+        "   ============================================================ */\n\n"
+        "export const ICONOS_TIENDA = {\n" + ",\n".join(entradas) + "\n};\n")
+
+with open("js/iconos-tienda.js", "w") as f:
+    f.write(generar_iconos(svg))
+
+print(f"Iconos de tienda generados desde el propio cuarto")
+
+
 print(f"SVG generado: {len(svg)} bytes, {len(out)} elementos")

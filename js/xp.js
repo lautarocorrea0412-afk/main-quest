@@ -18,6 +18,7 @@
 import { save } from "./store.js";
 import { PROGRESION, proximaRecompensa, nuevasEntre, ICONO_TIPO } from "./progression.js";
 import { mostrarCartel } from "./ui.js";
+import { ICONOS_ARBOL } from "./iconos.js";
 
 /* Metadatos de los árboles. Antes vivían en app.js;
    ahora que el XP tiene módulo propio, se mudan acá. */
@@ -130,7 +131,7 @@ export function renderArboles(data) {
        un listener delegado. Los botones siempre los reciben. */
     cont.insertAdjacentHTML("beforeend", `
       <button type="button" class="arbol" data-arbol="${id}" aria-expanded="${abierta}">
-        <div class="arbol__emoji">${meta.emoji}</div>
+        <div class="arbol__ico">${ICONOS_ARBOL[id] || meta.emoji}</div>
         <div class="arbol__info">
           <div class="arbol__nombre">
             <span>${meta.nombre} <span class="arbol__flecha">${abierta ? "▾" : "▸"}</span></span>

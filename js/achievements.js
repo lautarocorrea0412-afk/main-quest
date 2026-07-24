@@ -21,6 +21,7 @@ import { hoyISO, diasHasta, escapar } from "./util.js";
 import { ganarMonedas, quitarMonedas } from "./economy.js";
 import { contextoActual } from "./engine.js";
 import { mostrarCartel } from "./ui.js";
+import { iconoLogro } from "./iconos.js";
 
 let data;
 
@@ -207,7 +208,7 @@ export function verificarLogros({ celebrar = true } = {}) {
 /* La celebración vive en ui.js: es el mismo cartel que usan
    las subidas de nivel. */
 function mostrarCelebracion(logro) {
-  mostrarCartel(logro.icono, `Logro: ${logro.nombre}`, `+${logro.premio} 🪙`);
+  mostrarCartel(iconoLogro(logro.id), `Logro: ${logro.nombre}`, `+${logro.premio} 🪙`);
 }
 
 /* ------------------------------------------------------------
@@ -228,7 +229,7 @@ export function renderLogros() {
     if (yaEsta) {
       return `
         <div class="logro logro--hecho">
-          <span class="logro__icono">${l.icono}</span>
+          <span class="logro__ico">${iconoLogro(l.id)}</span>
           <span class="logro__info">
             <strong>${escapar(l.nombre)}</strong>
             <span class="logro__fecha">${yaEsta.fecha_desbloqueo}</span>
@@ -253,7 +254,7 @@ export function renderLogros() {
     }
     return `
       <div class="logro">
-        <span class="logro__icono logro__icono--gris">${l.icono}</span>
+        <span class="logro__ico logro__ico--gris">${iconoLogro(l.id)}</span>
         <span class="logro__info">
           <strong>${escapar(l.nombre)}</strong>
           <span class="logro__desc">${escapar(l.desc)}</span>

@@ -257,16 +257,15 @@ nav {
   transition: color 0.15s ease;
 }
 
-.tab__icon {
-  font-size: 22px;
-  line-height: 1;
-  transition: transform 0.3s var(--bounce);
-}
+.tab__icon-legacy { font-size: 22px; line-height: 1; }
 
 .tab.active { color: var(--accent); }
 
 /* La pestaña activa salta */
-.tab.active .tab__icon { transform: translateY(-3px) scale(1.15); }
+.tab.active .tab__icon {
+  transform: translateY(-3px) scale(1.15);
+  transition: transform 0.3s var(--bounce);
+}
 
 .tab:focus-visible { outline: 3px solid var(--sakura); outline-offset: -3px; }
 
@@ -1434,6 +1433,61 @@ body.modo-parcial .racha {
   font-size: 12px;
   padding: 4px 11px;
   opacity: 0.75;
+}
+
+/* ============ Íconos propios (Entrega 6 · A-3) ============
+   Reemplazan a los emojis. Los de tienda salen recortados
+   del propio cuarto; los demás se dibujan en iconos.js. */
+
+.ico { display: block; width: 100%; height: 100%; }
+
+.tienda__ico {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arbol__ico {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logro__ico {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Los bloqueados en gris: misma filosofía que antes, se ven
+   apagados pero se ven. */
+.logro__ico--gris { filter: grayscale(1); opacity: 0.4; }
+
+/* En la tab bar el ícono hereda el color del botón, así la
+   pestaña activa se pinta sola de ámbar. */
+.tab__icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  color: inherit;
+}
+
+.tab__icon .ico { fill: currentColor; }
+
+.celebracion__icono {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ============ Detalles ============ */

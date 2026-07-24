@@ -21,6 +21,7 @@ import { initAvatar, setDatosAvatar } from "./avatar.js";
 import { initLogros, setDatosLogros } from "./achievements.js";
 import { initHistoria, setDatosHistoria } from "./history.js";
 import { contextoActual } from "./engine.js";
+import { ICONOS_TAB } from "./iconos.js";
 
 let data = load();
 
@@ -57,7 +58,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 5 · modo parcial · datos v" + data.version;
+    "MAIN QUEST · Entrega 6 · íconos · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -163,12 +164,23 @@ function renderBackup() {
 /* Luz ambiente del fondo según la hora. Es sutil a propósito:
    la app entera baja o sube la temperatura sin que ningún
    color de la paleta deje de ser él mismo. */
+/* Íconos propios en la tab bar. Usan currentColor, así que
+   la pestaña activa los pinta de ámbar sin duplicar dibujos. */
+function pintarIconosTab() {
+  for (const tab of document.querySelectorAll(".tab")) {
+    const ico = ICONOS_TAB[tab.dataset.view];
+    const cont = tab.querySelector(".tab__icon");
+    if (ico && cont) cont.innerHTML = ico;
+  }
+}
+
 function aplicarLuzAmbiente() {
   const franja = franjaLuz(new Date().getHours());
   document.body.classList.remove("luz-manana", "luz-tarde", "luz-noche");
   document.body.classList.add(`luz-${franja}`);
 }
 
+pintarIconosTab();
 aplicarLuzAmbiente();
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {

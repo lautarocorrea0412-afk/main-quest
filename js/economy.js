@@ -21,6 +21,7 @@
 import { save } from "./store.js";
 import { hoyISO } from "./util.js";
 import { refrescarCuarto } from "./room.js";
+import { ICONOS_TIENDA } from "./iconos-tienda.js";
 
 let data;
 
@@ -194,7 +195,7 @@ export function renderTienda() {
 
     return `
       <div class="tienda__item ${comprado ? "tienda__item--tuyo" : ""}">
-        <div class="tienda__emoji">${item.emoji}</div>
+        <div class="tienda__ico">${ICONOS_TIENDA[item.id] || item.emoji}</div>
         <div class="tienda__nombre">${item.nombre}</div>
         ${boton}
       </div>`;
