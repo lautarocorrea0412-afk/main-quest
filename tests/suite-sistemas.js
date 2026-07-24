@@ -7,7 +7,8 @@
    ============================================================ */
 
 import { suite, test, assert, igual, crearDatos, hoyLocal, ARBOLES } from "./helpers.js";
-import { LOGROS, setDatosLogros, verificarLogros } from "../js/achievements.js";
+import { LOGROS, setDatosLogros, verificarLogros, marcarLogroManual, deshacerLogro } from "../js/achievements.js";
+import { franjaLuz } from "../js/util.js";
 import { PROGRESION, desbloqueosCuarto, proximaRecompensa, nuevasEntre, requisitoDe } from "../js/progression.js";
 import { CATALOGO, setDatosEconomia } from "../js/economy.js";
 import { setDatosEngine } from "../js/engine.js";
@@ -77,6 +78,58 @@ export function correr() {
       assert(!d.logros.some((l) => l.id === id), `"${id}" es manual y no debe desbloquearse solo`);
     }
   });
+
+  test("marcar y deshacer un logro manual es un ciclo neutro", () => {
+    const d = montar(crearDatos(hoyLocal()));
+    const antes = { logros: d.logros.length, monedas: d.economia.monedas, timeline: d.timeline.length };
+
+    assert(marcarLogroManual("cliente"), "se puede marcar");
+    igual(d.logros.length, antes.logros + 1, "logro registrado");
+    assert(d.economia.monedas > antes.monedas, "premio pagado");
+    igual(d.timeline.length, antes.timeline + 1, "rastro en la timeline");
+
+    assert(deshacerLogro("cliente"), "se puede deshacer");
+    igual(d.logros.length, antes.logros, "logro borrado");
+    igual(d.economia.monedas, antes.monedas, "monedas devueltas");
+    igual(d.timeline.length, antes.timeline, "timeline limpia");
+  });
+
+  test("los logros automáticos NO se pueden deshacer", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.hoy.principal = { titulo: "x", completada: true };
+    montar(d);
+    verificarLogros({ celebrar: false });
+    assert(d.logros.some((l) => l.id === "primera"), "el automático se desbloqueó");
+    igual(deshacerLogro("primera"), false, "deshacer un automático debe rechazarse");
+    assert(d.logros.some((l) => l.id === "primera"), "y sigue desbloqueado");
+  });
+
+  test("marcar un logro inexistente o automático a mano falla", () => {
+    montar(crearDatos(hoyLocal()));
+    igual(marcarLogroManual("no-existe"), false, "id inventado");
+    igual(marcarLogroManual("racha3"), false, "un automático no se marca a mano");
+  });
+
+  /* ================= LUZ AMBIENTE ================= */
+  suite("Luz ambiente");
+
+  test("las franjas de luz cubren las 24 horas sin huecos", () => {
+    for (let h = 0; h < 24; h++) {
+      assert(["manana", "tarde", "noche"].includes(franjaLuz(h)), `hora ${h} sin franja`);
+    }
+  });
+
+  test("los bordes de las franjas son los acordados", () => {
+    igual(franjaLuz(5), "noche", "5 AM todavía es noche");
+    igual(franjaLuz(6), "manana", "6 AM arranca la mañana");
+    igual(franjaLuz(11), "manana", "11 AM sigue siendo mañana");
+    igual(franjaLuz(12), "tarde", "mediodía es tarde");
+    igual(franjaLuz(18), "tarde", "18 sigue siendo tarde");
+    igual(franjaLuz(19), "noche", "a las 19 arranca la noche");
+    igual(franjaLuz(23), "noche", "a las 23 el cuarto YA está en modo noche");
+  });
+
+  suite("Logros (continuación)");
 
   test("todos los logros tienen id único y premio positivo", () => {
     const ids = new Set();

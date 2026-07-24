@@ -18,7 +18,7 @@
 
 import { save } from "./store.js";
 import { hoyISO, diasHasta, escapar } from "./util.js";
-import { ganarMonedas } from "./economy.js";
+import { ganarMonedas, quitarMonedas } from "./economy.js";
 import { contextoActual } from "./engine.js";
 import { mostrarCartel } from "./ui.js";
 
@@ -218,6 +218,7 @@ export function renderLogros() {
             <strong>${escapar(l.nombre)}</strong>
             <span class="logro__fecha">${yaEsta.fecha_desbloqueo}</span>
           </span>
+          ${l.manual ? `<button class="deshacer deshacer--logro" data-deshacer="${l.id}">deshacer</button>` : ""}
         </div>`;
     }
     return `
@@ -228,24 +229,59 @@ export function renderLogros() {
           <span class="logro__desc">${escapar(l.desc)}</span>
         </span>
         ${l.manual
-          ? `<button class="btn-marcar" data-action="marcar-logro" data-id="${l.id}">Lo hice</button>`
+          ? `<button class="btn-marcar" data-marcar="${l.id}">Lo hice</button>`
           : `<span class="logro__premio">${l.premio} 🪙</span>`}
       </div>`;
   }).join("");
+
+  /* onclick DIRECTO en cada botón, sin delegación: es la
+     regla de la casa desde que Safari nos comió dos entregas. */
+  for (const btn of cont.querySelectorAll("[data-marcar]")) {
+    btn.onclick = () => {
+      const logro = LOGROS.find((l) => l.id === btn.dataset.marcar);
+      if (!logro) return;
+      if (!confirm(`¿Confirmás "${logro.nombre}"? Queda registrado con la fecha de hoy y suma ${logro.premio} 🪙.`)) return;
+      marcarLogroManual(logro.id);
+    };
+  }
+  for (const btn of cont.querySelectorAll("[data-deshacer]")) {
+    btn.onclick = () => {
+      const logro = LOGROS.find((l) => l.id === btn.dataset.deshacer);
+      if (!logro) return;
+      if (!confirm(`¿Deshacer "${logro.nombre}"? Se devuelven las ${logro.premio} 🪙 y se borra de tu historia.`)) return;
+      deshacerLogro(logro.id);
+    };
+  }
 }
 
-function accion(e) {
-  const btn = e.target.closest('[data-action="marcar-logro"]');
-  if (!btn) return;
-
-  const logro = LOGROS.find((l) => l.id === btn.dataset.id);
-  if (!logro) return;
-
-  // Un logro de vida real no se deshace: vale confirmarlo.
-  if (!confirm(`¿Confirmás "${logro.nombre}"? Queda registrado con la fecha de hoy.`)) return;
-
+/* Marcar un logro manual. Exportada para poder testearla;
+   la confirmación con el usuario vive en el handler de UI. */
+export function marcarLogroManual(id) {
+  const logro = LOGROS.find((l) => l.id === id && l.manual);
+  if (!logro) return false;
   desbloquear(logro);
   renderLogros();
+  return true;
+}
+
+/* Deshacer un logro manual: lo saca del registro, devuelve
+   las monedas y borra su rastro de la timeline. Solo para
+   manuales — los automáticos se recalcularían solos y
+   volverían a aparecer, así que deshacerlos sería mentirse. */
+export function deshacerLogro(id) {
+  const logro = LOGROS.find((l) => l.id === id && l.manual);
+  if (!logro || !desbloqueado(id)) return false;
+
+  data.logros = data.logros.filter((l) => l.id !== id);
+  const idx = data.timeline.findLastIndex(
+    (t) => t.tipo === "logro" && t.titulo === `Logro: ${logro.nombre}`
+  );
+  if (idx >= 0) data.timeline.splice(idx, 1);
+
+  save(data);
+  quitarMonedas(logro.premio);
+  renderLogros();
+  return true;
 }
 
 /* ===================== API ===================== */
@@ -257,7 +293,6 @@ export function setDatosLogros(appData) {
 
 export function initLogros(appData) {
   data = appData;
-  document.getElementById("view-progreso").addEventListener("click", accion);
 
   // Al abrir: verificación retroactiva SIN celebrar, para no
   // tirarte diez carteles juntos la primera vez.

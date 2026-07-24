@@ -19,6 +19,7 @@
 
 import { dibujarAvatar } from "./avatar.js";
 import { desbloqueosCuarto } from "./progression.js";
+import { franjaLuz } from "./util.js";
 
 let data;
 let svgCargado = false;
@@ -61,6 +62,7 @@ function aplicarInventario() {
   }
 
   dibujarEnEscena();
+  aplicarLuzEscena();
 
   const total = grupos.length;
   const info = document.getElementById("cuarto-progreso");
@@ -69,6 +71,38 @@ function aplicarInventario() {
       ? "Tu cuarto arranca simple. Todo lo demás se gana."
       : `${comprados.size} de ${total} cosas desbloqueadas`;
   }
+}
+
+/* ------------------------------------------------------------
+   Luz ambiente de la escena. Un velo de color sobre TODO el
+   cuarto (avatar incluido: la luz baña, no esquiva) que
+   cambia con la hora real. Va como último hijo del SVG y se
+   reemplaza en cada refresco.
+   ------------------------------------------------------------ */
+const LUCES = {
+  manana: { color: "#FFD78C", opacidad: 0.09 },  // sol de la mañana
+  tarde:  { color: "#FFB067", opacidad: 0.05 },  // la paleta tal cual
+  noche:  { color: "#5A6EBE", opacidad: 0.16 }   // azul de lámpara apagándose
+};
+
+function aplicarLuzEscena() {
+  const svg = document.querySelector("#cuarto svg");
+  if (!svg) return;
+
+  const previa = document.getElementById("luz-escena");
+  if (previa) previa.remove();
+
+  const luz = LUCES[franjaLuz(new Date().getHours())];
+  const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  rect.id = "luz-escena";
+  rect.setAttribute("x", "0");
+  rect.setAttribute("y", "0");
+  rect.setAttribute("width", "200");
+  rect.setAttribute("height", "120");
+  rect.setAttribute("fill", luz.color);
+  rect.setAttribute("opacity", String(luz.opacidad));
+  rect.setAttribute("pointer-events", "none");
+  svg.appendChild(rect);
 }
 
 /* ------------------------------------------------------------
@@ -151,8 +185,15 @@ export function initCuarto(appData) {
   data = appData;
 
   // Si cambiás de ropa en VOS, el avatar del cuarto se actualiza.
-  document.addEventListener("avatar-cambiado", dibujarEnEscena);
+  const refrescarEscena = () => { dibujarEnEscena(); aplicarLuzEscena(); };
+  document.addEventListener("avatar-cambiado", refrescarEscena);
   document.addEventListener("contexto-cambiado", () => { if (svgCargado) aplicarInventario(); });
+
+  // Si dejaste la app abierta y volvés en otra franja horaria,
+  // la luz se actualiza al volver al primer plano.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && svgCargado) aplicarLuzEscena();
+  });
 
   cargarCuarto();
 }

@@ -287,11 +287,17 @@ nav {
 .campo:focus { outline: none; border-color: var(--accent); }
 .campo::placeholder { color: var(--ink-dim); }
 
-.agregar { display: flex; gap: 8px; margin-top: 12px; }
+/* Las filas de agregar envuelven: el campo de texto ocupa
+   su propia línea completa y los controles chicos (selector,
+   fecha, botón +) bajan a una segunda línea. Tres controles
+   en una fila no entran en un iPhone y se truncaba el texto. */
+.agregar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+.agregar > .campo:not(.campo--fecha) { flex: 1 1 100%; }
 
 .btn-mini {
-  flex: none;
-  width: 50px;
+  flex: 1;
+  min-width: 50px;
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
@@ -311,9 +317,16 @@ nav {
   font-size: 26px !important;
   line-height: 1.25;
   margin: 4px 0 14px !important;
+  color: var(--ink) !important; /* el texto MÁS importante de la app */
 }
 
-.mp-titulo--hecha { color: var(--ink-dim); }
+/* Cumplida, el título sigue siendo el protagonista: legible,
+   sin tachar. Que se cumplió ya lo dice el hanko — no hace
+   falta apagar la misión para celebrarla. */
+.mp-titulo--hecha {
+  color: var(--ink) !important;
+  opacity: 0.9;
+}
 
 .btn--completar { margin-bottom: 0; }
 
@@ -360,7 +373,8 @@ nav {
 .hanko-texto {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 17px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
   color: var(--matcha);
 }
 
@@ -606,8 +620,9 @@ nav {
 }
 
 .campo--fecha {
-  flex: none;
-  width: 132px;
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
   color-scheme: dark;
 }
 
@@ -903,21 +918,26 @@ nav {
   white-space: nowrap;
 }
 
+/* Outline neutro: matcha es el color de lo CUMPLIDO, y estos
+   botones viven justamente en logros que todavía no cumpliste.
+   El verde llega cuando el logro se hace, no antes. */
 .btn-marcar {
   flex: none;
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 800;
-  color: var(--bg);
-  background: var(--matcha);
-  border: none;
+  color: var(--ink-dim);
+  background: none;
+  border: 2px solid var(--line);
   border-radius: 999px;
-  padding: 7px 13px;
-  box-shadow: 0 3px 0 #6BAF85;
+  padding: 6px 12px;
   cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.btn-marcar:active { transform: translateY(3px); box-shadow: 0 0 0 #6BAF85; }
+.btn-marcar:active { color: var(--ink); border-color: var(--ink-dim); }
+
+.deshacer--logro { margin-top: 0; flex: none; }
 
 /* Cartel de logro desbloqueado: baja desde arriba */
 .celebracion {
@@ -966,6 +986,30 @@ nav {
   font-size: 13px;
   font-weight: 600;
   color: var(--oro);
+}
+
+/* ============ Luz ambiente (Entrega 1) ============
+   El fondo de la app acompaña la hora del día. Corrimientos
+   mínimos de las variables: la paleta Atardecer sigue siendo
+   ella misma, cambia la temperatura. La transición es lenta
+   para que nunca se vea "cambiar": simplemente ya cambió. */
+
+body, header, nav, .panel, .campo, .tienda__item, .arbol__linea, .energia, .mensaje {
+  transition: background-color 1.5s ease;
+}
+
+body.luz-manana {
+  --bg: #2C2530;        /* apenas más cálido y claro */
+  --bg-panel: #392F41;
+  --bg-raise: #463C4F;
+}
+
+/* luz-tarde: la paleta base, sin overrides */
+
+body.luz-noche {
+  --bg: #241F2C;        /* más oscuro y más frío */
+  --bg-panel: #302939;
+  --bg-raise: #3D3447;
 }
 
 /* ============ Revisión (Fase 3 · Paso 3b) ============ */

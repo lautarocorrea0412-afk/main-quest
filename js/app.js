@@ -5,11 +5,12 @@
    1. Carga los datos (store.js) y pinta la pantalla.
    2. Maneja la navegación entre pestañas.
    3. Conecta los botones de backup.
-   La lógica de misiones, XP y mensajes llega en la Fase 1
+   Orquesta la navegación e inicializa todos los módulos
    como módulos separados: este archivo solo orquesta.
    ============================================================ */
 
 import { load, save, exportar, importar } from "./store.js";
+import { franjaLuz } from "./util.js";
 import { initMisiones, setDatos } from "./missions.js";
 import { renderArboles } from "./xp.js";
 import { initEngine, setDatosEngine } from "./engine.js";
@@ -54,7 +55,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 0 · tests · datos v" + data.version;
+    "MAIN QUEST · Entrega 1 · pulido · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -111,6 +112,20 @@ inputImportar.addEventListener("change", async () => {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js");
 }
+
+/* Luz ambiente del fondo según la hora. Es sutil a propósito:
+   la app entera baja o sube la temperatura sin que ningún
+   color de la paleta deje de ser él mismo. */
+function aplicarLuzAmbiente() {
+  const franja = franjaLuz(new Date().getHours());
+  document.body.classList.remove("luz-manana", "luz-tarde", "luz-noche");
+  document.body.classList.add(`luz-${franja}`);
+}
+
+aplicarLuzAmbiente();
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") aplicarLuzAmbiente();
+});
 
 render();
 initMisiones(data);
