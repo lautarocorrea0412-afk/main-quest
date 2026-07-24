@@ -1,4 +1,21 @@
-Fase 3 · Paso 3d — Despliegue de árboles con handler directo (fix definitivo iOS)
-Caché SW: mq-fase3-paso3d
-La app debe mostrar en VOS: 'Fase 3 · Paso 3d · datos v5'
-Modificados: js/xp.js, js/app.js, sw.js
+Entrega 0 — Suite de tests (A1 / D-31)
+Caché SW: mq-entrega0-tests
+La app debe mostrar en VOS: 'Entrega 0 · tests · datos v5'
+
+Nuevos:
+  package.json          (solo para que Node lea los .js como módulos ES)
+  tests/run.js          (suite completa: node tests/run.js)
+  tests/helpers.js      (stubs de navegador + assertions + fixtures)
+  tests/suite-store.js  (migraciones)
+  tests/suite-xp.js     (niveles + despliegue de árboles)
+  tests/suite-engine.js (regla 2 semanas, energía, prioridades, cero culpa)
+  tests/suite-sistemas.js (logros, progresión, avatar)
+
+Modificados:
+  js/store.js  (bug corregido: el backup se fechaba en UTC)
+  js/app.js, sw.js
+
+Los archivos de tests/ NO se cachean en el service worker:
+no son parte de la app, son herramienta de desarrollo.
+
+Estado: 50 tests de lógica + 14 chequeos de sintaxis + HTML + convenciones. Todo en verde.

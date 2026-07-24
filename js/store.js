@@ -7,6 +7,8 @@
    los datos en el futuro sin tocar el resto de la app.
    ============================================================ */
 
+import { hoyISO } from "./util.js";
+
 const STORAGE_KEY = "mainquest_data";
 
 /* Historial de versiones de datos (sube solo cuando cambia
@@ -112,7 +114,9 @@ export function exportar(data) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  const fecha = new Date().toISOString().slice(0, 10);
+  // hoyISO() y no toISOString(): este último devuelve UTC y
+  // a la noche en Argentina el backup quedaría fechado mañana.
+  const fecha = hoyISO();
   a.href = url;
   a.download = `mainquest-backup-${fecha}.json`;
   a.click();
