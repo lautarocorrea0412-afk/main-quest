@@ -22,6 +22,7 @@ import { escapar } from "./util.js";
 let data;
 let mostrando = 7;      // días visibles (estado de pantalla, no se guarda)
 const PASO = 7;
+const abiertos = new Set(); // días con el diario desplegado
 
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
@@ -46,7 +47,10 @@ export function armarHistoria(datos) {
 
   const asegurar = (fecha) => {
     if (!porFecha.has(fecha)) {
-      porFecha.set(fecha, { fecha, principal: null, secundarias: 0, energia: null, eventos: [] });
+      porFecha.set(fecha, {
+        fecha, principal: null, secundarias: 0,
+        energia: null, diario: null, eventos: []
+      });
     }
     return porFecha.get(fecha);
   };
@@ -58,7 +62,19 @@ export function armarHistoria(datos) {
   }
 
   for (const entrada of datos.diario) {
-    if (entrada.fecha) asegurar(entrada.fecha).energia = entrada.energia || null;
+    if (!entrada.fecha) continue;
+    const e = asegurar(entrada.fecha);
+    e.energia = entrada.energia || null;
+    // Solo guardamos el diario si escribiste algo: un día con
+    // energía marcada y nada más no necesita desplegarse.
+    const texto = ["mejor", "orgullo", "manana"].filter((k) => entrada[k]);
+    if (texto.length) {
+      e.diario = {
+        mejor: entrada.mejor || "",
+        orgullo: entrada.orgullo || "",
+        manana: entrada.manana || ""
+      };
+    }
   }
 
   for (const ev of datos.timeline) {
@@ -101,6 +117,26 @@ function tarjetaDia(d) {
     `<div class="hist__evento">${ICONO_EVENTO[ev.tipo] || "✦"} ${escapar(ev.titulo)}</div>`
   ).join("");
 
+  /* El diario va PLEGADO. Treinta días de tres respuestas
+     cada uno sería un muro de texto imposible de leer: así,
+     recorrés rápido y abrís solo el día que te interesa. */
+  let diarioHTML = "";
+  if (d.diario) {
+    const abierto = abiertos.has(d.fecha);
+    const linea = (etiqueta, valor) => valor
+      ? `<div class="hist__nota"><span class="hist__nota-tag">${etiqueta}</span> ${escapar(valor)}</div>`
+      : "";
+    diarioHTML = `
+      <button type="button" class="hist__toggle" data-dia="${d.fecha}">
+        📓 ${abierto ? "Ocultar" : "Leer"} lo que escribiste ${abierto ? "▾" : "▸"}
+      </button>
+      ${abierto ? `<div class="hist__diario">
+        ${linea("Lo mejor", d.diario.mejor)}
+        ${linea("Orgullo", d.diario.orgullo)}
+        ${linea("Mañana", d.diario.manana)}
+      </div>` : ""}`;
+  }
+
   return `
     <article class="hist__dia">
       <div class="hist__fecha">${cabecera}</div>
@@ -108,6 +144,7 @@ function tarjetaDia(d) {
         ${cuerpo}
         ${detalles.length ? `<div class="hist__detalles">${detalles.join(" · ")}</div>` : ""}
         ${eventos}
+        ${diarioHTML}
       </div>
     </article>`;
 }
@@ -149,9 +186,17 @@ export function renderHistoria() {
 
   cont.innerHTML = html;
 
-  // onclick directo, la regla de la casa.
+  // onclick directo en todo lo tocable, la regla de la casa.
   const btn = document.getElementById("btn-ver-mas");
   if (btn) btn.onclick = () => { mostrando += PASO; renderHistoria(); };
+
+  for (const t of cont.querySelectorAll("[data-dia]")) {
+    t.onclick = () => {
+      const f = t.dataset.dia;
+      abiertos.has(f) ? abiertos.delete(f) : abiertos.add(f);
+      renderHistoria();
+    };
+  }
 }
 
 /* ===================== API ===================== */
@@ -159,6 +204,7 @@ export function renderHistoria() {
 export function setDatosHistoria(appData) {
   data = appData;
   mostrando = PASO;
+  abiertos.clear();
   renderHistoria();
 }
 

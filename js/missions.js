@@ -94,7 +94,15 @@ function renderPrincipal() {
   const p = data.misiones.hoy.principal;
 
   if (!p) {
-    const chips = Object.entries(ARBOLES_META).map(([id, m]) => `
+    /* En modo parcial la facultad va PRIMERA: si lo que
+       importa esta semana es aprobar, tiene que estar al
+       alcance del pulgar, no al final de la fila. */
+    const enParcial = document.body.classList.contains("modo-parcial");
+    const orden = Object.entries(ARBOLES_META);
+    if (enParcial) {
+      orden.sort(([a], [b]) => (a === "facultad" ? -1 : b === "facultad" ? 1 : 0));
+    }
+    const chips = orden.map(([id, m]) => `
       <button class="chip" data-action="elegir-arbol" data-arbol="${id}">
         ${m.emoji} ${m.nombre}
       </button>`).join("");
@@ -102,7 +110,10 @@ function renderPrincipal() {
     // Puede venir null si el motor todavía no arrancó: la
     // pantalla funciona igual, solo sin sugerencia.
     const sug = sugerirMision();
-    const frecuentes = misionesFrecuentes(data)
+    // Menos cosas en pantalla en modo parcial: las frecuentes
+    // son atajos a tus otras vidas, y esta semana la vida es
+    // una sola. La sugerencia (que ya apunta a estudiar) queda.
+    const frecuentes = enParcial ? [] : misionesFrecuentes(data)
       .filter((f) => !sug || f.titulo.toLowerCase() !== sug.titulo.toLowerCase());
 
     const chipsFrec = frecuentes.map((f, i) => `

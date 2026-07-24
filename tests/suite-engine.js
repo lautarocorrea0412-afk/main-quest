@@ -84,6 +84,14 @@ export function correr() {
     assert(texto.includes("Fisio"), `debía hablar del parcial inminente: "${texto}"`);
   });
 
+  test("C-24: el pill del parcial informa sin alarmar", () => {
+    conParcial(9, "Anatomía");
+    const ctx = contextoActual();
+    assert(ctx.parcialProximo, "hay parcial activo");
+    igual(ctx.parcialProximo.materia, "Anatomía", "la materia real");
+    igual(ctx.parcialProximo.dias, 9, "el conteo como dato");
+  });
+
   test("el mensaje del día es determinístico (no cambia al reabrir)", () => {
     conParcial(5);
     const a = elegirMensaje().texto;

@@ -53,6 +53,25 @@ export function correr() {
     igual(h[0].eventos.length, 1, "con su evento");
   });
 
+  test("el diario del día queda disponible para desplegar", () => {
+    const d = crearDatos(hoyLocal());
+    const dia = hoyLocal(-1);
+    d.diario = [{ fecha: dia, energia: 4, mejor: "el gym", orgullo: "no aflojé", manana: "dormir antes" }];
+    const h = armarHistoria(d);
+    assert(h[0].diario, "el texto del diario está");
+    igual(h[0].diario.mejor, "el gym", "lo mejor");
+    igual(h[0].diario.orgullo, "no aflojé", "el orgullo");
+    igual(h[0].diario.manana, "dormir antes", "qué mejorar");
+  });
+
+  test("un día con solo energía NO ofrece desplegar (sin texto no hay nada que leer)", () => {
+    const d = crearDatos(hoyLocal());
+    d.diario = [{ fecha: hoyLocal(-1), energia: 3, mejor: "", orgullo: "", manana: "" }];
+    const h = armarHistoria(d);
+    igual(h[0].energia, 3, "la energía sí se guarda");
+    igual(h[0].diario, null, "pero no hay diario que desplegar");
+  });
+
   test("historia vacía no rompe nada", () => {
     igual(armarHistoria(crearDatos(hoyLocal())).length, 0, "usuario nuevo, historia vacía");
   });

@@ -1,21 +1,24 @@
-Entrega 4 — Tu historia + recordatorio de backup (C-25, C-26 + E1)
-Caché SW: mq-entrega4-historia
-La app debe mostrar en VOS: 'Entrega 4 · historia · datos v6'
+Entrega 5 — Modo parcial visible (C-24) + diario desplegable en la historia
+Caché SW: mq-entrega5-parcial
+La app debe mostrar en VOS: 'Entrega 5 · modo parcial · datos v6'
 
-DATA_VERSION sube a 6: el perfil ahora recuerda la fecha del último
-backup. Migración automática, no se pierde nada.
+Sin cambios de estructura de datos: sigue en v6.
 
-Nuevos:
-  js/history.js  (une misiones + diario + timeline en una vista navegable)
+AGREGADO A LA ENTREGA 4:
+  js/history.js — cada día con diario escrito ofrece "📓 Leer lo que
+  escribiste": plegado por defecto, se despliega de a uno. Un día con
+  solo la energía marcada no ofrece desplegar (no hay nada que leer).
 
-Modificados:
-  js/store.js  (v6 + exportar() registra la fecha del backup)
-  js/util.js   (estadoBackup)
-  js/app.js    (init de historia, aviso de backup, puntito en la pestaña VOS)
-  index.html, css/app.css, sw.js
-  tests/suite-store.js, tests/suite-arranque.js, tests/suite-historia.js (nuevo)
+MODO PARCIAL (C-24):
+  js/app.js     — clase modo-parcial en el body según el contexto
+  js/engine.js  — el pill pierde la palabra "modo" y la alarma:
+                  ahora dice "Anatomía · en 9 días", el conteo como dato
+  js/missions.js— la facultad primera en los chips; sin misiones
+                  frecuentes (menos cosas en pantalla)
+  css/app.css   — luz más fría y desaturada, el durazno se apaga a un
+                  ámbar sobrio, el resplandor de la misión se apaga y
+                  el chip de racha se vuelve discreto. Ningún rojo.
+                  La luz de noche sigue mandando por encima del modo
+                  parcial: dormir es prioridad 2, estudiar es 3.
 
-Suite: 82 tests. Todo en verde.
-
-C-25 y E1 resueltos juntos: la timeline se venía llenando sola desde la
-Fase 2 (compras y logros) y nunca se veía. Ahora aparece dentro de cada día.
+Suite: 85 tests. Todo en verde.

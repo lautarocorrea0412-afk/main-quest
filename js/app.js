@@ -20,6 +20,7 @@ import { initCuarto, setDatosCuarto } from "./room.js";
 import { initAvatar, setDatosAvatar } from "./avatar.js";
 import { initLogros, setDatosLogros } from "./achievements.js";
 import { initHistoria, setDatosHistoria } from "./history.js";
+import { contextoActual } from "./engine.js";
 
 let data = load();
 
@@ -56,7 +57,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 4 · historia · datos v" + data.version;
+    "MAIN QUEST · Entrega 5 · modo parcial · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -118,6 +119,19 @@ if ("serviceWorker" in navigator) {
 }
 
 /* ------------------------------------------------------------
+   Modo parcial visible (C-24). La app se ORDENA, no se alarma:
+   luz más fría y desaturada, menos cosas decorativas en
+   pantalla, la facultad al frente. Nada de rojos ni de
+   cuentas regresivas ansiosas: el conteo ya está en el pill
+   como dato. Solo cambia la temperatura del ambiente.
+   ------------------------------------------------------------ */
+function aplicarModoParcial() {
+  let activo = false;
+  try { activo = !!contextoActual().parcialProximo; } catch { activo = false; }
+  document.body.classList.toggle("modo-parcial", activo);
+}
+
+/* ------------------------------------------------------------
    Estado del backup (C-26). Aviso suave: un cartelito en el
    panel de Backup y un puntito en la pestaña VOS. Nunca un
    modal, nunca bloquea nada.
@@ -157,7 +171,10 @@ function aplicarLuzAmbiente() {
 
 aplicarLuzAmbiente();
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") aplicarLuzAmbiente();
+  if (document.visibilityState === "visible") {
+    aplicarLuzAmbiente();
+    aplicarModoParcial(); // un parcial puede haberse acercado desde ayer
+  }
 });
 
 render();
@@ -175,3 +192,6 @@ initCuarto(data);
 initLogros(data);
 initHistoria(data);
 renderBackup();
+aplicarModoParcial();
+
+document.addEventListener("contexto-cambiado", aplicarModoParcial);

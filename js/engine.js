@@ -328,8 +328,10 @@ function renderMensaje() {
   if (!cont) return;
   const { texto, ctx } = elegirMensaje();
 
+  /* El conteo como DATO, no como amenaza: sin la palabra
+     "modo", sin alarma, sin rojo. Solo la materia y cuándo. */
   const pill = ctx.parcialProximo
-    ? `<span class="pill-parcial">Modo parcial · ${escapar(ctx.parcialProximo.materia)} · ${
+    ? `<span class="pill-parcial">${escapar(ctx.parcialProximo.materia)} · ${
         ctx.parcialProximo.dias === 0 ? "hoy" :
         ctx.parcialProximo.dias === 1 ? "mañana" :
         `en ${ctx.parcialProximo.dias} días`}</span>`

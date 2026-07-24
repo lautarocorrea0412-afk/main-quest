@@ -1352,6 +1352,90 @@ body.luz-noche {
   box-shadow: 0 0 6px rgba(245, 142, 168, 0.8);
 }
 
+/* ============ Diario en la historia (Entrega 4b) ============ */
+
+.hist__toggle {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.hist__toggle:active { color: var(--accent); }
+
+.hist__diario {
+  margin-top: 6px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  animation: viewIn 0.25s var(--bounce);
+}
+
+.hist__nota {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.hist__nota:last-child { margin-bottom: 0; }
+
+.hist__nota-tag {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-right: 4px;
+}
+
+/* ============ Modo parcial (Entrega 5) ============
+   La app se ORDENA, no se alarma. Luz más fría y desaturada,
+   menos decoración, la facultad al frente. Ningún rojo,
+   ninguna cuenta regresiva ansiosa: el conteo ya está en el
+   pill, como dato. Es la app bajando la voz para que puedas
+   concentrarte, no subiéndola para asustarte. */
+
+body.modo-parcial {
+  --bg: #232231;         /* más frío: el violeta cede al azul */
+  --bg-panel: #2E2D3E;
+  --bg-raise: #3A394C;
+  --accent: #E8C88A;     /* el durazno se apaga a un ámbar sobrio */
+  --line: #4A4A5E;
+}
+
+/* La luz nocturna manda incluso en modo parcial: dormir sigue
+   siendo prioridad 2, por encima de estudiar. */
+body.modo-parcial.luz-noche {
+  --bg: #1E1D2A;
+  --bg-panel: #292836;
+}
+
+/* El pill deja de gritar: pasa a ser una etiqueta tranquila */
+body.modo-parcial .pill-parcial,
+.pill-parcial {
+  background: none;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  font-weight: 800;
+}
+
+/* Menos decoración: el resplandor de la misión principal se
+   apaga y el chip de racha se vuelve discreto. */
+body.modo-parcial .panel--main { box-shadow: none; }
+
+body.modo-parcial .racha {
+  font-size: 12px;
+  padding: 4px 11px;
+  opacity: 0.75;
+}
+
 /* ============ Detalles ============ */
 
 .meta {
