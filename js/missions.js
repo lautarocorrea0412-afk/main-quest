@@ -99,9 +99,11 @@ function renderPrincipal() {
         ${m.emoji} ${m.nombre}
       </button>`).join("");
 
+    // Puede venir null si el motor todavía no arrancó: la
+    // pantalla funciona igual, solo sin sugerencia.
     const sug = sugerirMision();
     const frecuentes = misionesFrecuentes(data)
-      .filter((f) => f.titulo.toLowerCase() !== sug.titulo.toLowerCase());
+      .filter((f) => !sug || f.titulo.toLowerCase() !== sug.titulo.toLowerCase());
 
     const chipsFrec = frecuentes.map((f, i) => `
       <button class="chip chip--frecuente" id="frec-${i}">↺ ${escapar(f.titulo)}</button>`).join("");
@@ -110,10 +112,10 @@ function renderPrincipal() {
       <div class="panel panel--main">
         <div class="panel__label">Misión principal</div>
         <h2>¿Cuál es LA misión de hoy?</h2>
-        <div class="sugerencia">
+        ${sug ? `<div class="sugerencia">
           <span class="sugerencia__texto">💡 ${escapar(sug.titulo)}</span>
           <button class="btn-usar" id="btn-usar-sugerencia">Usar</button>
-        </div>
+        </div>` : ""}
         ${chipsFrec ? `<div class="frecuentes">${chipsFrec}</div>` : ""}
         <div class="chips" id="chips-arbol">${chips}</div>
         <div class="agregar">
@@ -135,7 +137,7 @@ function renderPrincipal() {
       });
     };
     const btnSug = document.getElementById("btn-usar-sugerencia");
-    if (btnSug) btnSug.onclick = () => prellenar(sug.titulo, sug.arbol);
+    if (btnSug && sug) btnSug.onclick = () => prellenar(sug.titulo, sug.arbol);
     frecuentes.forEach((f, i) => {
       const btn = document.getElementById(`frec-${i}`);
       if (btn) btn.onclick = () => prellenar(f.titulo, f.arbol);

@@ -130,6 +130,7 @@ function armarContexto() {
    avatar solo la refleja.
    ------------------------------------------------------------ */
 export function contextoActual() {
+  if (!data) throw new Error("engine sin datos todavía");
   return armarContexto();
 }
 
@@ -356,6 +357,10 @@ function renderMensaje() {
    Recibe la fecha para poder testearse con días fijos.
    ------------------------------------------------------------ */
 export function sugerirMision(ahora = new Date()) {
+  // Red de seguridad: si alguien pregunta antes de que el
+  // motor tenga datos, devolvemos null en vez de explotar.
+  // Un módulo de UI nunca debería poder tumbar el arranque.
+  if (!data) return null;
   const ctx = armarContexto();
 
   if (ctx.parcialProximo) {

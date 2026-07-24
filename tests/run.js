@@ -143,7 +143,8 @@ async function correrTests() {
     await import("./suite-store.js"),
     await import("./suite-xp.js"),
     await import("./suite-engine.js"),
-    await import("./suite-sistemas.js")
+    await import("./suite-sistemas.js"),
+    await import("./suite-arranque.js")  // va último: deja datos cargados
   ];
 
   for (const s of suites) s.correr(dom);

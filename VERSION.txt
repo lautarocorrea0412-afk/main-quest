@@ -1,17 +1,24 @@
-Entrega 3 — El motor habla de tu día (A-2, C-22, C-23)
-Caché SW: mq-entrega3-motor
-La app debe mostrar en VOS: 'Entrega 3 · motor · datos v5'
+Entrega 3b — ARREGLO URGENTE del arranque roto en la Entrega 3
+Caché SW: mq-entrega3b-arreglo
+La app debe mostrar en VOS: 'Entrega 3b · arreglo · datos v5'
 
-Modificados:
-  js/engine.js   (selección reescrita: el mensaje matchea la misión;
-                  modo "cumplida"; 9 plantillas nuevas; sugerirMision)
-  js/missions.js (sugerencia con botón Usar + hasta 3 misiones
-                  frecuentes computadas del historial)
-  css/app.css, tests/suite-engine.js, tests/suite-sistemas.js
-  sw.js, js/app.js
+EL BUG:
+En la Entrega 3, missions.js empezó a pedirle el contexto a engine.js,
+pero app.js inicializaba initMisiones ANTES que initEngine. Al abrir la
+app sin misión del día, missions.js explotaba y cortaba la secuencia de
+arranque: motor, diario, economía, avatar, cuarto y logros nunca se
+inicializaban.
 
-Jerarquía nueva del mensaje: energía baja > parcial inminente >
-misión cumplida > modo parcial > árbol de la misión de hoy > general.
-La sugerencia NUNCA propone facultad fuera del modo parcial.
+EL ARREGLO (tres capas):
+  1. js/app.js    — initEngine ahora va antes que initMisiones
+  2. js/engine.js — sugerirMision() devuelve null si no tiene datos,
+                    en vez de explotar
+  3. js/missions.js — la pantalla funciona igual sin sugerencia
 
-Suite: 70 tests. Todo en verde.
+EL AGUJERO TAPADO:
+  tests/suite-arranque.js (nuevo) — replica el arranque REAL de app.js,
+  leyendo el orden de init directamente del archivo. Si alguien vuelve a
+  reordenarlo, el test avisa.
+
+Sin cambios de datos: sigue en v5.
+Suite: 75 tests. Todo en verde.

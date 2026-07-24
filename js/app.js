@@ -55,7 +55,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 3 · motor · datos v" + data.version;
+    "MAIN QUEST · Entrega 3b · arreglo · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -128,8 +128,13 @@ document.addEventListener("visibilitychange", () => {
 });
 
 render();
-initMisiones(data);
+
+/* ORDEN IMPORTANTE: el motor va PRIMERO porque missions y
+   avatar le consultan el contexto durante su propio init.
+   Inicializarlo después rompía toda la cadena de arranque
+   (bug de la Entrega 3). Hay un test que verifica este orden. */
 initEngine(data);
+initMisiones(data);
 initDiario(data);
 initEconomia(data);
 initAvatar(data);
