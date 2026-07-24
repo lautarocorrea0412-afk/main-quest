@@ -69,6 +69,11 @@ export function ganarXp(data, arbolId, cantidad) {
 
   save(data);
 
+  /* Bandera de animación: la barra elástica pertenece al
+     EVENTO de subir de nivel, no al estado. El próximo
+     renderArboles la consume una sola vez. */
+  if (subioNivel) arbolReciensubido = arbolId;
+
   /* Si el nivel nuevo desbloqueó recompensas de evolución,
      se celebran acá: la subida de nivel es el momento. */
   if (subioNivel) {
@@ -107,6 +112,7 @@ export function quitarXp(data, arbolId, cantidad) {
    ------------------------------------------------------------ */
 /* Árboles con la línea abierta (estado de pantalla, no se guarda) */
 const lineasAbiertas = new Set();
+let arbolReciensubido = null; // bandera de la barra elástica
 let ultimoData = null;
 
 export function renderArboles(data) {
@@ -135,6 +141,31 @@ export function renderArboles(data) {
         </div>
       </button>
     `);
+  }
+
+  /* La animación más satisfactoria de cualquier RPG: al
+     subir de nivel, la barra llega al final, destella, se
+     vacía de golpe y vuelve a llenarse con el resto. */
+  if (arbolReciensubido) {
+    const id = arbolReciensubido;
+    arbolReciensubido = null; // se consume: evento, no estado
+    const fill = document.querySelector(`#arboles [data-arbol="${id}"] .barra__fill`);
+    if (fill && !window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
+      const pctFinal = fill.style.width;
+      fill.classList.add("barra__fill--flash");
+      fill.style.width = "100%";
+      setTimeout(() => {
+        fill.style.transition = "none";
+        fill.style.width = "0%";
+        fill.classList.remove("barra__fill--flash");
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            fill.style.transition = "";
+            fill.style.width = pctFinal;
+          });
+        });
+      }, 420);
+    }
   }
 
   /* Handler DIRECTO en cada botón, sin delegación: la

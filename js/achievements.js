@@ -24,10 +24,10 @@ import { mostrarCartel } from "./ui.js";
 
 let data;
 
-/* ===================== PREMIOS ===================== */
-const CHICO = 50;
-const MEDIO = 150;
-const GRANDE = 400;
+/* ===================== PREMIOS =====================
+   Curva por dificultad real, no tres escalones planos.
+   El techo es De vuelta en Japón (1500): el logro más
+   grande de la app es el objetivo más grande de la vida. */
 
 /* ------------------------------------------------------------
    Helpers de conteo (miran tus datos reales).
@@ -56,6 +56,8 @@ function racha() {
   try { return contextoActual().racha; } catch { return 0; }
 }
 
+/* Nivel de avance hacia un logro contable: { actual, meta } */
+
 /* ============================================================
    LOS LOGROS
    ------------------------------------------------------------
@@ -66,81 +68,94 @@ export const LOGROS = [
   /* ---------- Automáticos: el camino ---------- */
   { id: "primera",     icono: "⚔️", nombre: "El primer paso",
     desc: "Cumplir tu primera misión principal",
-    premio: CHICO, cond: () => principalesCumplidas() >= 1 },
+    premio: 40, cond: () => principalesCumplidas() >= 1,
+    progreso: () => ({ actual: principalesCumplidas(), meta: 1 }) },
 
   { id: "racha3",      icono: "🔥", nombre: "Tres seguidos",
     desc: "Racha de 3 días",
-    premio: CHICO, cond: () => racha() >= 3 },
+    premio: 60, cond: () => racha() >= 3,
+    progreso: () => ({ actual: racha(), meta: 3 }) },
 
   { id: "racha7",      icono: "🔥", nombre: "Semana completa",
     desc: "Racha de 7 días",
-    premio: MEDIO, cond: () => racha() >= 7 },
+    premio: 150, cond: () => racha() >= 7,
+    progreso: () => ({ actual: racha(), meta: 7 }) },
 
   { id: "racha30",     icono: "🔥", nombre: "Un mes sin fallar",
     desc: "Racha de 30 días",
-    premio: GRANDE, cond: () => racha() >= 30 },
+    premio: 500, cond: () => racha() >= 30,
+    progreso: () => ({ actual: racha(), meta: 30 }) },
 
   { id: "mis50",       icono: "📜", nombre: "Cincuenta misiones",
     desc: "50 misiones principales cumplidas",
-    premio: MEDIO, cond: () => principalesCumplidas() >= 50 },
+    premio: 250, cond: () => principalesCumplidas() >= 50,
+    progreso: () => ({ actual: principalesCumplidas(), meta: 50 }) },
 
   { id: "mis365",      icono: "🏆", nombre: "Un año de misiones",
     desc: "365 misiones principales cumplidas",
-    premio: GRANDE, cond: () => principalesCumplidas() >= 365 },
+    premio: 1200, cond: () => principalesCumplidas() >= 365,
+    progreso: () => ({ actual: principalesCumplidas(), meta: 365 }) },
 
   { id: "nivel5",      icono: "⭐", nombre: "Especialista",
     desc: "Llegar a nivel 5 en algún árbol",
-    premio: MEDIO, cond: () => nivelMaximo() >= 5 },
+    premio: 200, cond: () => nivelMaximo() >= 5,
+    progreso: () => ({ actual: nivelMaximo(), meta: 5 }) },
 
   { id: "nivel10",     icono: "🌟", nombre: "Maestría",
     desc: "Llegar a nivel 10 en algún árbol",
-    premio: GRANDE, cond: () => nivelMaximo() >= 10 },
+    premio: 800, cond: () => nivelMaximo() >= 10,
+    progreso: () => ({ actual: nivelMaximo(), meta: 10 }) },
 
   { id: "equilibrio",  icono: "⚖️", nombre: "Equilibrio",
     desc: "Todos los árboles en nivel 2 o más",
-    premio: GRANDE,
-    cond: () => Object.values(data.arboles).every((a) => a.nivel >= 2) },
+    premio: 600,
+    cond: () => Object.values(data.arboles).every((a) => a.nivel >= 2),
+    progreso: () => ({ actual: Object.values(data.arboles).filter((a) => a.nivel >= 2).length, meta: 6 }) },
 
   { id: "diario7",     icono: "📓", nombre: "Siete noches",
     desc: "Cerrar el día 7 veces",
-    premio: CHICO, cond: () => data.diario.length >= 7 },
+    premio: 80, cond: () => data.diario.length >= 7,
+    progreso: () => ({ actual: data.diario.length, meta: 7 }) },
 
   { id: "decorador",   icono: "🛋️", nombre: "Tomando forma",
     desc: "Desbloquear 5 cosas para tu cuarto",
-    premio: MEDIO, cond: () => data.economia.inventario.length >= 5 },
+    premio: 150, cond: () => data.economia.inventario.length >= 5,
+    progreso: () => ({ actual: data.economia.inventario.length, meta: 5 }) },
 
   { id: "hogar",       icono: "🏠", nombre: "Tu hogar",
     desc: "Desbloquear todo el cuarto",
-    premio: GRANDE, cond: () => data.economia.inventario.length >= 14 },
+    premio: 700, cond: () => data.economia.inventario.length >= 14,
+    progreso: () => ({ actual: data.economia.inventario.length, meta: 14 }) },
 
   { id: "anio",        icono: "🎂", nombre: "Un año juntos",
     desc: "365 días desde que empezaste",
-    premio: GRANDE, cond: () => diasDesdeElInicio() >= 365 },
+    premio: 1000, cond: () => diasDesdeElInicio() >= 365,
+    progreso: () => ({ actual: diasDesdeElInicio(), meta: 365 }) },
 
   /* ---------- Manuales: la vida real ---------- */
   { id: "materia",     icono: "🎓", nombre: "Materia aprobada",
     desc: "Aprobar una materia de Kinesiología",
-    premio: GRANDE, manual: true },
+    premio: 500, manual: true },
 
   { id: "cliente",     icono: "🤝", nombre: "Primer cliente",
     desc: "Conseguir tu primer cliente de edición",
-    premio: GRANDE, manual: true },
+    premio: 800, manual: true },
 
   { id: "dolares",     icono: "💵", nombre: "Primer ingreso en dólares",
     desc: "Cobrar tu primer trabajo en USD",
-    premio: GRANDE, manual: true },
+    premio: 800, manual: true },
 
   { id: "horas100",    icono: "🎬", nombre: "100 horas en Premiere",
     desc: "Cien horas de edición acumuladas",
-    premio: GRANDE, manual: true },
+    premio: 600, manual: true },
 
   { id: "stream",      icono: "🎥", nombre: "Primer stream",
     desc: "Hacer tu primera transmisión",
-    premio: MEDIO, manual: true },
+    premio: 300, manual: true },
 
   { id: "japon",       icono: "⛩️", nombre: "De vuelta en Japón",
     desc: "Volver a pisar Japón",
-    premio: GRANDE, manual: true }
+    premio: 1500, manual: true }
 ];
 
 /* ------------------------------------------------------------
@@ -221,12 +236,28 @@ export function renderLogros() {
           ${l.manual ? `<button class="deshacer deshacer--logro" data-deshacer="${l.id}">deshacer</button>` : ""}
         </div>`;
     }
+    /* Bloqueado: si el logro es contable, muestra el camino
+       recorrido. "3/7 días" motiva; "bloqueado" solo informa. */
+    let progresoHTML = "";
+    if (l.progreso) {
+      try {
+        const p = l.progreso();
+        const actual = Math.min(p.actual, p.meta);
+        const pct = Math.round((actual / p.meta) * 100);
+        progresoHTML = `
+          <span class="logro__prog">
+            <span class="barra barra--mini"><span class="barra__fill" style="width:${pct}%"></span></span>
+            <span class="logro__prog-num">${actual}/${p.meta}</span>
+          </span>`;
+      } catch { /* sin datos todavía: sin barra */ }
+    }
     return `
       <div class="logro">
         <span class="logro__icono logro__icono--gris">${l.icono}</span>
         <span class="logro__info">
           <strong>${escapar(l.nombre)}</strong>
           <span class="logro__desc">${escapar(l.desc)}</span>
+          ${progresoHTML}
         </span>
         ${l.manual
           ? `<button class="btn-marcar" data-marcar="${l.id}">Lo hice</button>`

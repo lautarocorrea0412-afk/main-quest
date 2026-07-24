@@ -19,7 +19,7 @@ import {
   ARBOLES_META, XP_PRINCIPAL, XP_SECUNDARIA,
   ganarXp, quitarXp, renderArboles, flotarXp
 } from "./xp.js";
-import { MONEDAS_PRINCIPAL, MONEDAS_SECUNDARIA, ganarMonedas, quitarMonedas } from "./economy.js";
+import { MONEDAS_PRINCIPAL, MONEDAS_SECUNDARIA, ganarMonedas, quitarMonedas, volarMonedas } from "./economy.js";
 
 let data; // referencia a los datos de la app (los llena initMisiones)
 
@@ -28,6 +28,11 @@ let data; // referencia a los datos de la app (los llena initMisiones)
    en CADA render (al agregar una secundaria, por ejemplo),
    porque el elemento se recrea de cero cada vez. */
 let recienCompletada = false;
+
+/* Id de la secundaria recién completada: su check hace pop
+   y su texto se tacha con animación, UNA vez. Evento, no
+   estado — sin esto, todo se re-animaría en cada render. */
+let secundariaAnimada = null;
 
 /* ------------------------------------------------------------
    Cambio de día.
@@ -153,8 +158,9 @@ function renderSecundarias() {
 
   lista.innerHTML = items.map((s) => {
     const m = ARBOLES_META[s.arbol];
+    const anim = s.id === secundariaAnimada ? " secundaria--anim" : "";
     return `
-    <li class="secundaria ${s.completada ? "hecha" : ""}">
+    <li class="secundaria ${s.completada ? "hecha" : ""}${anim}">
       <button class="secundaria__check" data-action="toggle-secundaria" data-id="${s.id}"
               aria-label="${s.completada ? "Desmarcar" : "Completar"} ${escapar(s.titulo)}"></button>
       <span class="secundaria__titulo">${escapar(s.titulo)}${m ? ` <span class="secundaria__arbol">${m.emoji}</span>` : ""}</span>
@@ -167,6 +173,7 @@ function renderSecundarias() {
 function render() {
   renderPrincipal();
   renderSecundarias();
+  secundariaAnimada = null; // la bandera se consume en un solo render
 }
 
 /* ------------------------------------------------------------
@@ -219,6 +226,7 @@ function accion(e) {
       hoy.principal.completada = true;
       hoy.principal.completada_en = new Date().toISOString();
       ganarMonedas(MONEDAS_PRINCIPAL);
+      volarMonedas(btn);
       const res = ganarXp(data, hoy.principal.arbol, XP_PRINCIPAL);
       // Un solo texto flotante con todo lo ganado:
       // monedas siempre; XP y nivel solo si la misión tiene árbol.
@@ -266,7 +274,9 @@ function accion(e) {
       if (!s) return;
       s.completada = !s.completada;
       if (s.completada) {
+        secundariaAnimada = s.id;
         ganarMonedas(MONEDAS_SECUNDARIA);
+        volarMonedas(btn);
         const res = ganarXp(data, s.arbol, XP_SECUNDARIA);
         let texto = `+${MONEDAS_SECUNDARIA} 🪙`;
         if (res) {

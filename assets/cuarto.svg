@@ -36,6 +36,11 @@
   <rect x="98" y="46" width="20" height="12" fill="#5A5364"/>
   <rect x="100" y="48" width="16" height="8" fill="#7FC4E8"/>
   <rect x="96" y="58" width="24" height="3" fill="#8A8194"/>
+  <g id="item-cojin">
+  <rect x="22" y="76" width="9" height="7" fill="#F58EA8"/>
+  <rect x="22" y="76" width="9" height="2" fill="#D4708A"/>
+  <rect x="25" y="79" width="3" height="2" fill="#FBF0E4"/>
+  </g>
   <g id="item-alfombra">
   <rect x="40" y="96" width="56" height="20" fill="#F58EA8"/>
   <rect x="44" y="100" width="48" height="12" fill="#E07A96"/>

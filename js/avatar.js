@@ -550,12 +550,13 @@ export function dibujarAvatar(escala = 1, expr = null) {
 /* ------------------------------------------------------------
    Panel de personalización (pestaña VOS).
    ------------------------------------------------------------ */
-function opcionesHTML(grupo, coleccion, actual) {
+function opcionesHTML(grupo, coleccion, actual, nuevas = []) {
   return Object.entries(coleccion).map(([id, item]) => {
     const libre = desbloqueada(id);
     const activa = actual === id;
+    const nueva = nuevas.includes(id) ? " opcion--nueva" : "";
     return `
-      <button class="opcion ${activa ? "activa" : ""} ${libre ? "" : "trabada"}"
+      <button class="opcion ${activa ? "activa" : ""} ${libre ? "" : "trabada"}${nueva}"
               data-action="elegir-look" data-grupo="${grupo}" data-id="${id}"
               ${libre ? "" : "disabled"}>
         <span class="opcion__nombre">${item.nombre}</span>
@@ -563,6 +564,11 @@ function opcionesHTML(grupo, coleccion, actual) {
       </button>`;
   }).join("");
 }
+
+/* Qué piezas estaban desbloqueadas en el render anterior:
+   la diferencia con el actual son los desbloqueos NUEVOS,
+   que entran con destello. Evento, no estado. */
+let desbloqueadasAntes = null;
 
 export function renderAvatar() {
   const gesto = expresionAutomatica();
@@ -576,15 +582,23 @@ export function renderAvatar() {
   if (!panel) return;
 
   const a = data.perfil.avatar;
+
+  const todas = [...Object.keys(REMERAS), ...Object.keys(PANTALONES), ...Object.keys(ACCESORIOS)];
+  const ahora = new Set(todas.filter((id) => desbloqueada(id)));
+  const nuevas = desbloqueadasAntes
+    ? [...ahora].filter((id) => !desbloqueadasAntes.has(id))
+    : [];
+  desbloqueadasAntes = ahora;
+
   panel.innerHTML = `
     <p class="diario-pregunta">Peinado</p>
     <div class="opciones">${opcionesHTML("pelo", PELOS, a.pelo)}</div>
     <p class="diario-pregunta">Ropa</p>
-    <div class="opciones">${opcionesHTML("remera", REMERAS, a.remera)}</div>
+    <div class="opciones">${opcionesHTML("remera", REMERAS, a.remera, nuevas)}</div>
     <p class="diario-pregunta">Pantalón</p>
-    <div class="opciones">${opcionesHTML("pantalon", PANTALONES, a.pantalon)}</div>
+    <div class="opciones">${opcionesHTML("pantalon", PANTALONES, a.pantalon, nuevas)}</div>
     <p class="diario-pregunta">Accesorio</p>
-    <div class="opciones">${opcionesHTML("accesorio", ACCESORIOS, a.accesorio)}</div>`;
+    <div class="opciones">${opcionesHTML("accesorio", ACCESORIOS, a.accesorio, nuevas)}</div>`;
 }
 
 function accion(e) {

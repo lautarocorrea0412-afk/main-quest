@@ -35,6 +35,11 @@ export const MONEDAS_SECUNDARIA = 10;
    Escalones de precio (a ~350-400 🪙/semana estimadas):
    chico ≈ días · medio ≈ 1-2 semanas · grande ≈ un mes. */
 export const CATALOGO = [
+  /* El ítem de arranque: a 40 🪙, una misión principal (30)
+     más una secundaria (10) lo compran el PRIMER día. El
+     ciclo "cumplo → gano → compro → veo el cambio en mi
+     cuarto" se cierra en 24 horas, no en una semana. */
+  { id: "cojin",        emoji: "🔶", nombre: "Cojín",              precio: 40 },
   { id: "planta",       emoji: "🪴", nombre: "Planta",             precio: 120 },
   { id: "poster",       emoji: "🖼️", nombre: "Póster anime",       precio: 150 },
   { id: "alfombra",     emoji: "🟦", nombre: "Alfombra",           precio: 200 },
@@ -104,14 +109,66 @@ function comprar(itemId) {
 export function renderMonedas() {
   const el = document.getElementById("monedas-contador");
   if (!el) return;
-  const nuevo = `🪙 ${data.economia.monedas}`;
-  if (el.textContent === nuevo) return;
-  el.textContent = nuevo;
-  // Saltito al cambiar: reiniciar la animación requiere sacar
-  // la clase, forzar un reflow y volver a ponerla.
+  const objetivo = data.economia.monedas;
+  const desde = Number(el.dataset.valor ?? objetivo);
+  el.dataset.valor = String(objetivo);
+
+  // El valor FINAL se escribe primero: la animación es
+  // cosmética y si algo la interrumpe, el número queda bien.
+  el.textContent = `🪙 ${objetivo}`;
+  if (desde === objetivo) return;
+
   el.classList.remove("bump");
   void el.offsetWidth;
   el.classList.add("bump");
+
+  // Contador rodante: del valor viejo al nuevo en ~450ms.
+  const reducir = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  if (reducir || typeof requestAnimationFrame !== "function") return;
+  const inicio = performance.now();
+  const rodar = (t) => {
+    const p = Math.min(1, (t - inicio) / 450);
+    const suave = 1 - Math.pow(1 - p, 3); // arranca rápido, frena al llegar
+    el.textContent = `🪙 ${Math.round(desde + (objetivo - desde) * suave)}`;
+    if (p < 1) requestAnimationFrame(rodar);
+  };
+  requestAnimationFrame(rodar);
+}
+
+/* ------------------------------------------------------------
+   Moneditas que vuelan desde donde tocaste hasta la billetera
+   del header. Tres, escalonadas. Puro deleite, cero función:
+   por eso respetan "reducir movimiento" y se autodestruyen.
+   ------------------------------------------------------------ */
+export function volarMonedas(origenEl) {
+  if (!origenEl?.getBoundingClientRect) return;
+  const destino = document.getElementById("monedas-contador");
+  if (!destino?.getBoundingClientRect) return;
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+
+  const desde = origenEl.getBoundingClientRect();
+  const hasta = destino.getBoundingClientRect();
+  const dx = hasta.left + hasta.width / 2 - (desde.left + desde.width / 2);
+  const dy = hasta.top + hasta.height / 2 - (desde.top + desde.height / 2);
+
+  for (let i = 0; i < 3; i++) {
+    const m = document.createElement("span");
+    m.className = "moneda-vuelo";
+    m.textContent = "🪙";
+    m.style.left = desde.left + desde.width / 2 + "px";
+    m.style.top = desde.top + "px";
+    m.style.transitionDelay = `${i * 70}ms`;
+    document.body.appendChild(m);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        m.style.transform = `translate(${dx}px, ${dy}px) scale(0.4)`;
+        m.style.opacity = "0";
+      });
+    });
+    m.addEventListener("transitionend", () => m.remove(), { once: true });
+    setTimeout(() => m.remove(), 1400); // red de seguridad > animación
+  }
 }
 
 export function renderTienda() {

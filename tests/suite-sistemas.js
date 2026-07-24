@@ -131,6 +131,27 @@ export function correr() {
 
   suite("Logros (continuación)");
 
+  test("la curva de premios respeta la dificultad", () => {
+    const p = Object.fromEntries(LOGROS.map((l) => [l.id, l.premio]));
+    assert(p.racha30 > p.racha7 && p.racha7 > p.racha3, "las rachas escalan");
+    assert(p.mis365 > p.mis50, "365 misiones vale más que 50");
+    assert(p.nivel10 > p.nivel5, "la maestría vale más");
+    assert(p.mis365 > p.racha30, "el logro de un año supera al del mes");
+    const max = Math.max(...LOGROS.map((l) => l.premio));
+    igual(p.japon, max, "volver a Japón es el techo de toda la tabla");
+  });
+
+  test("todos los logros automáticos contables tienen progreso sano", () => {
+    const d = montar(crearDatos(hoyLocal()));
+    d.arboles.edicion.nivel = 3;
+    for (const l of LOGROS.filter((x) => !x.manual)) {
+      assert(l.progreso, `${l.id} sin función de progreso`);
+      const { actual, meta } = l.progreso();
+      assert(Number.isFinite(actual) && actual >= 0, `${l.id}: actual inválido`);
+      assert(meta > 0, `${l.id}: meta inválida`);
+    }
+  });
+
   test("todos los logros tienen id único y premio positivo", () => {
     const ids = new Set();
     for (const l of LOGROS) {

@@ -36,18 +36,43 @@ function calcularRacha() {
   const hoy = data.misiones.hoy;
   if (hoy && hoy.principal && hoy.principal.completada) cumplidas.add(hoy.fecha);
 
-  let racha = 0;
-  const cursor = new Date();
-  // Si hoy no está cumplida todavía, arrancamos a contar desde ayer.
   const fechaDe = (d) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  if (!cumplidas.has(fechaDe(cursor))) cursor.setDate(cursor.getDate() - 1);
 
-  while (cumplidas.has(fechaDe(cursor))) {
-    racha += 1;
+  /* Reglas (decididas por Lautaro, no negociables sin él):
+     - Se corta con DOS días seguidos sin misión principal.
+     - UN día salteado no rompe ni suma: la racha se sostiene
+       pero ese día no cuenta. El domingo de fútbol no te
+       borra la semana.
+     - El día en curso nunca juega en contra: si hoy todavía
+       no cumpliste, no es una falta — el día no terminó. */
+  let racha = 0;
+  let faltas = 0;
+
+  const cursor = new Date();
+  const hoyStr = fechaDe(cursor);
+  const hoyCumplida = cumplidas.has(hoyStr);
+  if (hoyCumplida) racha += 1;
+  cursor.setDate(cursor.getDate() - 1);
+
+  // Tope de seguridad de ~3 años de recorrido.
+  for (let i = 0; i < 1100; i++) {
+    const f = fechaDe(cursor);
+    if (cumplidas.has(f)) {
+      racha += 1;
+      faltas = 0;
+    } else {
+      faltas += 1;
+      if (faltas >= 2) break;
+    }
     cursor.setDate(cursor.getDate() - 1);
   }
-  return racha;
+
+  const ayer = new Date();
+  ayer.setDate(ayer.getDate() - 1);
+  const enRiesgo = racha > 0 && !hoyCumplida && !cumplidas.has(fechaDe(ayer));
+
+  return { racha, enRiesgo };
 }
 
 /* ------------------------------------------------------------
@@ -81,11 +106,14 @@ function armarContexto() {
 
   const hoyMis = data.misiones.hoy;
 
+  const infoRacha = calcularRacha();
+
   return {
     parcialProximo,               // { materia, fecha, dias } o null
     energiaBaja,
     principalCumplidaHoy: !!(hoyMis && hoyMis.principal && hoyMis.principal.completada),
-    racha: calcularRacha(),
+    racha: infoRacha.racha,
+    rachaEnRiesgo: infoRacha.enRiesgo,
     totalPrincipales,
     mesesJapon: Math.max(0, mesesJapon),
     diaSemana: ahora.getDay(),    // 0=domingo, 1=lunes...
@@ -258,6 +286,30 @@ function renderMensaje() {
 }
 
 /* ------------------------------------------------------------
+   El chip de racha, arriba de todo en HOY.
+   Tres estados, los tres mirando hacia adelante:
+   - viva: "🔥 N días de racha"
+   - en riesgo (ayer faltó): "se sostiene si cumplís hoy"
+   - en cero: "tu racha arranca con la misión de hoy"
+   Jamás "perdiste" ni "se cortó". Cero culpa, también acá.
+   ------------------------------------------------------------ */
+function renderRacha() {
+  const cont = document.getElementById("racha-hoy");
+  if (!cont) return;
+  const ctx = armarContexto();
+
+  if (ctx.racha === 0) {
+    cont.innerHTML = `<div class="racha racha--cero">🔥 Tu racha arranca con la misión de hoy</div>`;
+    return;
+  }
+  if (ctx.rachaEnRiesgo) {
+    cont.innerHTML = `<div class="racha racha--riesgo">🔥 ${ctx.racha} ${ctx.racha === 1 ? "día" : "días"} · se sostiene si cumplís hoy</div>`;
+    return;
+  }
+  cont.innerHTML = `<div class="racha">🔥 ${ctx.racha} ${ctx.racha === 1 ? "día" : "días"} de racha</div>`;
+}
+
+/* ------------------------------------------------------------
    Panel de parciales en la pestaña VOS.
    ------------------------------------------------------------ */
 function renderParciales() {
@@ -324,6 +376,7 @@ export function setDatosEngine(appData) {
   data = appData;
   renderParciales();
   renderMensaje();
+  renderRacha();
 }
 
 export function initEngine(appData) {
@@ -332,9 +385,13 @@ export function initEngine(appData) {
 
   // Si volvés a la app al día siguiente, el mensaje se renueva.
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") renderMensaje();
+    if (document.visibilityState === "visible") { renderMensaje(); renderRacha(); }
   });
+
+  // Completar o deshacer la misión mueve la racha al instante.
+  document.addEventListener("contexto-cambiado", renderRacha);
 
   renderParciales();
   renderMensaje();
+  renderRacha();
 }

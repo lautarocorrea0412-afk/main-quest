@@ -83,6 +83,14 @@ r(96, 58, 24, 3, C["gray"])            # teclado
 
 # ============ ITEMS COMPRABLES ============
 
+# El item de arranque (40 monedas): un cojín sobre la cama.
+# Chico, visible, y no choca con nada.
+g_open("cojin")
+r(22, 76, 9, 7, C["sakura"])
+r(22, 76, 9, 2, "#D4708A")             # sombra del pliegue
+r(25, 79, 3, 2, C["cream"])            # botón del centro
+g_close()
+
 g_open("alfombra")
 r(40, 96, 56, 20, C["sakura"])
 r(44, 100, 48, 12, "#E07A96")

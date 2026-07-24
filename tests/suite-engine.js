@@ -123,6 +123,54 @@ export function correr() {
     igual(contextoActual().racha, 4, "cumplir hoy la extiende");
   });
 
+  test("RACHA: un día salteado no rompe (regla de Lautaro)", () => {
+    const d = crearDatos(hoyLocal());
+    // Cumplió -3 y -2, faltó ayer (-1): la racha sobrevive.
+    d.misiones.historial = [
+      { fecha: hoyLocal(-3), principal: { completada: true } },
+      { fecha: hoyLocal(-2), principal: { completada: true } }
+    ];
+    setDatosEngine(d);
+    igual(contextoActual().racha, 2, "el domingo de fútbol no borra la semana");
+    igual(contextoActual().rachaEnRiesgo, true, "pero queda en riesgo hasta cumplir hoy");
+  });
+
+  test("RACHA: el día salteado no suma, solo perdona", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.historial = [
+      { fecha: hoyLocal(-4), principal: { completada: true } },
+      { fecha: hoyLocal(-3), principal: { completada: true } },
+      // -2 faltó
+      { fecha: hoyLocal(-1), principal: { completada: true } }
+    ];
+    setDatosEngine(d);
+    igual(contextoActual().racha, 3, "3 cumplidos, el hueco no cuenta como día");
+    igual(contextoActual().rachaEnRiesgo, false, "ayer cumplió: sin riesgo");
+  });
+
+  test("RACHA: dos días seguidos sin misión la cortan", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.historial = [
+      { fecha: hoyLocal(-5), principal: { completada: true } },
+      { fecha: hoyLocal(-4), principal: { completada: true } }
+      // -3 y -2 faltaron: corte. -1 tampoco, pero ya está cortada.
+    ];
+    d.misiones.hoy.principal = { titulo: "x", completada: true };
+    setDatosEngine(d);
+    igual(contextoActual().racha, 1, "solo cuenta hoy: lo anterior quedó del otro lado del corte");
+  });
+
+  test("RACHA: cumplir hoy saca el estado de riesgo", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.historial = [{ fecha: hoyLocal(-2), principal: { completada: true } }];
+    setDatosEngine(d);
+    igual(contextoActual().rachaEnRiesgo, true, "ayer faltó: en riesgo");
+    d.misiones.hoy.principal = { titulo: "x", completada: true };
+    setDatosEngine(d);
+    igual(contextoActual().rachaEnRiesgo, false, "cumplida hoy: asegurada");
+    igual(contextoActual().racha, 2, "y el hueco de ayer quedó perdonado");
+  });
+
   test("no cumplir todavía HOY no corta la racha", () => {
     const d = crearDatos(hoyLocal());
     d.misiones.historial = [{ fecha: hoyLocal(-1), principal: { completada: true } }];

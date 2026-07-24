@@ -460,11 +460,6 @@ nav {
 
 .secundaria__titulo { flex: 1; font-size: 15px; }
 
-.secundaria.hecha .secundaria__titulo {
-  color: var(--ink-dim);
-  text-decoration: line-through;
-}
-
 .secundaria__borrar {
   flex: none;
   background: none;
@@ -1080,6 +1075,119 @@ body.luz-noche {
 @keyframes idleBob {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-1.2px); }
+}
+
+/* ============ Entrega 2: racha y microanimaciones ============ */
+
+/* El chip de racha, arriba de HOY */
+.racha {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--oro);
+  background: var(--bg-panel);
+  border: 2px solid var(--oro);
+  border-radius: 999px;
+  padding: 6px 14px;
+  margin-bottom: 14px;
+  animation: viewIn 0.3s var(--bounce);
+}
+
+.racha--cero {
+  color: var(--ink-dim);
+  border-color: var(--line);
+}
+
+.racha--riesgo {
+  color: var(--sakura);
+  border-color: var(--sakura);
+}
+
+/* Progreso en logros bloqueados */
+.logro__prog {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.barra--mini {
+  display: inline-block;
+  flex: 1;
+  max-width: 130px;
+  height: 6px;
+  border-width: 1px;
+}
+
+.barra--mini .barra__fill { display: block; }
+
+.logro__prog-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+/* Barra elástica: el destello del momento de subir */
+.barra__fill--flash {
+  filter: brightness(1.6);
+  box-shadow: 0 0 12px rgba(255, 217, 142, 0.8);
+}
+
+/* Moneditas que vuelan a la billetera */
+.moneda-vuelo {
+  position: fixed;
+  z-index: 150;
+  font-size: 18px;
+  pointer-events: none;
+  transform: translate(0, 0) scale(1);
+  opacity: 1;
+  transition: transform 0.65s cubic-bezier(0.4, -0.1, 0.6, 1), opacity 0.65s ease;
+}
+
+/* Check de secundaria recién completada: pop + tachado suave.
+   Solo con .secundaria--anim (la pone missions.js UNA vez):
+   la animación pertenece al evento, no al estado. */
+.secundaria--anim .secundaria__check {
+  animation: checkPop 0.4s var(--bounce);
+}
+
+@keyframes checkPop {
+  0%   { transform: scale(0.6); }
+  55%  { transform: scale(1.35); }
+  100% { transform: scale(1.12); }
+}
+
+/* El tachado ahora es una línea que crece, no un switch */
+.secundaria.hecha .secundaria__titulo {
+  color: var(--ink-dim);
+  text-decoration: none;
+  background-image: linear-gradient(var(--ink-dim), var(--ink-dim));
+  background-repeat: no-repeat;
+  background-position: 0 58%;
+  background-size: 100% 2px;
+}
+
+.secundaria--anim.hecha .secundaria__titulo {
+  animation: tachar 0.35s ease-out;
+}
+
+@keyframes tachar {
+  from { background-size: 0% 2px; }
+  to   { background-size: 100% 2px; }
+}
+
+/* Prenda recién desbloqueada: el borde punteado se enciende */
+.opcion--nueva {
+  animation: opcionNueva 0.9s var(--bounce);
+}
+
+@keyframes opcionNueva {
+  0%   { border-color: var(--line); box-shadow: none; }
+  40%  { border-color: var(--oro); box-shadow: 0 0 14px rgba(255, 217, 142, 0.7); transform: scale(1.1); }
+  100% { border-color: var(--line); box-shadow: none; transform: scale(1); }
 }
 
 /* ============ Detalles ============ */
