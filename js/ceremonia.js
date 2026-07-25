@@ -1,46 +1,69 @@
 /* ============================================================
    MAIN QUEST — ceremonia.js
    ------------------------------------------------------------
-   "Tu rincón": la ceremonia de apertura, UNA vez por día.
+   "Tu rincón": la ceremonia de apertura. La firma visual de
+   la app, pensada como el inicio de un videojuego, no como
+   una pantalla de carga.
 
-   Por qué una vez por día y no en cada apertura: Lautaro abre
-   esta app cada mañana durante años. Todo lo que se meta entre
-   el tap y su misión es fricción, y la fricción diaria mata
-   las apps de hábito. Una vez por día no se gasta nunca, y
-   encima marca "arrancó el día", que es justo lo que la app
-   quiere hacer.
+   La secuencia (~3.8s, una sola idea: tu cuarto despertando):
+   0.0-0.6  oscuridad + un punto de luz cálido que late donde
+            va la lámpara. Su color ya es el de tu hora real.
+   0.6-2.0  el cuarto se enciende POR PARTES y en orden:
+            ventana → cama → escritorio → avatar. Cada cosa
+            entra con un rebote. Es "mi rincón despertando".
+   2.0-2.8  el avatar cobra vida: respira y hace UNA micro-
+            acción al azar (pestañea, mira al costado, ajusta
+            los hombros). Aleatoria: nunca es idéntica.
+   2.8-3.8  aparece MAIN QUEST y, debajo, una frase que el
+            motor elige según tu día. Disolvencia a HOY.
 
-   La secuencia (una sola idea encadenada, ~1.8s):
-   1. Pantalla oscura.
-   2. La espada del logo se dibuja píxel por píxel (booteo retro).
-   3. Ese último píxel SE TRANSFORMA en la luz de la lámpara.
-      El logo no termina y empieza otra cosa: el logo se vuelve
-      la luz. Si esa transición no se siente como una sola cosa,
-      la ceremonia falló.
-   4. El cuarto se enciende de abajo hacia arriba.
-   5. El avatar queda mirando al frente.
-
-   Decisiones tomadas (de las notas de Lautaro):
-   - NO es una pestaña: es un momento previo, sin tab bar.
-   - MUDA. En iOS el audio necesita un toque previo para
-     sonar, y esto arranca solo. Se diseña sin sonido.
-   - Salteable con un tap en cualquier momento.
-   - Respeta prefers-reduced-motion: si está activo, no hay
-     ceremonia (se lee del sistema, no necesita ajuste propio).
-   - El hanko NO se usa acá: es el premio por cumplir, si
-     también abriera la app dejaría de ser un momento ganado.
+   Decisiones (tomadas con Lautaro):
+   - Aparece SIEMPRE, salvo reapertura accidental (<30s).
+   - Salteable solo manteniendo apretado (no un tap): es una
+     ceremonia, no un obstáculo, pero el día apurado tenés
+     salida.
+   - Luz según la hora real (mañana/tarde/noche).
+   - Respeta prefers-reduced-motion: sin animación, va directo.
+   - Muda: en iOS el audio necesita un toque previo y esto
+     arranca solo.
    ============================================================ */
 
 import { save } from "./store.js";
 import { hoyISO } from "./util.js";
 import { dibujarAvatar } from "./avatar.js";
+import { franjaLuz } from "./util.js";
+import { fraseCeremonia } from "./engine.js";
 
 let data;
 
-/* ¿Corresponde la ceremonia? Solo la primera apertura del día.
+/* La ventana de gracia: si cerraste hace menos de esto, fue
+   sin querer y no repetimos la ceremonia. */
+const GRACIA_MS = 30000;
+const CLAVE_CIERRE = "mainquest_cerrada_en";
+
+/* Luz de la ceremonia según la hora. Más saturada que la luz
+   ambiente normal: acá la luz es protagonista. */
+const LUCES = {
+  manana: "#FFD98C",
+  tarde:  "#FFB067",
+  noche:  "#8FA2E8"
+};
+
+/* ¿Corresponde la ceremonia? Siempre, salvo que hayas cerrado
+   hace menos de 30 segundos (reapertura accidental).
    Exportada para testearse. */
-export function tocaCeremonia(datos, hoy = hoyISO()) {
-  return datos.perfil.ultima_ceremonia !== hoy;
+export function tocaCeremonia(ahora = Date.now(), storage = globalThis.localStorage) {
+  try {
+    const cerrada = Number(storage?.getItem(CLAVE_CIERRE) || 0);
+    if (cerrada && ahora - cerrada < GRACIA_MS) return false;
+  } catch { /* sin storage: que aparezca */ }
+  return true;
+}
+
+/* Registrar el cierre, para poder detectar la reapertura
+   accidental. Lo llama app.js al perder visibilidad. */
+export function registrarCierre(storage = globalThis.localStorage) {
+  try { storage?.setItem(CLAVE_CIERRE, String(Date.now())); } catch { /* nada */ }
 }
 
 function reduceMovimiento() {
@@ -48,108 +71,86 @@ function reduceMovimiento() {
     window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 }
 
-/* ------------------------------------------------------------
-   Marca la ceremonia como vista hoy. Se llama SIEMPRE que
-   correspondía, con o sin animación, así el que activó
-   "reducir movimiento" tampoco la ve dos veces.
-   ------------------------------------------------------------ */
-function marcarVista() {
-  data.perfil.ultima_ceremonia = hoyISO();
-  save(data);
-}
-
-/* La espada del logo, en píxeles. Cada rect es un "paso" del
-   booteo: se encienden en orden con un pequeño retraso. */
-const ESPADA = [
-  // [x, y, w, h] sobre una grilla de 40x40, centrada
-  [19, 4, 2, 20],   // hoja
-  [18, 6, 1, 16], [21, 6, 1, 16],
-  [16, 24, 8, 2],   // guarda
-  [14, 24, 2, 2], [24, 24, 2, 2],
-  [18, 26, 4, 6],   // empuñadura
-  [19, 32, 2, 3]    // pomo
-];
+/* Las micro-acciones del avatar: una se elige al azar cada
+   apertura, así la ceremonia nunca se siente calcada. */
+const ACCIONES = ["pestanear", "mirar", "hombros", "respirar"];
 
 /* ------------------------------------------------------------
-   Corre la ceremonia. Devuelve una promesa que se resuelve
-   cuando termina (o cuando el usuario la saltea), para que
-   el que la llama muestre la app recién después.
+   Corre la ceremonia. Promesa que se resuelve al terminar (o
+   al saltearla), para que app.js muestre HOY recién después.
    ------------------------------------------------------------ */
 export function correrCeremonia(datos) {
   data = datos;
 
-  // Sin animación: marcar y seguir de largo. La app aparece
-  // directo, sin ningún parpadeo.
-  if (reduceMovimiento()) {
-    marcarVista();
-    return Promise.resolve();
-  }
+  if (reduceMovimiento()) return Promise.resolve();
 
   return new Promise((resolve) => {
     let cerrada = false;
-    const cerrar = () => {
-      if (cerrada) return;
-      cerrada = true;
-      marcarVista();
-      overlay.classList.add("ceremonia--fin");
-      // El timeout de seguridad dura MÁS que la animación de
-      // salida (regla de la casa): si transitionend no llega,
-      // igual se limpia.
-      const quitar = () => { overlay.remove(); resolve(); };
-      overlay.addEventListener("transitionend", quitar, { once: true });
-      setTimeout(quitar, 600);
-    };
+    const franja = franjaLuz(new Date().getHours());
+    const luz = LUCES[franja];
+    const accion = ACCIONES[Math.floor(Math.random() * ACCIONES.length)];
 
     const overlay = document.createElement("div");
-    overlay.className = "ceremonia";
+    overlay.className = `ceremonia ceremonia--${franja}`;
+    overlay.style.setProperty("--luz-ceremonia", luz);
     overlay.setAttribute("role", "presentation");
 
-    const piezasEspada = ESPADA.map((_, i) =>
-      `<rect class="ceremonia__px" data-i="${i}" width="0" height="0" fill="#FBF0E4"/>`
-    ).join("");
-
     overlay.innerHTML = `
-      <div class="ceremonia__escena">
-        <svg class="ceremonia__logo" viewBox="0 0 40 40" shape-rendering="crispEdges" aria-hidden="true">
-          ${piezasEspada}
-        </svg>
-        <div class="ceremonia__cuarto" aria-hidden="true">
-          <div class="ceremonia__luz"></div>
-          <div class="ceremonia__avatar">${dibujarAvatar(1)}</div>
+      <div class="cer-escena">
+        <div class="cer-luz"></div>
+        <div class="cer-cuarto">
+          <div class="cer-ventana"></div>
+          <div class="cer-cama"></div>
+          <div class="cer-escritorio"></div>
+          <div class="cer-avatar cer-accion--${accion}">${dibujarAvatar(1)}</div>
         </div>
       </div>
-      <button class="ceremonia__saltar" type="button">Saltar</button>`;
+      <div class="cer-marca">
+        <div class="cer-logo">MAIN<span>/</span>QUEST</div>
+        <div class="cer-frase">${fraseCeremonia()}</div>
+      </div>
+      <div class="cer-saltar"><span>Mantené apretado para saltar</span></div>`;
 
     document.body.appendChild(overlay);
 
-    // Un tap en cualquier lado la saltea; el botón también.
-    overlay.onclick = cerrar;
+    const terminar = () => {
+      if (cerrada) return;
+      cerrada = true;
+      overlay.classList.add("cer-fin");
+      const quitar = () => { overlay.remove(); resolve(); };
+      overlay.addEventListener("transitionend", quitar, { once: true });
+      setTimeout(quitar, 700); // red de seguridad > animación de salida
+    };
 
-    /* --- La coreografía, con timeouts encadenados ---
-       No usamos librerías de animación: cada fase es una
-       clase que se agrega en su momento y el CSS hace el
-       resto. Fácil de leer, fácil de frenar. */
-    const px = [...overlay.querySelectorAll(".ceremonia__px")];
+    /* Saltar solo con MANTENER APRETADO (600ms). Un tap no
+       hace nada: la ceremonia no se saltea sin querer. */
+    let timerHold = null;
+    const saltar = overlay.querySelector(".cer-saltar");
+    const iniciarHold = (e) => {
+      e.preventDefault();
+      saltar.classList.add("cer-saltar--activo");
+      timerHold = setTimeout(terminar, 600);
+    };
+    const cancelarHold = () => {
+      saltar.classList.remove("cer-saltar--activo");
+      if (timerHold) { clearTimeout(timerHold); timerHold = null; }
+    };
+    saltar.addEventListener("pointerdown", iniciarHold);
+    saltar.addEventListener("pointerup", cancelarHold);
+    saltar.addEventListener("pointerleave", cancelarHold);
+    saltar.addEventListener("pointercancel", cancelarHold);
 
-    // Fase 1: la espada se dibuja píxel por píxel (~600ms)
-    px.forEach((rect, i) => {
-      setTimeout(() => {
-        const [x, y, w, h] = ESPADA[i];
-        rect.setAttribute("x", x);
-        rect.setAttribute("y", y);
-        rect.setAttribute("width", w);
-        rect.setAttribute("height", h);
-        rect.classList.add("on");
-      }, 60 * i);
+    /* La coreografía: clases que entran en su momento. El CSS
+       hace el resto. Sin librerías. */
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => overlay.classList.add("cer-luz-on"));
     });
-
-    // Fase 2: el logo se transforma en la luz de la lámpara
-    setTimeout(() => overlay.classList.add("ceremonia--luz"), 720);
-
-    // Fase 3: el cuarto se enciende de abajo hacia arriba
-    setTimeout(() => overlay.classList.add("ceremonia--cuarto"), 1050);
-
-    // Fase 4: cierre solo, salvo que ya la hayan salteado
-    setTimeout(cerrar, 1900);
+    setTimeout(() => overlay.classList.add("cer-p1"), 600);   // ventana
+    setTimeout(() => overlay.classList.add("cer-p2"), 900);   // cama
+    setTimeout(() => overlay.classList.add("cer-p3"), 1200);  // escritorio
+    setTimeout(() => overlay.classList.add("cer-p4"), 1550);  // avatar
+    setTimeout(() => overlay.classList.add("cer-viva"), 2100); // micro-acción
+    setTimeout(() => overlay.classList.add("cer-marca-on"), 2850); // logo + frase
+    setTimeout(terminar, 3800);
   });
 }

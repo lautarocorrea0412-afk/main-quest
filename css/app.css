@@ -1490,113 +1490,221 @@ body.modo-parcial .racha {
   justify-content: center;
 }
 
-/* ============ Ceremonia de apertura (Entrega 7A) ============
-   "Tu rincón". Toda la coreografía es CSS: js/ceremonia.js
-   solo agrega clases en su momento. Sin librerías. */
+/* ============ Ceremonia de apertura "Tu rincón" (7A v2) ============
+   La firma visual de la app. Toda la coreografía es CSS; el
+   JS solo agrega clases en su momento. Sin librerías. */
 
 .ceremonia {
   position: fixed;
   inset: 0;
   z-index: 500;
-  background: #17131C;
+  background: #13101A;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.ceremonia.cer-fin { opacity: 0; }
+
+/* --- La escena del cuarto --- */
+.cer-escena {
+  position: relative;
+  width: 260px;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 1;
-  transition: opacity 0.5s ease;
 }
 
-.ceremonia--fin { opacity: 0; }
+/* El punto de luz cálido que late, del color de tu hora */
+.cer-luz {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  margin-left: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--luz-ceremonia) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 1s ease, transform 1.4s ease;
+}
 
-.ceremonia__escena {
+.cer-luz-on .cer-luz {
+  opacity: 0.9;
+  transform: scale(1);
+  animation: cerLatido 2.4s ease-in-out infinite;
+}
+
+@keyframes cerLatido {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+
+/* A medida que avanza, la luz crece y baña todo el cuarto */
+.cer-p4 .cer-luz { transform: scale(3.4); opacity: 0.5; transition: transform 1.2s ease, opacity 1.2s ease; }
+
+.cer-cuarto {
   position: relative;
   width: 220px;
-  height: 260px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 240px;
 }
 
-/* --- La espada del logo --- */
-.ceremonia__logo {
+/* Cada parte del cuarto arranca apagada (oscura, sin escala)
+   y se enciende en su fase. Son bloques simples de color: la
+   ceremonia sugiere el cuarto, no lo redibuja pixel por pixel
+   (eso mantiene el rendimiento en el iPhone). */
+.cer-ventana, .cer-cama, .cer-escritorio, .cer-avatar {
   position: absolute;
-  width: 150px;
-  height: 150px;
-  z-index: 2;
-  filter: drop-shadow(0 0 0 rgba(255, 217, 142, 0));
-  transition: transform 0.5s ease, opacity 0.4s ease, filter 0.5s ease;
-}
-
-.ceremonia__px {
   opacity: 0;
-  transition: opacity 0.12s steps(1);
+  transition: opacity 0.5s ease, transform 0.5s var(--bounce);
 }
 
-.ceremonia__px.on { opacity: 1; }
-
-/* Fase 2: el logo se encoge hacia el punto de la lámpara y
-   se desvanece justo cuando la luz nace. La transformación
-   ES la transición: no desaparece y aparece otra cosa. */
-.ceremonia--luz .ceremonia__logo {
-  transform: translateY(-46px) scale(0.12);
-  opacity: 0;
-  filter: drop-shadow(0 0 20px rgba(255, 217, 142, 1));
+.cer-ventana {
+  top: 8px; left: 24px;
+  width: 70px; height: 60px;
+  border-radius: 6px;
+  background: var(--luz-ceremonia);
+  box-shadow: 0 0 24px var(--luz-ceremonia);
+  transform: translateY(-8px) scale(0.9);
 }
 
-.ceremonia--luz .ceremonia__luz { opacity: 1; transform: scale(1); }
-
-/* --- El cuarto --- */
-.ceremonia__cuarto {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+.cer-cama {
+  bottom: 20px; left: 6px;
+  width: 96px; height: 44px;
+  border-radius: 8px;
+  background: #4A3E58;
+  transform: translateY(10px) scale(0.9);
 }
 
-/* El halo de luz que nació del logo */
-.ceremonia__luz {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  width: 200px;
-  height: 200px;
-  margin-left: -100px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 216, 140, 0.55) 0%, rgba(255, 176, 103, 0.15) 40%, transparent 70%);
-  opacity: 0;
-  transform: scale(0.1);
-  transition: opacity 0.6s ease, transform 0.7s var(--bounce);
-  pointer-events: none;
+.cer-escritorio {
+  bottom: 40px; right: 6px;
+  width: 96px; height: 70px;
+  border-radius: 8px;
+  background: #3A3346;
+  transform: translateY(10px) scale(0.9);
 }
 
-/* El avatar aparece de abajo hacia arriba: un clip que sube */
-.ceremonia__avatar {
-  width: 120px;
-  opacity: 0;
-  clip-path: inset(100% 0 0 0);
-  transition: clip-path 0.7s ease, opacity 0.4s ease;
-  transform: translateY(-10px);
-}
-
-.ceremonia--cuarto .ceremonia__avatar {
-  opacity: 1;
-  clip-path: inset(0 0 0 0);
-}
-
-.ceremonia__saltar {
-  position: absolute;
-  bottom: calc(env(safe-area-inset-bottom) + 22px);
-  right: 22px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: rgba(251, 240, 228, 0.5);
-  background: none;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
+.cer-avatar {
+  bottom: 26px; left: 50%;
+  margin-left: -40px;
+  width: 80px;
+  transform: translateY(14px) scale(0.9);
   z-index: 3;
 }
+
+.cer-p1 .cer-ventana    { opacity: 1; transform: translateY(0) scale(1); }
+.cer-p2 .cer-cama       { opacity: 1; transform: translateY(0) scale(1); }
+.cer-p3 .cer-escritorio { opacity: 1; transform: translateY(0) scale(1); }
+.cer-p4 .cer-avatar     { opacity: 1; transform: translateY(0) scale(1); }
+
+/* El avatar cobra vida: respira siempre, y hace UNA micro-
+   acción (elegida al azar en JS) cuando entra .cer-viva. */
+.cer-viva .cer-avatar { animation: cerRespira 3s ease-in-out infinite; }
+
+@keyframes cerRespira {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-2px) scale(1.005); }
+}
+
+.cer-viva.cer-accion--pestanear .cer-avatar svg { animation: cerPestaneo 2.4s ease-in-out 1; }
+.cer-viva.cer-accion--mirar     .cer-avatar { animation: cerMira 2.4s ease-in-out 1, cerRespira 3s ease-in-out infinite; }
+.cer-viva.cer-accion--hombros   .cer-avatar { animation: cerHombros 1.6s ease-in-out 1, cerRespira 3s ease-in-out infinite; }
+/* "respirar" no agrega nada extra: es la variación más sutil */
+
+@keyframes cerPestaneo {
+  0%, 44%, 56%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1) contrast(1.1); }
+}
+@keyframes cerMira {
+  0%, 100% { transform: translateY(0) scale(1); }
+  30%, 55% { transform: translateY(0) translateX(3px) scale(1); }
+}
+@keyframes cerHombros {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-3px) scale(1); }
+}
+
+/* --- El logo y la frase --- */
+.cer-marca {
+  position: absolute;
+  bottom: 90px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.6s var(--bounce);
+}
+
+.cer-marca-on .cer-marca { opacity: 1; transform: translateY(0); }
+
+.cer-logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: 1px;
+  color: var(--ink);
+}
+
+.cer-logo span { color: var(--accent); margin: 0 1px; }
+
+.cer-frase {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--luz-ceremonia);
+  margin-top: 6px;
+  animation: cerFrase 0.6s ease 0.3s both;
+}
+
+@keyframes cerFrase {
+  from { opacity: 0; }
+  to   { opacity: 0.9; }
+}
+
+/* --- Mantener apretado para saltar --- */
+.cer-saltar {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + 26px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+  opacity: 0;
+  animation: cerFrase 0.5s ease 1.2s forwards;
+}
+
+.cer-saltar span {
+  position: relative;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(251, 240, 228, 0.4);
+}
+
+/* Al mantener apretado, una barrita se llena en 600ms: da
+   feedback de que el gesto está funcionando. */
+.cer-saltar span::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -6px;
+  height: 2px;
+  width: 0;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.cer-saltar--activo span::after {
+  width: 100%;
+  transition: width 0.6s linear;
+}
+
+.cer-saltar--activo span { color: rgba(251, 240, 228, 0.8); }
 
 /* ============ Detalles ============ */
 

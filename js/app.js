@@ -22,7 +22,7 @@ import { initLogros, setDatosLogros } from "./achievements.js";
 import { initHistoria, setDatosHistoria } from "./history.js";
 import { contextoActual } from "./engine.js";
 import { ICONOS_TAB } from "./iconos.js";
-import { correrCeremonia, tocaCeremonia } from "./ceremonia.js";
+import { correrCeremonia, tocaCeremonia, registrarCierre } from "./ceremonia.js";
 
 let data = load();
 
@@ -59,7 +59,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 7A · ceremonia · datos v" + data.version;
+    "MAIN QUEST · Entrega 7A-v2 · ceremonia · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -185,11 +185,17 @@ pintarIconosTab();
 aplicarLuzAmbiente();
 
 /* La ceremonia de apertura corre ANTES de que la app quede
-   usable, pero solo la primera vez del día. El resto de las
-   aperturas van directo a Hoy, sin fricción. */
-if (tocaCeremonia(data)) {
+   usable. Aparece siempre, salvo reapertura accidental
+   (cerraste hace menos de 30 segundos). */
+if (tocaCeremonia()) {
   correrCeremonia(data);
 }
+
+/* Al irte de la app, registramos la hora: si volvés en menos
+   de 30s, fue sin querer y no repetimos la ceremonia. */
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") registrarCierre();
+});
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
     aplicarLuzAmbiente();

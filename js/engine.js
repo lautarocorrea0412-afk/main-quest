@@ -358,6 +358,36 @@ function renderMensaje() {
      ayer para que la semana tenga variedad.
    Recibe la fecha para poder testearse con días fijos.
    ------------------------------------------------------------ */
+/* ------------------------------------------------------------
+   La frase de la ceremonia de apertura. La elige el motor
+   según tu día real, no al azar entre genéricas: la intro
+   deja de ser decoración y es la primera cosa útil del día.
+   Prioridad igual que los mensajes: energía > parcial >
+   racha > domingo > general (con variación diaria estable).
+   ------------------------------------------------------------ */
+export function fraseCeremonia(ahora = new Date()) {
+  if (!data) return "Tu rincón te espera";
+  const ctx = armarContexto();
+
+  if (ctx.energiaBaja) return "Hoy, sin exigirte de más";
+  if (ctx.parcialProximo) {
+    const p = ctx.parcialProximo;
+    if (p.dias <= 1) return `${p.materia}: ya casi`;
+    return `${p.materia} te espera`;
+  }
+  if (ctx.racha >= 3) return `${ctx.racha} días. Seguís`;
+  if (ahora.getDay() === 0) return "Planeá tu semana";
+
+  const genericas = [
+    "Hoy también cuenta",
+    "Tu historia continúa",
+    "Un día más, un paso más",
+    "Este es tu rincón",
+    "De a poco se construye"
+  ];
+  return genericas[hashDeTexto(hoyISO()) % genericas.length];
+}
+
 export function sugerirMision(ahora = new Date()) {
   // Red de seguridad: si alguien pregunta antes de que el
   // motor tenga datos, devolvemos null en vez de explotar.

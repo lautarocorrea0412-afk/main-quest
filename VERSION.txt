@@ -1,26 +1,39 @@
-Entrega 7A — Tu rincón: la ceremonia de apertura
-Caché SW: mq-entrega7a-ceremonia
-La app debe mostrar en VOS: 'Entrega 7A · ceremonia · datos v7'
+Entrega 7A v2 — Ceremonia "Tu rincón" rediseñada
+Caché SW: mq-entrega7a-v2-ceremonia
+La app debe mostrar en VOS: 'Entrega 7A-v2 · ceremonia · datos v7'
 
-DATA_VERSION sube a 7: el perfil recuerda el día de la última ceremonia
-(la ceremonia es 1 vez por día). Migración automática.
+Rediseño completo de la ceremonia según el pedido de Lautaro: ahora es
+la firma visual de la app, no una animación de carga.
 
-Nuevos:
-  js/ceremonia.js — la secuencia de apertura. Booteo pixel de la espada
-    del logo que SE TRANSFORMA en la luz de la lámpara; el cuarto se
-    enciende de abajo hacia arriba; el avatar queda al frente. ~1.8s.
+LA SECUENCIA (~3.8s):
+  0.0-0.6  oscuridad + punto de luz cálido que late (color según tu hora)
+  0.6-2.0  el cuarto se enciende POR PARTES: ventana → cama → escritorio → avatar
+  2.0-2.8  el avatar cobra vida: respira + UNA micro-acción al azar
+           (pestañea/mira/hombros) — nunca es idéntica
+  2.8-3.8  aparece MAIN QUEST + una frase que el motor elige según tu día
+           Disolvencia a HOY.
 
-Decisiones respetadas (notas de Lautaro):
-  - Una vez por día, no en cada apertura (la fricción diaria mata apps).
-  - MUDA: en iOS el audio necesita un toque previo, y esto arranca solo.
-  - Salteable con un tap en cualquier lado.
-  - Respeta prefers-reduced-motion: si está activo, sin ceremonia.
-  - El hanko NO se usa acá (es el premio por cumplir, no la puerta).
+DECISIONES (tomadas con Lautaro):
+  - Aparece SIEMPRE, salvo reapertura accidental: si cerraste hace menos
+    de 30 segundos, no se repite.
+  - Salteable SOLO manteniendo apretado 600ms (no un tap): ceremonia, no
+    obstáculo, pero el día apurado tenés salida. Barrita de progreso al
+    mantener.
+  - Luz según la hora real (mañana dorada / tarde ámbar / noche azul).
+  - La frase la elige el motor: parcial → "Anatomía te espera"; racha →
+    "5 días. Seguís"; domingo → "Planeá tu semana"; si no, genérica estable.
+  - Respeta prefers-reduced-motion (sin animación, directo a HOY).
+  - Muda (en iOS el audio necesita toque previo y esto arranca solo).
 
-Modificados: js/store.js (v7), js/app.js, css/app.css, sw.js,
-  tests/suite-store.js, tests/suite-ceremonia.js (nuevo)
+Modificados: js/ceremonia.js (reescrito), js/engine.js (fraseCeremonia),
+  js/app.js (ventana de gracia + registrar cierre), css/app.css (coreografía),
+  sw.js, tests/suite-ceremonia.js
 
-Entrega 7B (después): poses de entrada contextuales, pestañeo irregular,
-pelo con retraso. Se separó para no jugarse el rendimiento de una.
+Nota: el campo perfil.ultima_ceremonia (v7) quedó sin usar tras pasar de
+"1 vez por día" a "ventana de gracia". Se deja en el modelo por si sirve
+para estadísticas; no molesta.
 
-Suite: 98 tests. Todo en verde.
+Entrega 7B (después): más poses contextuales, pestañeo permanente en la
+app (no solo en la intro), pelo con retraso.
+
+Suite: 102 tests. Todo en verde.
