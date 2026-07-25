@@ -59,7 +59,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 7A-v2 · ceremonia · datos v" + data.version;
+    "MAIN QUEST · Entrega 7A-v3 · el regreso · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------

@@ -1,39 +1,35 @@
-Entrega 7A v2 — Ceremonia "Tu rincón" rediseñada
-Caché SW: mq-entrega7a-v2-ceremonia
-La app debe mostrar en VOS: 'Entrega 7A-v2 · ceremonia · datos v7'
+Entrega 7A v3 — Ceremonia "El regreso"
+Caché SW: mq-entrega7a-v3-regreso
+La app debe mostrar en VOS: 'Entrega 7A-v3 · el regreso · datos v7'
 
-Rediseño completo de la ceremonia según el pedido de Lautaro: ahora es
-la firma visual de la app, no una animación de carga.
+Rediseño narrativo completo: no es una intro que construye un cuarto,
+es un cuarto que YA ESTABA VIVO y al que volvés. Él ya estaba ahí.
 
-LA SECUENCIA (~3.8s):
-  0.0-0.6  oscuridad + punto de luz cálido que late (color según tu hora)
-  0.6-2.0  el cuarto se enciende POR PARTES: ventana → cama → escritorio → avatar
-  2.0-2.8  el avatar cobra vida: respira + UNA micro-acción al azar
-           (pestañea/mira/hombros) — nunca es idéntica
-  2.8-3.8  aparece MAIN QUEST + una frase que el motor elige según tu día
-           Disolvencia a HOY.
+LOS CUATRO TIEMPOS (~5s, después espera tu toque):
+  T1 (0-1.5s)  penumbra azul; el avatar YA está, de espaldas, mirando la
+               ventana, respirando. Polvo flotando. No aparece: lo descubrís.
+  T2 (1.5-2.8) EL WOW: prende la lámpara y la luz cálida se DERRAMA desde
+               ese punto, revelando el cuarto (nada de bloques cuadrados).
+               El polvo brilla dorado.
+  T3 (2.8-4s)  TE MIRA: la silueta de espaldas gira y llega la cara de
+               frente, con un giro. Cae sakura.
+  T4 (4-5s +)  la luz revela el PÓSTER de MAIN QUEST en la pared (idea C).
+               Tu frase contextual debajo. Y SE QUEDA: el cuarto sigue
+               vivo (respira, cortina, monitor, lámpara titila, pétalos)
+               esperando "Tocar para entrar". Vos decidís.
 
-DECISIONES (tomadas con Lautaro):
-  - Aparece SIEMPRE, salvo reapertura accidental: si cerraste hace menos
-    de 30 segundos, no se repite.
-  - Salteable SOLO manteniendo apretado 600ms (no un tap): ceremonia, no
-    obstáculo, pero el día apurado tenés salida. Barrita de progreso al
-    mantener.
-  - Luz según la hora real (mañana dorada / tarde ámbar / noche azul).
-  - La frase la elige el motor: parcial → "Anatomía te espera"; racha →
-    "5 días. Seguís"; domingo → "Planeá tu semana"; si no, genérica estable.
-  - Respeta prefers-reduced-motion (sin animación, directo a HOY).
-  - Muda (en iOS el audio necesita toque previo y esto arranca solo).
+  Al tocar: TRAVELLING hacia adelante (la cámara entra al cuarto) y funde
+  a HOY. No es un fade: entrás al juego.
 
-Modificados: js/ceremonia.js (reescrito), js/engine.js (fraseCeremonia),
-  js/app.js (ventana de gracia + registrar cierre), css/app.css (coreografía),
-  sw.js, tests/suite-ceremonia.js
+DECISIONES (con Lautaro):
+  - Aparece SIEMPRE, salvo reapertura accidental (<30s).
+  - NO desaparece sola: espera tu toque en "Tocar para entrar".
+  - Título = póster en la pared que la luz revela (idea C).
+  - Solo sakura + polvo, sin luciérnagas (rendimiento iPhone: 6 pétalos,
+    10 motas; se sienten sin trabar).
+  - Luz según la hora real. Respeta prefers-reduced-motion. Muda.
 
-Nota: el campo perfil.ultima_ceremonia (v7) quedó sin usar tras pasar de
-"1 vez por día" a "ventana de gracia". Se deja en el modelo por si sirve
-para estadísticas; no molesta.
-
-Entrega 7B (después): más poses contextuales, pestañeo permanente en la
-app (no solo en la intro), pelo con retraso.
+Modificados: js/ceremonia.js (reescrito), css/app.css (coreografía nueva),
+  js/app.js, sw.js
 
 Suite: 102 tests. Todo en verde.

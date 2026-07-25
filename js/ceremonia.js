@@ -1,34 +1,44 @@
 /* ============================================================
-   MAIN QUEST — ceremonia.js
+   MAIN QUEST — ceremonia.js  ·  "El regreso"
    ------------------------------------------------------------
-   "Tu rincón": la ceremonia de apertura. La firma visual de
-   la app, pensada como el inicio de un videojuego, no como
-   una pantalla de carga.
+   No es una intro que construye un cuarto. Es un cuarto que
+   YA ESTABA VIVO y al que volvés. La diferencia narrativa lo
+   es todo: no armás la escena, interrumpís una que ya estaba
+   pasando. Él ya estaba ahí. Vos llegaste.
 
-   La secuencia (~3.8s, una sola idea: tu cuarto despertando):
-   0.0-0.6  oscuridad + un punto de luz cálido que late donde
-            va la lámpara. Su color ya es el de tu hora real.
-   0.6-2.0  el cuarto se enciende POR PARTES y en orden:
-            ventana → cama → escritorio → avatar. Cada cosa
-            entra con un rebote. Es "mi rincón despertando".
-   2.0-2.8  el avatar cobra vida: respira y hace UNA micro-
-            acción al azar (pestañea, mira al costado, ajusta
-            los hombros). Aleatoria: nunca es idéntica.
-   2.8-3.8  aparece MAIN QUEST y, debajo, una frase que el
-            motor elige según tu día. Disolvencia a HOY.
+   Cuatro tiempos (~5s, después espera tu toque):
 
-   Decisiones (tomadas con Lautaro):
-   - Aparece SIEMPRE, salvo reapertura accidental (<30s).
-   - Salteable solo manteniendo apretado (no un tap): es una
-     ceremonia, no un obstáculo, pero el día apurado tenés
-     salida.
-   - Luz según la hora real (mañana/tarde/noche).
-   - Respeta prefers-reduced-motion: sin animación, va directo.
-   - Muda: en iOS el audio necesita un toque previo y esto
-     arranca solo.
+   T1 (0-1.5s) · YA HAY ALGUIEN. El cuarto en penumbra azul.
+      El avatar ya está, de espaldas, mirando la ventana,
+      respirando. No aparece: lo descubrís. Polvo flotando.
+
+   T2 (1.5-2.8s) · EL MOMENTO WOW. Prende la lámpara y la luz
+      cálida se DERRAMA desde ese punto, revelando el cuarto
+      como cuando prendés el velador. El polvo brilla dorado.
+
+   T3 (2.8-4s) · TE MIRA. Levanta la cabeza, gira despacio, te
+      mira. Ese giro es el vínculo. Cae sakura (de noche, más
+      lenta y tenue).
+
+   T4 (4-5s +) · EL TÍTULO Y TU DECISIÓN. La luz revela el
+      póster de MAIN QUEST en la pared. Tu frase debajo. Y la
+      ceremonia SE QUEDA: el cuarto sigue vivo (respira, la
+      cortina se mueve, cae alguna hoja, la lámpara titila),
+      esperando "Tocar para entrar". Vos decidís.
+
+   Al tocar: travelling hacia adelante (la cámara entra al
+   cuarto) y recién ahí aparece HOY. No un fade: entrás.
+
+   Decisiones (con Lautaro):
+   - Aparece SIEMPRE (toda apertura), salvo reapertura
+     accidental (<30s).
+   - No desaparece sola: espera tu toque.
+   - Luz según la hora real.
+   - Solo sakura, sin luciérnagas (rendimiento en iPhone).
+   - Respeta prefers-reduced-motion.
+   - Muda (en iOS el audio necesita toque previo).
    ============================================================ */
 
-import { save } from "./store.js";
 import { hoyISO } from "./util.js";
 import { dibujarAvatar } from "./avatar.js";
 import { franjaLuz } from "./util.js";
@@ -36,22 +46,15 @@ import { fraseCeremonia } from "./engine.js";
 
 let data;
 
-/* La ventana de gracia: si cerraste hace menos de esto, fue
-   sin querer y no repetimos la ceremonia. */
 const GRACIA_MS = 30000;
 const CLAVE_CIERRE = "mainquest_cerrada_en";
 
-/* Luz de la ceremonia según la hora. Más saturada que la luz
-   ambiente normal: acá la luz es protagonista. */
 const LUCES = {
   manana: "#FFD98C",
   tarde:  "#FFB067",
   noche:  "#8FA2E8"
 };
 
-/* ¿Corresponde la ceremonia? Siempre, salvo que hayas cerrado
-   hace menos de 30 segundos (reapertura accidental).
-   Exportada para testearse. */
 export function tocaCeremonia(ahora = Date.now(), storage = globalThis.localStorage) {
   try {
     const cerrada = Number(storage?.getItem(CLAVE_CIERRE) || 0);
@@ -60,8 +63,6 @@ export function tocaCeremonia(ahora = Date.now(), storage = globalThis.localStor
   return true;
 }
 
-/* Registrar el cierre, para poder detectar la reapertura
-   accidental. Lo llama app.js al perder visibilidad. */
 export function registrarCierre(storage = globalThis.localStorage) {
   try { storage?.setItem(CLAVE_CIERRE, String(Date.now())); } catch { /* nada */ }
 }
@@ -71,86 +72,109 @@ function reduceMovimiento() {
     window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 }
 
-/* Las micro-acciones del avatar: una se elige al azar cada
-   apertura, así la ceremonia nunca se siente calcada. */
-const ACCIONES = ["pestanear", "mirar", "hombros", "respirar"];
+/* Pocas partículas a propósito: 10 motas de polvo y 6 pétalos
+   se SIENTEN sin trabar el iPhone. No es un campo de mil
+   hojas; son las justas para que el cuarto respire. */
+function polvo(n = 10) {
+  let html = "";
+  for (let i = 0; i < n; i++) {
+    const x = Math.round(Math.random() * 100);
+    const y = Math.round(Math.random() * 100);
+    const d = (Math.random() * 3 + 3).toFixed(1);
+    const delay = (Math.random() * 4).toFixed(1);
+    html += `<span class="cer-mota" style="left:${x}%;top:${y}%;animation-duration:${d}s;animation-delay:${delay}s"></span>`;
+  }
+  return html;
+}
+
+function sakura(n = 6) {
+  let html = "";
+  for (let i = 0; i < n; i++) {
+    const x = Math.round(Math.random() * 100);
+    const d = (Math.random() * 4 + 5).toFixed(1);
+    const delay = (Math.random() * 5).toFixed(1);
+    html += `<span class="cer-petalo" style="left:${x}%;animation-duration:${d}s;animation-delay:${delay}s"></span>`;
+  }
+  return html;
+}
 
 /* ------------------------------------------------------------
-   Corre la ceremonia. Promesa que se resuelve al terminar (o
-   al saltearla), para que app.js muestre HOY recién después.
+   Corre la ceremonia. La promesa se resuelve cuando el
+   usuario TOCA para entrar (no sola), tras el travelling.
    ------------------------------------------------------------ */
 export function correrCeremonia(datos) {
   data = datos;
-
   if (reduceMovimiento()) return Promise.resolve();
 
   return new Promise((resolve) => {
-    let cerrada = false;
+    let entrado = false;
     const franja = franjaLuz(new Date().getHours());
     const luz = LUCES[franja];
-    const accion = ACCIONES[Math.floor(Math.random() * ACCIONES.length)];
 
     const overlay = document.createElement("div");
-    overlay.className = `ceremonia ceremonia--${franja}`;
+    overlay.className = `ceremonia cer-${franja}`;
     overlay.style.setProperty("--luz-ceremonia", luz);
     overlay.setAttribute("role", "presentation");
 
+    /* El avatar arranca DE ESPALDAS (mirando la ventana) y en
+       T3 gira al frente. Dos versiones: la de espaldas es una
+       silueta simple; la de frente es el avatar de siempre. */
     overlay.innerHTML = `
-      <div class="cer-escena">
-        <div class="cer-luz"></div>
+      <div class="cer-camara">
         <div class="cer-cuarto">
-          <div class="cer-ventana"></div>
+          <div class="cer-pared"></div>
+          <div class="cer-poster"><span>MAIN<b>/</b>QUEST</span></div>
+          <div class="cer-ventana">
+            <div class="cer-vidrio"></div>
+            <div class="cer-cortina"></div>
+          </div>
+          <div class="cer-lampara"></div>
+          <div class="cer-halo"></div>
           <div class="cer-cama"></div>
-          <div class="cer-escritorio"></div>
-          <div class="cer-avatar cer-accion--${accion}">${dibujarAvatar(1)}</div>
+          <div class="cer-escritorio"><span class="cer-monitor"></span></div>
+          <div class="cer-avatar">
+            <div class="cer-av-espaldas"></div>
+            <div class="cer-av-frente">${dibujarAvatar(1)}</div>
+          </div>
+          <div class="cer-polvo">${polvo()}</div>
+          <div class="cer-sakura">${sakura()}</div>
         </div>
       </div>
       <div class="cer-marca">
-        <div class="cer-logo">MAIN<span>/</span>QUEST</div>
         <div class="cer-frase">${fraseCeremonia()}</div>
       </div>
-      <div class="cer-saltar"><span>Mantené apretado para saltar</span></div>`;
+      <button class="cer-entrar" type="button">Tocar para entrar</button>`;
 
     document.body.appendChild(overlay);
 
-    const terminar = () => {
-      if (cerrada) return;
-      cerrada = true;
-      overlay.classList.add("cer-fin");
-      const quitar = () => { overlay.remove(); resolve(); };
-      overlay.addEventListener("transitionend", quitar, { once: true });
-      setTimeout(quitar, 700); // red de seguridad > animación de salida
+    const entrar = () => {
+      if (entrado) return;
+      entrado = true;
+      /* Travelling: la cámara AVANZA hacia el cuarto (zoom in)
+         y funde a HOY. No es un fade plano: entrás al juego. */
+      overlay.classList.add("cer-entrando");
+      const salir = () => { overlay.remove(); resolve(); };
+      overlay.addEventListener("transitionend", salir, { once: true });
+      setTimeout(salir, 1100); // red de seguridad > animación
     };
 
-    /* Saltar solo con MANTENER APRETADO (600ms). Un tap no
-       hace nada: la ceremonia no se saltea sin querer. */
-    let timerHold = null;
-    const saltar = overlay.querySelector(".cer-saltar");
-    const iniciarHold = (e) => {
-      e.preventDefault();
-      saltar.classList.add("cer-saltar--activo");
-      timerHold = setTimeout(terminar, 600);
-    };
-    const cancelarHold = () => {
-      saltar.classList.remove("cer-saltar--activo");
-      if (timerHold) { clearTimeout(timerHold); timerHold = null; }
-    };
-    saltar.addEventListener("pointerdown", iniciarHold);
-    saltar.addEventListener("pointerup", cancelarHold);
-    saltar.addEventListener("pointerleave", cancelarHold);
-    saltar.addEventListener("pointercancel", cancelarHold);
-
-    /* La coreografía: clases que entran en su momento. El CSS
-       hace el resto. Sin librerías. */
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => overlay.classList.add("cer-luz-on"));
+    const btn = overlay.querySelector(".cer-entrar");
+    // El botón aparece recién al final; hasta entonces no responde.
+    btn.addEventListener("click", entrar);
+    // Tocar en cualquier lado del cuarto ya revelado también entra.
+    overlay.querySelector(".cer-camara").addEventListener("click", () => {
+      if (overlay.classList.contains("cer-lista")) entrar();
     });
-    setTimeout(() => overlay.classList.add("cer-p1"), 600);   // ventana
-    setTimeout(() => overlay.classList.add("cer-p2"), 900);   // cama
-    setTimeout(() => overlay.classList.add("cer-p3"), 1200);  // escritorio
-    setTimeout(() => overlay.classList.add("cer-p4"), 1550);  // avatar
-    setTimeout(() => overlay.classList.add("cer-viva"), 2100); // micro-acción
-    setTimeout(() => overlay.classList.add("cer-marca-on"), 2850); // logo + frase
-    setTimeout(terminar, 3800);
+
+    /* La coreografía por tiempos. Clases que entran a su hora;
+       el CSS hace todo el resto. Sin librerías. */
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => overlay.classList.add("cer-t1")); // penumbra + silueta
+    });
+    setTimeout(() => overlay.classList.add("cer-lampara-on"), 1500); // WOW: prende la luz
+    setTimeout(() => overlay.classList.add("cer-revelado"), 1900);   // el cuarto se derrama
+    setTimeout(() => overlay.classList.add("cer-gira"), 2800);       // te mira
+    setTimeout(() => overlay.classList.add("cer-titulo"), 4000);     // póster + frase
+    setTimeout(() => overlay.classList.add("cer-lista"), 4700);      // "tocar para entrar"
   });
 }

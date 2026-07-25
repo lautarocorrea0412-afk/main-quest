@@ -1490,221 +1490,334 @@ body.modo-parcial .racha {
   justify-content: center;
 }
 
-/* ============ Ceremonia de apertura "Tu rincón" (7A v2) ============
-   La firma visual de la app. Toda la coreografía es CSS; el
-   JS solo agrega clases en su momento. Sin librerías. */
+/* ============ Ceremonia "El regreso" (7A v3) ============
+   Volvés a tu rincón, donde alguien ya estaba. Toda la
+   coreografía es CSS; el JS solo cambia clases. Sin librerías.
+   Pocas partículas a propósito: el iPhone tiene que volar. */
 
 .ceremonia {
   position: fixed;
   inset: 0;
   z-index: 500;
-  background: #13101A;
+  background: #0E0B14;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   opacity: 1;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.7s ease;
 }
 
-.ceremonia.cer-fin { opacity: 0; }
-
-/* --- La escena del cuarto --- */
-.cer-escena {
+/* --- La cámara: todo el cuarto vive acá dentro, para poder
+   hacer el travelling al final moviendo un solo elemento. --- */
+.cer-camara {
   position: relative;
-  width: 260px;
-  height: 300px;
+  width: 280px;
+  height: 320px;
+  transform: scale(1);
+  transition: transform 0.9s cubic-bezier(0.5, 0, 0.7, 1), opacity 0.7s ease;
+}
+
+/* Travelling final: la cámara AVANZA hacia el cuarto y funde */
+.cer-entrando .cer-camara { transform: scale(2.6); opacity: 0; }
+.cer-entrando { opacity: 0; transition: opacity 0.9s ease 0.2s; }
+
+.cer-cuarto {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #14101C;
+}
+
+/* Todo arranca en penumbra: un velo azul que la luz disipa */
+.cer-cuarto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #0A0812;
+  opacity: 0.88;
+  transition: opacity 1.4s ease;
+  z-index: 6;
+  pointer-events: none;
+}
+.cer-revelado .cer-cuarto::after { opacity: 0; }
+
+/* --- Pared, póster (el título vive acá) --- */
+.cer-pared { position: absolute; inset: 0; background: linear-gradient(160deg, #2A2438, #201A2C); }
+
+.cer-poster {
+  position: absolute;
+  top: 30px; left: 50%;
+  margin-left: -66px;
+  width: 132px; height: 54px;
+  border: 2px solid rgba(255, 217, 142, 0.25);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(255, 216, 140, 0.03);
+  opacity: 0.12;                 /* casi invisible en penumbra */
+  transition: opacity 1s ease, box-shadow 1s ease, transform 0.8s var(--bounce);
+  transform: scale(0.96);
+  z-index: 2;
 }
-
-/* El punto de luz cálido que late, del color de tu hora */
-.cer-luz {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  width: 60px;
-  height: 60px;
-  margin-left: -30px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--luz-ceremonia) 0%, transparent 70%);
-  opacity: 0;
-  transform: scale(0.4);
-  transition: opacity 1s ease, transform 1.4s ease;
-}
-
-.cer-luz-on .cer-luz {
-  opacity: 0.9;
+/* La luz de la lámpara REVELA el póster (idea C de Lautaro) */
+.cer-titulo .cer-poster {
+  opacity: 1;
   transform: scale(1);
-  animation: cerLatido 2.4s ease-in-out infinite;
+  box-shadow: 0 0 24px rgba(255, 216, 140, 0.35), inset 0 0 20px rgba(255, 216, 140, 0.12);
 }
-
-@keyframes cerLatido {
-  0%, 100% { opacity: 0.7; }
-  50%      { opacity: 1; }
-}
-
-/* A medida que avanza, la luz crece y baña todo el cuarto */
-.cer-p4 .cer-luz { transform: scale(3.4); opacity: 0.5; transition: transform 1.2s ease, opacity 1.2s ease; }
-
-.cer-cuarto {
-  position: relative;
-  width: 220px;
-  height: 240px;
-}
-
-/* Cada parte del cuarto arranca apagada (oscura, sin escala)
-   y se enciende en su fase. Son bloques simples de color: la
-   ceremonia sugiere el cuarto, no lo redibuja pixel por pixel
-   (eso mantiene el rendimiento en el iPhone). */
-.cer-ventana, .cer-cama, .cer-escritorio, .cer-avatar {
-  position: absolute;
-  opacity: 0;
-  transition: opacity 0.5s ease, transform 0.5s var(--bounce);
-}
-
-.cer-ventana {
-  top: 8px; left: 24px;
-  width: 70px; height: 60px;
-  border-radius: 6px;
-  background: var(--luz-ceremonia);
-  box-shadow: 0 0 24px var(--luz-ceremonia);
-  transform: translateY(-8px) scale(0.9);
-}
-
-.cer-cama {
-  bottom: 20px; left: 6px;
-  width: 96px; height: 44px;
-  border-radius: 8px;
-  background: #4A3E58;
-  transform: translateY(10px) scale(0.9);
-}
-
-.cer-escritorio {
-  bottom: 40px; right: 6px;
-  width: 96px; height: 70px;
-  border-radius: 8px;
-  background: #3A3346;
-  transform: translateY(10px) scale(0.9);
-}
-
-.cer-avatar {
-  bottom: 26px; left: 50%;
-  margin-left: -40px;
-  width: 80px;
-  transform: translateY(14px) scale(0.9);
-  z-index: 3;
-}
-
-.cer-p1 .cer-ventana    { opacity: 1; transform: translateY(0) scale(1); }
-.cer-p2 .cer-cama       { opacity: 1; transform: translateY(0) scale(1); }
-.cer-p3 .cer-escritorio { opacity: 1; transform: translateY(0) scale(1); }
-.cer-p4 .cer-avatar     { opacity: 1; transform: translateY(0) scale(1); }
-
-/* El avatar cobra vida: respira siempre, y hace UNA micro-
-   acción (elegida al azar en JS) cuando entra .cer-viva. */
-.cer-viva .cer-avatar { animation: cerRespira 3s ease-in-out infinite; }
-
-@keyframes cerRespira {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%      { transform: translateY(-2px) scale(1.005); }
-}
-
-.cer-viva.cer-accion--pestanear .cer-avatar svg { animation: cerPestaneo 2.4s ease-in-out 1; }
-.cer-viva.cer-accion--mirar     .cer-avatar { animation: cerMira 2.4s ease-in-out 1, cerRespira 3s ease-in-out infinite; }
-.cer-viva.cer-accion--hombros   .cer-avatar { animation: cerHombros 1.6s ease-in-out 1, cerRespira 3s ease-in-out infinite; }
-/* "respirar" no agrega nada extra: es la variación más sutil */
-
-@keyframes cerPestaneo {
-  0%, 44%, 56%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1) contrast(1.1); }
-}
-@keyframes cerMira {
-  0%, 100% { transform: translateY(0) scale(1); }
-  30%, 55% { transform: translateY(0) translateX(3px) scale(1); }
-}
-@keyframes cerHombros {
-  0%, 100% { transform: translateY(0) scale(1); }
-  40% { transform: translateY(-3px) scale(1); }
-}
-
-/* --- El logo y la frase --- */
-.cer-marca {
-  position: absolute;
-  bottom: 90px;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.6s ease, transform 0.6s var(--bounce);
-}
-
-.cer-marca-on .cer-marca { opacity: 1; transform: translateY(0); }
-
-.cer-logo {
+.cer-poster span {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 30px;
+  font-size: 21px;
   letter-spacing: 1px;
   color: var(--ink);
 }
+.cer-poster b { color: var(--luz-ceremonia); font-weight: 800; }
 
-.cer-logo span { color: var(--accent); margin: 0 1px; }
+/* --- Ventana con su luz y su cortina viva --- */
+.cer-ventana {
+  position: absolute;
+  top: 74px; left: 26px;
+  width: 74px; height: 88px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 3px solid #1A1526;
+  z-index: 2;
+}
+.cer-vidrio {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, var(--luz-ceremonia), #2A3550);
+  opacity: 0.5;
+}
+.cer-noche .cer-vidrio { background: linear-gradient(180deg, #2A3550, #14101C); opacity: 0.8; }
+.cer-cortina {
+  position: absolute; top: 0; right: 0;
+  width: 26px; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(60, 46, 74, 0.9));
+  animation: cerCortina 6s ease-in-out infinite;
+  transform-origin: top;
+}
+@keyframes cerCortina {
+  0%, 100% { transform: skewX(0deg); }
+  50%      { transform: skewX(-3deg) translateX(-2px); }
+}
 
+/* --- La lámpara y su halo: el MOMENTO WOW --- */
+.cer-lampara {
+  position: absolute;
+  top: 60px; right: 40px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #3A3346;
+  z-index: 4;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.cer-lampara-on .cer-lampara {
+  background: var(--luz-ceremonia);
+  box-shadow: 0 0 12px 4px var(--luz-ceremonia);
+  animation: cerTitila 3s ease-in-out infinite 1s;
+}
+@keyframes cerTitila {
+  0%, 100% { box-shadow: 0 0 12px 4px var(--luz-ceremonia); }
+  50%      { box-shadow: 0 0 16px 6px var(--luz-ceremonia); }
+}
+
+/* El halo de luz que se DERRAMA desde la lámpara y revela todo */
+.cer-halo {
+  position: absolute;
+  top: 66px; right: 46px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,216,140,0.5) 0%, rgba(255,176,103,0.14) 40%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.2);
+  transform-origin: center;
+  transition: opacity 1.1s ease, transform 1.3s cubic-bezier(0.3, 0.7, 0.4, 1);
+  z-index: 3;
+  pointer-events: none;
+}
+.cer-lampara-on .cer-halo { opacity: 1; transform: scale(16); }
+
+/* --- Muebles: no aparecen con bloques; los revela la luz.
+   Están siempre presentes, la penumbra los tapaba. --- */
+.cer-cama {
+  position: absolute;
+  bottom: 24px; left: 12px;
+  width: 104px; height: 46px;
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(180deg, #4A3E58, #3A3049);
+  z-index: 2;
+}
+.cer-escritorio {
+  position: absolute;
+  bottom: 40px; right: 14px;
+  width: 96px; height: 76px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #3A3346, #2E2838);
+  z-index: 2;
+}
+.cer-monitor {
+  position: absolute;
+  top: 14px; left: 18px;
+  width: 46px; height: 30px;
+  border-radius: 3px;
+  background: #1A1526;
+  transition: background 0.6s ease, box-shadow 0.6s ease;
+}
+/* Microvida: el monitor tiene un brillo tenue que respira */
+.cer-revelado .cer-monitor {
+  background: #2A3A4A;
+  box-shadow: 0 0 8px rgba(127, 196, 232, 0.4);
+  animation: cerMonitor 4s ease-in-out infinite;
+}
+@keyframes cerMonitor {
+  0%, 100% { box-shadow: 0 0 8px rgba(127, 196, 232, 0.35); }
+  50%      { box-shadow: 0 0 12px rgba(127, 196, 232, 0.55); }
+}
+
+/* --- El avatar: YA ESTABA. De espaldas primero, gira en T3 --- */
+.cer-avatar {
+  position: absolute;
+  bottom: 30px; left: 50%;
+  margin-left: -40px;
+  width: 80px; height: 130px;
+  z-index: 3;
+  animation: cerRespira 3.4s ease-in-out infinite;
+}
+@keyframes cerRespira {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2px); }
+}
+/* Silueta de espaldas: un bloque oscuro con forma de hombros
+   y cabeza, casi negro contra la ventana. */
+.cer-av-espaldas {
+  position: absolute;
+  bottom: 0; left: 50%;
+  margin-left: -22px;
+  width: 44px; height: 96px;
+  background: #17131F;
+  border-radius: 22px 22px 8px 8px;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+.cer-av-espaldas::before {
+  content: "";
+  position: absolute;
+  top: -6px; left: 50%;
+  margin-left: -32px;
+  width: 64px; height: 40px;
+  background: #17131F;
+  border-radius: 40px 40px 0 0;    /* la melena larga, en silueta */
+}
+.cer-av-frente {
+  position: absolute;
+  bottom: 0; left: 50%;
+  margin-left: -40px;
+  width: 80px;
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 0.6s ease;
+}
+/* T3: gira. La espalda se va, la cara llega, con un giro. */
+.cer-gira .cer-av-espaldas { opacity: 0; }
+.cer-gira .cer-av-frente { opacity: 1; animation: cerGiro 0.8s var(--bounce); }
+@keyframes cerGiro {
+  0%   { transform: scaleX(-0.6) scale(0.98); filter: brightness(0.4); }
+  50%  { transform: scaleX(0.3) scale(0.99); filter: brightness(0.7); }
+  100% { transform: scaleX(1) scale(1); filter: brightness(1); }
+}
+
+/* --- Partículas: polvo dorado en el haz + sakura cayendo --- */
+.cer-polvo, .cer-sakura {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.cer-revelado .cer-polvo { opacity: 1; }
+.cer-titulo .cer-sakura { opacity: 1; }
+
+.cer-mota {
+  position: absolute;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 220, 150, 0.8);
+  animation: cerFlota ease-in-out infinite;
+}
+@keyframes cerFlota {
+  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+  50%      { transform: translateY(-10px) translateX(4px); opacity: 0.9; }
+}
+
+.cer-petalo {
+  position: absolute;
+  top: -10px;
+  width: 8px; height: 8px;
+  background: var(--sakura);
+  border-radius: 0 100% 0 100%;
+  animation: cerCae linear infinite;
+  opacity: 0.85;
+}
+.cer-noche .cer-petalo { opacity: 0.5; }
+@keyframes cerCae {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.85; }
+  100% { transform: translateY(320px) rotate(320deg); opacity: 0; }
+}
+
+/* --- La marca (frase) y "tocar para entrar" --- */
+.cer-marca {
+  position: absolute;
+  bottom: 132px;
+  left: 0; right: 0;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.7s ease, transform 0.7s var(--bounce);
+  z-index: 10;
+}
+.cer-titulo .cer-marca { opacity: 1; transform: translateY(0); }
 .cer-frase {
   font-family: var(--font-body);
   font-size: 15px;
   color: var(--luz-ceremonia);
-  margin-top: 6px;
-  animation: cerFrase 0.6s ease 0.3s both;
 }
 
-@keyframes cerFrase {
-  from { opacity: 0; }
-  to   { opacity: 0.9; }
-}
-
-/* --- Mantener apretado para saltar --- */
-.cer-saltar {
+.cer-entrar {
   position: absolute;
-  bottom: calc(env(safe-area-inset-bottom) + 26px);
+  bottom: calc(env(safe-area-inset-bottom) + 46px);
   left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 18px;
+  transform: translateX(-50%) translateY(8px);
+  padding: 13px 30px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: var(--luz-ceremonia);
+  background: rgba(255, 216, 140, 0.06);
+  border: 2px solid var(--luz-ceremonia);
+  border-radius: 999px;
   cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
-  touch-action: none;
   opacity: 0;
-  animation: cerFrase 0.5s ease 1.2s forwards;
+  pointer-events: none;
+  z-index: 10;
+  -webkit-user-select: none; user-select: none;
 }
-
-.cer-saltar span {
-  position: relative;
-  font-family: var(--font-body);
-  font-size: 12px;
-  color: rgba(251, 240, 228, 0.4);
+.cer-lista .cer-entrar {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+  transition: opacity 0.6s ease, transform 0.6s var(--bounce);
+  animation: cerPulso 2.4s ease-in-out infinite 0.6s;
 }
-
-/* Al mantener apretado, una barrita se llena en 600ms: da
-   feedback de que el gesto está funcionando. */
-.cer-saltar span::after {
-  content: "";
-  position: absolute;
-  left: 0; bottom: -6px;
-  height: 2px;
-  width: 0;
-  background: var(--accent);
-  border-radius: 2px;
+@keyframes cerPulso {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 216, 140, 0); }
+  50%      { box-shadow: 0 0 20px 2px rgba(255, 216, 140, 0.3); }
 }
-
-.cer-saltar--activo span::after {
-  width: 100%;
-  transition: width 0.6s linear;
-}
-
-.cer-saltar--activo span { color: rgba(251, 240, 228, 0.8); }
 
 /* ============ Detalles ============ */
 
