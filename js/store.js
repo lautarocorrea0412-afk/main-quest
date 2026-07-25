@@ -18,9 +18,10 @@ const STORAGE_KEY = "mainquest_data";
    v4 — el perfil guarda el look del avatar
    v5 — el look suma el slot de accesorio
    v6 — el perfil recuerda la fecha del último backup
+   v7 — el perfil recuerda el día de la última ceremonia
    completarFaltantes() agrega los campos nuevos a los datos
    viejos, así que las migraciones son automáticas. */
-const DATA_VERSION = 6;
+const DATA_VERSION = 7;
 
 /* ------------------------------------------------------------
    Estado inicial (el "personaje nivel 1").
@@ -35,7 +36,8 @@ const DEFAULT_DATA = {
     // El look de arranque, tal como te describiste en el PRD:
     // pelo negro largo, ropa oversize.
     avatar: { pelo: "largo", remera: "oversize", pantalon: "jogging", accesorio: "ninguno" },
-    ultimo_backup: null // C-26: para avisar cuando pasó demasiado tiempo
+    ultimo_backup: null, // C-26: para avisar cuando pasó demasiado tiempo
+    ultima_ceremonia: null // Entrega 7: la ceremonia es 1 vez por día
   },
   arboles: {
     fitness:   { xp: 0, nivel: 1 },

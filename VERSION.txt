@@ -1,27 +1,26 @@
-Entrega 6 — Íconos propios (A-3) + separación de avatar.js (D-29)
-Caché SW: mq-entrega6-iconos
-La app debe mostrar en VOS: 'Entrega 6 · íconos · datos v6'
+Entrega 7A — Tu rincón: la ceremonia de apertura
+Caché SW: mq-entrega7a-ceremonia
+La app debe mostrar en VOS: 'Entrega 7A · ceremonia · datos v7'
 
-Sin cambios de estructura de datos: sigue en v6.
+DATA_VERSION sube a 7: el perfil recuerda el día de la última ceremonia
+(la ceremonia es 1 vez por día). Migración automática.
 
-D-29 — avatar.js partido en dos:
-  js/avatar-arte.js (nuevo, 481 líneas) — SOLO dibujo: paleta, peinados,
-    ropa, accesorios, expresiones. Ni una decisión ni una línea de DOM.
-  js/avatar.js (164 líneas) — SOLO lógica: desbloqueos, expresión según
-    contexto, ensamblado por capas, panel de personalización.
+Nuevos:
+  js/ceremonia.js — la secuencia de apertura. Booteo pixel de la espada
+    del logo que SE TRANSFORMA en la luz de la lámpara; el cuarto se
+    enciende de abajo hacia arriba; el avatar queda al frente. ~1.8s.
 
-A-3 — se fueron los emojis:
-  js/iconos-tienda.js (GENERADO por tools/gen_cuarto.py) — cada ícono de
-    la tienda se recorta del PROPIO SVG del cuarto: no se parece al
-    mueble, ES el mueble. Si un objeto se rediseña, su ícono cambia solo.
-  js/iconos.js (nuevo) — 6 íconos de árbol, 4 de pestaña y 17 de logro,
-    dibujados en pixel art sobre grilla de 12x12. Los de pestaña usan
-    currentColor: la activa se pinta sola de ámbar.
+Decisiones respetadas (notas de Lautaro):
+  - Una vez por día, no en cada apertura (la fricción diaria mata apps).
+  - MUDA: en iOS el audio necesita un toque previo, y esto arranca solo.
+  - Salteable con un tap en cualquier lado.
+  - Respeta prefers-reduced-motion: si está activo, sin ceremonia.
+  - El hanko NO se usa acá (es el premio por cumplir, no la puerta).
 
-D-30 — decisión pendiente de Lautaro (recomendación: no ampliar todavía;
-cuando toque, ampliar hacia ARRIBA a 200x150, no a lo ancho).
+Modificados: js/store.js (v7), js/app.js, css/app.css, sw.js,
+  tests/suite-store.js, tests/suite-ceremonia.js (nuevo)
 
-Modificados: js/economy.js, js/xp.js, js/achievements.js, js/app.js,
-  css/app.css, tools/gen_cuarto.py, sw.js, tests/suite-iconos.js (nuevo)
+Entrega 7B (después): poses de entrada contextuales, pestañeo irregular,
+pelo con retraso. Se separó para no jugarse el rendimiento de una.
 
-Suite: 94 tests. Todo en verde.
+Suite: 98 tests. Todo en verde.

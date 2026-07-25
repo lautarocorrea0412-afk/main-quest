@@ -15,7 +15,7 @@ export function correr() {
   test("usuario nuevo arranca en la versión actual y con los 6 árboles", () => {
     localStorage.clear();
     const d = load();
-    igual(d.version, 6, "versión inicial");
+    igual(d.version, 7, "versión inicial");
     igual(Object.keys(d.arboles).length, 6, "cantidad de árboles");
     igual(d.economia.monedas, 0, "monedas iniciales");
     assert(d.perfil.creado_en, "creado_en debe fijarse en el primer arranque");
@@ -37,7 +37,7 @@ export function correr() {
 
     const d = load();
 
-    igual(d.version, 6, "debe quedar migrado a la versión actual");
+    igual(d.version, 7, "debe quedar migrado a la versión actual");
     // Lo del usuario se respeta
     igual(d.economia.monedas, 999, "las monedas no se pisan");
     igual(d.arboles.fitness.nivel, 2, "el nivel ganado no se pierde");
@@ -49,6 +49,7 @@ export function correr() {
     igual(d.perfil.avatar.pelo, "largo", "el avatar se completa (v4)");
     igual(d.perfil.avatar.accesorio, "ninguno", "el accesorio se completa (v5)");
     igual(d.perfil.ultimo_backup, null, "el campo de backup se completa (v6)");
+    igual(d.perfil.ultima_ceremonia, null, "el campo de ceremonia se completa (v7)");
     assert(Array.isArray(d.logros), "logros se completa");
     assert(Array.isArray(d.timeline), "timeline se completa");
     assert(d.contexto.objetivo_japon.meta_usd === 10000, "objetivo Japón se completa");
@@ -59,7 +60,7 @@ export function correr() {
     localStorage.setItem("mainquest_data", JSON.stringify({ version: 2, economia: { monedas: 50 } }));
     load();
     const guardado = JSON.parse(localStorage.getItem("mainquest_data"));
-    igual(guardado.version, 6, "la versión migrada se guarda en disco");
+    igual(guardado.version, 7, "la versión migrada se guarda en disco");
     igual(guardado.economia.monedas, 50, "los datos del usuario siguen ahí");
   });
 
@@ -67,7 +68,7 @@ export function correr() {
     localStorage.clear();
     localStorage.setItem("mainquest_data", "{esto no es json valido");
     const d = load();
-    igual(d.version, 6, "cae al estado inicial");
+    igual(d.version, 7, "cae al estado inicial");
     igual(Object.keys(d.arboles).length, 6, "con todos los árboles");
   });
 

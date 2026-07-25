@@ -1490,6 +1490,114 @@ body.modo-parcial .racha {
   justify-content: center;
 }
 
+/* ============ Ceremonia de apertura (Entrega 7A) ============
+   "Tu rincón". Toda la coreografía es CSS: js/ceremonia.js
+   solo agrega clases en su momento. Sin librerías. */
+
+.ceremonia {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: #17131C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.ceremonia--fin { opacity: 0; }
+
+.ceremonia__escena {
+  position: relative;
+  width: 220px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- La espada del logo --- */
+.ceremonia__logo {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  z-index: 2;
+  filter: drop-shadow(0 0 0 rgba(255, 217, 142, 0));
+  transition: transform 0.5s ease, opacity 0.4s ease, filter 0.5s ease;
+}
+
+.ceremonia__px {
+  opacity: 0;
+  transition: opacity 0.12s steps(1);
+}
+
+.ceremonia__px.on { opacity: 1; }
+
+/* Fase 2: el logo se encoge hacia el punto de la lámpara y
+   se desvanece justo cuando la luz nace. La transformación
+   ES la transición: no desaparece y aparece otra cosa. */
+.ceremonia--luz .ceremonia__logo {
+  transform: translateY(-46px) scale(0.12);
+  opacity: 0;
+  filter: drop-shadow(0 0 20px rgba(255, 217, 142, 1));
+}
+
+.ceremonia--luz .ceremonia__luz { opacity: 1; transform: scale(1); }
+
+/* --- El cuarto --- */
+.ceremonia__cuarto {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* El halo de luz que nació del logo */
+.ceremonia__luz {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  margin-left: -100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 216, 140, 0.55) 0%, rgba(255, 176, 103, 0.15) 40%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.1);
+  transition: opacity 0.6s ease, transform 0.7s var(--bounce);
+  pointer-events: none;
+}
+
+/* El avatar aparece de abajo hacia arriba: un clip que sube */
+.ceremonia__avatar {
+  width: 120px;
+  opacity: 0;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 0.7s ease, opacity 0.4s ease;
+  transform: translateY(-10px);
+}
+
+.ceremonia--cuarto .ceremonia__avatar {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+}
+
+.ceremonia__saltar {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + 22px);
+  right: 22px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: rgba(251, 240, 228, 0.5);
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  z-index: 3;
+}
+
 /* ============ Detalles ============ */
 
 .meta {

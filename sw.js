@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega6-iconos";
+const CACHE_VERSION = "mq-entrega7a-ceremonia";
 
 const CORE = [
   "./",
@@ -29,6 +29,7 @@ const CORE = [
   "./js/avatar-arte.js",
   "./js/iconos.js",
   "./js/iconos-tienda.js",
+  "./js/ceremonia.js",
   "./js/achievements.js",
   "./js/history.js",
   "./js/progression.js",
