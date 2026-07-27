@@ -10,6 +10,7 @@ import { CATALOGO } from "../js/economy.js";
 import { LOGROS } from "../js/achievements.js";
 import { ARBOLES_META } from "../js/xp.js";
 import { PELOS, REMERAS, PANTALONES, ACCESORIOS } from "../js/avatar-arte.js";
+import { desbloqueada, setDatosAvatar } from "../js/avatar.js";
 
 const esSVG = (s) => typeof s === "string" && s.startsWith("<svg") && s.endsWith("</svg>");
 
@@ -74,6 +75,15 @@ export function correr() {
     igual(Object.keys(REMERAS).length, 11, "remeras y camperas");
     igual(Object.keys(PANTALONES).length, 3, "pantalones");
     igual(Object.keys(ACCESORIOS).length, 7, "accesorios (incluye 'ninguno')");
+  });
+
+  test("acordeón del avatar: conteo de desbloqueadas coherente", () => {
+    setDatosAvatar({ perfil: { avatar: { pelo: "largo", remera: "oversize", pantalon: "jogging", accesorio: "ninguno" } }, arboles: Object.fromEntries(["fitness","edicion","facultad","japones","finanzas","streaming"].map(k => [k, { xp: 0, nivel: 1 }])) });
+    const total = Object.keys(REMERAS).length;
+    assert(total >= 2, "hay varias remeras para coleccionar");
+    const desbloqueadas = Object.keys(REMERAS).filter((id) => desbloqueada(id)).length;
+    assert(desbloqueadas >= 1, "siempre hay al menos la inicial");
+    assert(desbloqueadas <= total, "nunca más desbloqueadas que el total");
   });
 
   test("cada pieza de arte sabe dibujarse", () => {

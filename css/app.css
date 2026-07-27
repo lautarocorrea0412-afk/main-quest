@@ -2063,6 +2063,83 @@ body.hoja-abierta { overflow: hidden; }
    la hoja misma la pone. */
 .camino--completo, .camino--scroll { max-height: none; }
 
+/* ============ Acordeón del avatar (Entrega 8d) ============
+   Cada categoría de ropa es una fila que se despliega in-place:
+   el avatar de arriba queda visible mientras te probás. Antes
+   las cuatro grillas se apilaban en un chorizo vertical. */
+
+.cat {
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.cat--abierta { border-color: var(--accent); }
+
+.cat__cab {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  text-align: left;
+}
+
+.cat__titulo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ink);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* El resumen: qué tenés puesto y cuántas desbloqueaste */
+.cat__resumen {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--ink-dim);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cat__flecha {
+  flex: none;
+  color: var(--accent);
+  font-size: 12px;
+}
+
+/* Puntito de prenda nueva sin ver */
+.cat__punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sakura);
+  box-shadow: 0 0 6px var(--sakura);
+}
+
+/* La grilla que se despliega, con una entrada suave */
+.cat .opciones {
+  padding: 4px 14px 14px;
+  animation: catAbre 0.28s var(--bounce);
+}
+
+@keyframes catAbre {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ============ Detalles ============ */
 
 .meta {

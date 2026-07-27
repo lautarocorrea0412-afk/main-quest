@@ -103,6 +103,11 @@ function opcionesHTML(grupo, coleccion, actual, nuevas = []) {
    que entran con destello. Evento, no estado. */
 let desbloqueadasAntes = null;
 
+/* Qué categorías del acordeón están desplegadas. Estado de
+   pantalla (no se guarda): al re-renderizar tras elegir una
+   prenda, las que estaban abiertas siguen abiertas. */
+const abiertasCat = new Set();
+
 export function renderAvatar() {
   const gesto = expresionAutomatica();
   const vista = document.getElementById("avatar-preview");
@@ -123,15 +128,53 @@ export function renderAvatar() {
     : [];
   desbloqueadasAntes = ahora;
 
-  panel.innerHTML = `
-    <p class="diario-pregunta">Peinado</p>
-    <div class="opciones">${opcionesHTML("pelo", PELOS, a.pelo)}</div>
-    <p class="diario-pregunta">Ropa</p>
-    <div class="opciones">${opcionesHTML("remera", REMERAS, a.remera, nuevas)}</div>
-    <p class="diario-pregunta">Pantalón</p>
-    <div class="opciones">${opcionesHTML("pantalon", PANTALONES, a.pantalon, nuevas)}</div>
-    <p class="diario-pregunta">Accesorio</p>
-    <div class="opciones">${opcionesHTML("accesorio", ACCESORIOS, a.accesorio, nuevas)}</div>`;
+  // Cada categoría es una fila de acordeón: se toca y despliega
+  // SOLO su grilla, sin empujar toda la sección hacia abajo. El
+  // avatar de arriba queda siempre a la vista mientras te probás.
+  // Pueden quedar varias abiertas a la vez (decisión de Lautaro).
+  panel.innerHTML = [
+    categoriaHTML("pelo", "Peinado", PELOS, a.pelo, nuevas),
+    categoriaHTML("remera", "Ropa", REMERAS, a.remera, nuevas),
+    categoriaHTML("pantalon", "Pantalón", PANTALONES, a.pantalon, nuevas),
+    categoriaHTML("accesorio", "Accesorio", ACCESORIOS, a.accesorio, nuevas)
+  ].join("");
+
+  // onclick directo en cada cabecera (la regla de la casa).
+  for (const cab of panel.querySelectorAll("[data-cat]")) {
+    cab.onclick = () => {
+      const cat = cab.dataset.cat;
+      abiertasCat.has(cat) ? abiertasCat.delete(cat) : abiertasCat.add(cat);
+      renderAvatar();
+    };
+  }
+}
+
+/* Cuántas prendas de la categoría tenés desbloqueadas, y cuál
+   está puesta ahora: eso resume la fila cuando está cerrada. */
+function categoriaHTML(grupo, titulo, coleccion, actual, nuevas) {
+  const abierta = abiertasCat.has(grupo);
+  const ids = Object.keys(coleccion);
+  const desbloq = ids.filter((id) => desbloqueada(id)).length;
+  const nombreActual = (coleccion[actual] && coleccion[actual].nombre) || "—";
+  // Un puntito si hay prendas nuevas sin ver en esta categoría.
+  const hayNueva = ids.some((id) => nuevas.includes(id));
+
+  return `
+    <div class="cat ${abierta ? "cat--abierta" : ""}">
+      <button type="button" class="cat__cab" data-cat="${grupo}">
+        <span class="cat__titulo">${titulo}${hayNueva ? '<span class="cat__punto"></span>' : ""}</span>
+        <span class="cat__resumen">${escaparTexto(nombreActual)} · ${desbloq}/${ids.length}</span>
+        <span class="cat__flecha">${abierta ? "▾" : "▸"}</span>
+      </button>
+      ${abierta ? `<div class="opciones">${opcionesHTML(grupo, coleccion, actual, nuevas)}</div>` : ""}
+    </div>`;
+}
+
+/* Escape mínimo para los nombres de prenda en el resumen. */
+function escaparTexto(s) {
+  return String(s).replace(/[&<>"]/g, (c) => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]
+  ));
 }
 
 function accion(e) {

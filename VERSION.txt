@@ -1,31 +1,27 @@
-Entrega 8c — Distribución: hoja deslizable para Japón e Historia
-Caché SW: mq-entrega8c-distribucion
-La app debe mostrar en VOS: 'Entrega 8c · distribución · datos v9'
+Entrega 8d — Avatar en acordeón (mismo criterio de distribución)
+Caché SW: mq-entrega8d-avatar
+La app debe mostrar en VOS: 'Entrega 8d · avatar acordeón · datos v9'
 
-Sin cambios de datos ni de funcionalidad: solo distribución y experiencia.
-Tomando la sección Avatar como referencia (lo importante visible, el
-detalle a un toque), se resolvió que Japón e Historia crecían hacia abajo
-y volvían la pestaña VOS interminable.
+Sin cambios de datos ni de funcionalidad: solo distribución.
 
-NUEVO COMPONENTE COMPARTIDO — js/ui.js abrirHoja():
-  Una hoja que sube desde abajo (bottom sheet), como las apps nativas.
-  El detalle se abre ENCIMA, ocupa solo lo necesario, con su propio
-  scroll. La página principal queda compacta e intacta. Se cierra con la
-  X, tocando el fondo, o arrastrando hacia abajo.
+EL PROBLEMA: las cuatro grillas de ropa (Peinado, Ropa, Pantalón,
+Accesorio) se apilaban en un chorizo vertical enorme, sobre todo con
+muchas prendas desbloqueadas.
 
-JAPÓN:
-  - El panel principal queda compacto: barra protagonista (sin tocar) +
-    últimos 3 movimientos del camino.
-  - "Ver todo el camino" abre la hoja con el recorrido completo, en vez
-    de expandir la página.
+LA SOLUCIÓN: acordeón in-place (NO hoja, a diferencia de Japón/Historia).
+Cada categoría es una fila que se toca y despliega SOLO su grilla, con el
+avatar de arriba siempre visible mientras te probás ropa. Se eligió
+acordeón y no hoja justamente porque acá estás eligiendo activamente:
+tenés que ver el resultado en el muñeco al instante.
 
-HISTORIA:
-  - La pestaña VOS muestra un resumen: los últimos 5 días.
-  - "Ver toda tu historia" abre la hoja con todo el recorrido, cargado
-    por bloques de 10 (scroll interno, "Ver más días" dentro de la hoja).
-  - El diario de cada día se sigue desplegando, en el resumen y en la hoja.
+  - Cada fila cerrada resume: qué tenés puesto y cuántas desbloqueaste
+    (ej: "Haori · 3/11").
+  - Pueden quedar VARIAS abiertas a la vez (decisión de Lautaro).
+  - Puntito rosa en la categoría con prendas nuevas sin ver.
+  - Al elegir una prenda, las categorías abiertas siguen abiertas
+    (el estado no se pierde en el re-render).
 
-Modificados: js/ui.js (abrirHoja), js/japon.js, js/history.js,
-  css/app.css, sw.js, js/app.js, tests/suite-distribucion.js (nuevo)
+Modificados: js/avatar.js, css/app.css, sw.js, js/app.js,
+  tests/suite-iconos.js
 
-Suite: 114 tests. Todo en verde.
+Suite: 115 tests. Todo en verde.
