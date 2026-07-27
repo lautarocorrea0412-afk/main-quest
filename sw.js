@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega8b-japon";
+const CACHE_VERSION = "mq-entrega8c-distribucion";
 
 const CORE = [
   "./",

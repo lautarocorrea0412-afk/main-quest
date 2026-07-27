@@ -1974,6 +1974,95 @@ body:not(.cargando) #telon { opacity: 0; }
 }
 .jceleb-cerrar:active { transform: translateY(4px); box-shadow: 0 1px 0 #C9A85F; }
 
+/* ============ Hoja deslizable / bottom sheet (Entrega 8c) ============
+   El detalle se abre ENCIMA, no expandiendo la página. Sube
+   desde abajo como las apps nativas: la pantalla principal
+   queda compacta e intacta. */
+
+.hoja-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 550;
+  background: rgba(14, 11, 20, 0);
+  transition: background 0.35s ease;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.hoja-fondo--on { background: rgba(14, 11, 20, 0.6); }
+
+/* Bloquea el scroll del fondo mientras la hoja está abierta */
+body.hoja-abierta { overflow: hidden; }
+
+.hoja {
+  width: 100%;
+  max-width: 520px;
+  max-height: 82vh;
+  background: var(--bg-panel);
+  border-radius: 22px 22px 0 0;
+  border-top: 2px solid var(--line);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0.3, 1);
+  padding-bottom: env(safe-area-inset-bottom);
+  touch-action: none;
+}
+.hoja-fondo--on .hoja { transform: translateY(0); }
+
+/* El tirador: la manija visual para arrastrar hacia abajo */
+.hoja__tirador {
+  width: 42px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--line);
+  margin: 10px auto 4px;
+  flex: none;
+}
+
+.hoja__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 18px 12px;
+  border-bottom: 2px solid var(--line);
+  flex: none;
+}
+
+.hoja__titulo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.hoja__cerrar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--bg-raise);
+  color: var(--ink-dim);
+  font-size: 14px;
+  cursor: pointer;
+  flex: none;
+}
+.hoja__cerrar:active { transform: scale(0.92); }
+
+/* El cuerpo es lo único que scrollea */
+.hoja__cuerpo {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 18px 24px;
+  touch-action: pan-y;
+}
+
+/* Dentro de la hoja, el camino ya no necesita altura tope:
+   la hoja misma la pone. */
+.camino--completo, .camino--scroll { max-height: none; }
+
 /* ============ Detalles ============ */
 
 .meta {

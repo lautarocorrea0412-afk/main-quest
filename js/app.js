@@ -52,7 +52,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 8b · Japón · datos v" + data.version;
+    "MAIN QUEST · Entrega 8c · distribución · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------

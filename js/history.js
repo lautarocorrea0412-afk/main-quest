@@ -18,10 +18,12 @@
    ============================================================ */
 
 import { escapar } from "./util.js";
+import { abrirHoja } from "./ui.js";
 
 let data;
-let mostrando = 7;      // días visibles (estado de pantalla, no se guarda)
-const PASO = 7;
+const RESUMEN = 5;          // días en el resumen de la pestaña VOS
+const PASO = 10;            // días por bloque dentro de la hoja
+let mostrandoHoja = PASO;   // cuántos días muestra la hoja (crece por bloques)
 const abiertos = new Set(); // días con el diario desplegado
 
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
@@ -165,11 +167,27 @@ export function renderHistoria() {
     return;
   }
 
-  const visibles = dias.slice(0, mostrando);
+  // La pestaña VOS muestra un RESUMEN limpio (últimos días).
+  // El recorrido completo se abre en una hoja, sin alargar la
+  // página. Ese era el problema: la historia crecía sin fin.
+  const html = bloqueDias(dias.slice(0, RESUMEN));
+
+  const boton = dias.length > RESUMEN
+    ? `<button class="btn btn--ghost" id="hist-ver-todo">Ver toda tu historia (${dias.length} días) →</button>`
+    : "";
+
+  cont.innerHTML = html + boton;
+  cablearDias(cont);
+
+  const verTodo = document.getElementById("hist-ver-todo");
+  if (verTodo) verTodo.onclick = abrirHistoriaCompleta;
+}
+
+/* Arma el HTML de una lista de días con sus separadores de mes. */
+function bloqueDias(dias) {
   let html = "";
   let mesActual = null;
-
-  for (const d of visibles) {
+  for (const d of dias) {
     const p = partes(d.fecha);
     const clave = `${p.anio}-${p.mes}`;
     if (clave !== mesActual) {
@@ -178,25 +196,42 @@ export function renderHistoria() {
     }
     html += tarjetaDia(d);
   }
+  return html;
+}
 
-  if (dias.length > mostrando) {
-    const faltan = Math.min(PASO, dias.length - mostrando);
-    html += `<button class="btn btn--ghost" id="btn-ver-mas">Ver ${faltan} día${faltan > 1 ? "s" : ""} más</button>`;
-  }
-
-  cont.innerHTML = html;
-
-  // onclick directo en todo lo tocable, la regla de la casa.
-  const btn = document.getElementById("btn-ver-mas");
-  if (btn) btn.onclick = () => { mostrando += PASO; renderHistoria(); };
-
+/* Cablea el despliegue del diario en cada día (regla de la casa:
+   onclick directo, sin delegación). Recibe el contenedor donde
+   están las tarjetas (la pestaña o la hoja). */
+function cablearDias(cont, alTocar) {
   for (const t of cont.querySelectorAll("[data-dia]")) {
     t.onclick = () => {
       const f = t.dataset.dia;
       abiertos.has(f) ? abiertos.delete(f) : abiertos.add(f);
-      renderHistoria();
+      if (alTocar) alTocar();
     };
   }
+}
+
+/* La hoja con TODA la historia, cargada por bloques (scroll
+   interno). "Ver más" agrega otro bloque sin salir de la hoja. */
+function abrirHistoriaCompleta() {
+  const dias = armarHistoria(data);
+  mostrandoHoja = PASO;
+
+  const pintar = (cuerpo) => {
+    const visibles = dias.slice(0, mostrandoHoja);
+    let html = bloqueDias(visibles);
+    if (dias.length > mostrandoHoja) {
+      html += `<button class="btn btn--ghost" id="hist-hoja-mas">Ver más días</button>`;
+    }
+    cuerpo.innerHTML = html;
+
+    cablearDias(cuerpo, () => pintar(cuerpo));
+    const mas = cuerpo.querySelector("#hist-hoja-mas");
+    if (mas) mas.onclick = () => { mostrandoHoja += PASO; pintar(cuerpo); };
+  };
+
+  abrirHoja("Tu historia", "", pintar);
 }
 
 /* ===================== API ===================== */

@@ -1,29 +1,31 @@
-Entrega 8b — Japón: camino de viaje + ceremonia de llegada
-Caché SW: mq-entrega8b-japon
-La app debe mostrar en VOS: 'Entrega 8b · Japón · datos v9'
+Entrega 8c — Distribución: hoja deslizable para Japón e Historia
+Caché SW: mq-entrega8c-distribucion
+La app debe mostrar en VOS: 'Entrega 8c · distribución · datos v9'
 
-DATA_VERSION sube a 9: el objetivo Japón recuerda el día que se cumplió
-(cumplido_en), para que la ceremonia de llegada pase UNA sola vez.
-La barra de progreso NO se tocó (quedó como estaba, a pedido).
+Sin cambios de datos ni de funcionalidad: solo distribución y experiencia.
+Tomando la sección Avatar como referencia (lo importante visible, el
+detalle a un toque), se resolvió que Japón e Historia crecían hacia abajo
+y volvían la pestaña VOS interminable.
 
-1. HISTORIAL "CAMINO A JAPÓN":
-   - Cada aporte es una parada en una ruta vertical con nudos.
-   - Muestra fecha, monto y TOTAL ACUMULADO en ese punto.
-   - 3 paradas por defecto; "Ver todo el camino" despliega una lista con
-     scroll interno (altura fija) del primero al último.
-   - El nudo actual va destacado con glow.
+NUEVO COMPONENTE COMPARTIDO — js/ui.js abrirHoja():
+  Una hoja que sube desde abajo (bottom sheet), como las apps nativas.
+  El detalle se abre ENCIMA, ocupa solo lo necesario, con su propio
+  scroll. La página principal queda compacta e intacta. Se cierra con la
+  X, tocando el fondo, o arrastrando hacia abajo.
 
-2. CEREMONIA DE LLEGADA A USD 10.000 (una vez en la vida de la app):
-   - El aporte que cruza la meta la dispara sola.
-   - Resplandor dorado que baña la pantalla, sakura cayendo por todos
-     lados, torii, "Japón desbloqueado" y la frase:
-     "Una misión cumplida. El próximo capítulo empieza lejos de casa."
-   - Queda para siempre en Tu historia (evento japon-meta con ⛩️).
-   - Se marca con cumplido_en: no se puede repetir aunque bajes y vuelvas
-     a subir el ahorro.
-   - Respeta prefers-reduced-motion (queda el cartel, sin animación).
+JAPÓN:
+  - El panel principal queda compacto: barra protagonista (sin tocar) +
+    últimos 3 movimientos del camino.
+  - "Ver todo el camino" abre la hoja con el recorrido completo, en vez
+    de expandir la página.
 
-Modificados: js/japon.js, js/store.js (v9), js/history.js, css/app.css,
-  sw.js, tests/helpers.js, tests/suite-store.js, tests/suite-japon.js
+HISTORIA:
+  - La pestaña VOS muestra un resumen: los últimos 5 días.
+  - "Ver toda tu historia" abre la hoja con todo el recorrido, cargado
+    por bloques de 10 (scroll interno, "Ver más días" dentro de la hoja).
+  - El diario de cada día se sigue desplegando, en el resumen y en la hoja.
 
-Suite: 111 tests. Todo en verde.
+Modificados: js/ui.js (abrirHoja), js/japon.js, js/history.js,
+  css/app.css, sw.js, js/app.js, tests/suite-distribucion.js (nuevo)
+
+Suite: 114 tests. Todo en verde.

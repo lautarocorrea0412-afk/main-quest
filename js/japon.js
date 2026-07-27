@@ -17,6 +17,7 @@
 
 import { save } from "./store.js";
 import { hoyISO, escapar, diasHasta } from "./util.js";
+import { abrirHoja } from "./ui.js";
 
 let data;
 
@@ -147,15 +148,14 @@ export function renderJapon() {
   if (input) input.onkeydown = (ev) => { if (ev.key === "Enter") sumar(); };
 
   const toggle = document.getElementById("japon-toggle");
-  if (toggle) toggle.onclick = () => { historialAbierto = !historialAbierto; renderJapon(); };
+  if (toggle) toggle.onclick = abrirCaminoCompleto;
 }
 
 /* El historial como CAMINO de viaje: cada aporte es una parada
    en una ruta que sube hacia Japón, con el total acumulado en
-   ese punto. Muestra 3 por defecto (altura fija); se despliega
-   a una lista con scroll interno para ver todo el recorrido,
-   del primero al último. */
-let historialAbierto = false;
+   ese punto. En el panel se ven los últimos 3; el recorrido
+   completo se abre en una HOJA deslizable (no expande la
+   página, que era el problema). */
 
 function formatearFecha(iso) {
   const MESES = ["enero","febrero","marzo","abril","mayo","junio",
@@ -164,50 +164,56 @@ function formatearFecha(iso) {
   return `${d} ${MESES[m - 1]} ${y}`;
 }
 
-function aportesRecientesHTML() {
+/* Aportes con total acumulado, más reciente primero. */
+function aportesConTotal() {
   const aportes = data.contexto.objetivo_japon.aportes || [];
-  if (aportes.length === 0) {
-    return `<div class="japon-camino-vacio">Tu primer aporte abre el camino.</div>`;
-  }
-
-  /* Recalculamos el total acumulado parada por parada, en
-     orden cronológico, para mostrarlo en cada nudo. */
   let acum = 0;
   const conTotal = aportes.map((a) => {
     acum += a.monto;
     return { ...a, total: acum };
   });
+  return conTotal.reverse();
+}
 
-  // Más reciente arriba (se lee como "dónde estoy ahora").
-  const orden = conTotal.slice().reverse();
-  const visibles = historialAbierto ? orden : orden.slice(0, 3);
-
-  const paradas = visibles.map((a, i) => {
-    const esUltima = !historialAbierto && i === 0; // el nudo actual, destacado
-    return `
-      <div class="camino-parada ${esUltima ? "camino-parada--actual" : ""}">
-        <span class="camino-nudo"></span>
-        <div class="camino-info">
-          <div class="camino-monto ${a.monto >= 0 ? "japon-mas" : "japon-menos"}">
-            ${a.monto >= 0 ? "+" : ""}USD ${a.monto.toLocaleString("es-AR")}
-          </div>
-          <div class="camino-fecha">${formatearFecha(a.fecha)}</div>
-          <div class="camino-total">Total: USD ${a.total.toLocaleString("es-AR")}</div>
+function paradaHTML(a, destacar) {
+  return `
+    <div class="camino-parada ${destacar ? "camino-parada--actual" : ""}">
+      <span class="camino-nudo"></span>
+      <div class="camino-info">
+        <div class="camino-monto ${a.monto >= 0 ? "japon-mas" : "japon-menos"}">
+          ${a.monto >= 0 ? "+" : ""}USD ${a.monto.toLocaleString("es-AR")}
         </div>
-      </div>`;
-  }).join("");
+        <div class="camino-fecha">${formatearFecha(a.fecha)}</div>
+        <div class="camino-total">Total: USD ${a.total.toLocaleString("es-AR")}</div>
+      </div>
+    </div>`;
+}
 
-  const hayMas = orden.length > 3;
-  const toggle = hayMas
+function aportesRecientesHTML() {
+  const orden = aportesConTotal();
+  if (orden.length === 0) {
+    return `<div class="japon-camino-vacio">Tu primer aporte abre el camino.</div>`;
+  }
+  const visibles = orden.slice(0, 3);
+  const paradas = visibles.map((a, i) => paradaHTML(a, i === 0)).join("");
+
+  const boton = orden.length > 3
     ? `<button type="button" class="camino-toggle" id="japon-toggle">
-        ${historialAbierto ? "Ver menos ▴" : `Ver todo el camino (${orden.length}) ▾`}
+        Ver todo el camino (${orden.length}) →
       </button>`
     : "";
 
   return `
     <div class="camino-titulo">Tu camino a Japón</div>
-    <div class="camino ${historialAbierto ? "camino--scroll" : ""}">${paradas}</div>
-    ${toggle}`;
+    <div class="camino">${paradas}</div>
+    ${boton}`;
+}
+
+/* La hoja con el recorrido COMPLETO, del primero al último. */
+function abrirCaminoCompleto() {
+  const orden = aportesConTotal();
+  const paradas = orden.map((a, i) => paradaHTML(a, i === 0)).join("");
+  abrirHoja("Tu camino a Japón", `<div class="camino camino--completo">${paradas}</div>`);
 }
 
 /* ------------------------------------------------------------
