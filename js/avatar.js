@@ -13,6 +13,7 @@ import { save } from "./store.js";
 import { ARBOLES_META } from "./xp.js";
 import { contextoActual } from "./engine.js";
 import { requisitoDe } from "./progression.js";
+import { sonar } from "./sonido.js";
 import {
   PELOS, REMERAS, PANTALONES, ACCESORIOS,
   NOMBRES_EXPRESION, dibujarCara, r, P
@@ -183,6 +184,8 @@ function escaparTexto(s) {
 function accion(e) {
   const btn = e.target.closest('[data-action="elegir-look"]');
   if (!btn) return;
+  // Solo suena si la prenda está desbloqueada (si no, no cambia nada).
+  if (desbloqueada(btn.dataset.id)) sonar("vestir");
   data.perfil.avatar[btn.dataset.grupo] = btn.dataset.id;
   save(data);
   renderAvatar();

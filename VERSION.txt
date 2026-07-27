@@ -1,37 +1,37 @@
-Entrega 14 — Sonido
-Caché SW: mq-entrega14-sonido
-La app debe mostrar en VOS: 'Entrega 14 · sonido · datos v10'
+Entrega 15 — Música de fondo + sonidos de navegación
+Caché SW: mq-entrega15-musica
+La app debe mostrar en VOS: 'Entrega 15 · música · datos v11'
 
-Sin cambios de datos (usa el ajuste sonido que ya existía, apagado).
+DATA_VERSION sube a 11: flag de música (aparte del de efectos).
 
-Audio chiptune SINTETIZADO con Web Audio API. Cero archivos: cada efecto
-son unas pocas notas de onda cuadrada/triangular generadas por código.
+MÚSICA DE FONDO — pad ambiental SINTETIZADO (cero archivos):
+  - No es una melodía: es una cama de acordes lentos (4 acordes que giran
+    en loop, glissando suave entre ellos cada ~8s). Onda triangular +
+    filtro pasa-bajos + volumen muy bajo, para que sea chill y no canse.
+  - Interruptor APARTE de los efectos (decisión de Lautaro): podés tener
+    música sin efectos o al revés. Los dos switches en Configuración.
+  - Apagada por defecto. Fade-in/fade-out suave al prender/apagar.
+  - Se reanuda al volver a la app (iOS suspende el audio en el fondo).
 
-Efectos: cumplir principal (arpegio triunfal), secundaria (tic corto),
-comprar (caja registradora suave), subir de nivel (fanfarria), logro
-(brillo alto), entrar desde la ceremonia (acorde cálido).
+SONIDOS DE NAVEGACIÓN (efectos nuevos):
+  - Cambiar de pestaña: un "pop" corto y bajo, casi táctil.
+  - Probarse ropa / cambiar el avatar: un "blip" suave (solo si la prenda
+    está desbloqueada).
 
-TRAMPAS DE iOS CONTEMPLADAS:
-  - El AudioContext arranca suspendido hasta el PRIMER gesto del usuario
-    (toque). Se despierta ahí, nunca antes: si sonara solo, iOS lo callaría.
-  - El interruptor físico de silencio del iPhone calla TODO esto sin que
-    la app se entere. No es un bug; es iOS. La ayuda de Configuración lo
-    advierte con todas las letras.
-  - Arranca APAGADO. Nada suena hasta que lo prendas en Configuración
-    (al prenderlo, suena un efecto de muestra).
-  - El motor es a prueba de fallos: si el navegador se queja, queda mudo,
-    nunca rompe la app (4 tests lo garantizan).
+Por qué pad sintetizado y no lo-fi real: mantener el "cero archivos / cero
+costo" de toda la app. Música lo-fi de verdad necesitaría un .mp3; se puede
+sumar más adelante si se decide gastar en eso. La misma advertencia de
+siempre: el interruptor de silencio del iPhone calla todo esto.
 
-Modificados: js/sonido.js (nuevo), js/missions.js, js/economy.js, js/xp.js,
-  js/achievements.js, js/ceremonia.js, js/config.js, js/app.js, sw.js,
-  tests/suite-sonido.js
+Modificados: js/sonido.js (motor de música + efectos de navegación),
+  js/store.js (v11), js/config.js (2º switch), js/app.js, js/ceremonia.js,
+  js/avatar.js, sw.js, tests (helpers, store, config, sonido)
 
 QUÉ VES (OÍS) HOY, SIN NADA HECHO:
-  - Nada suena todavía: el sonido arranca apagado. Eso es correcto.
-  - Si lo prendés en Configuración (VOS), a partir de ahí escuchás los
-    efectos al cumplir misiones, comprar y subir de nivel. Antes de
-    prenderlo, silencio total: no es un bug.
-  - Recordá el interruptor de silencio del iPhone: si está en silencio,
-    no vas a oír nada aunque el switch de la app esté encendido.
+  - Silencio: música y efectos arrancan apagados. Correcto.
+  - Prendé cada uno por separado en VOS → Configuración. La música empieza
+    con un fade-in suave; los sonidos de navegación se oyen al moverte por
+    las pestañas y al cambiar de ropa.
+  - Interruptor de silencio del iPhone: si está en silencio, no se oye nada.
 
-Suite: 140 tests. Todo en verde.
+Suite: 142 tests. Todo en verde.

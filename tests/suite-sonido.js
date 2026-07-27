@@ -9,7 +9,7 @@
    ============================================================ */
 
 import { suite, test, assert, igual } from "./helpers.js";
-import { sonar, setSonido, initSonido } from "../js/sonido.js";
+import { sonar, setSonido, initSonido, setMusica, retomarMusica } from "../js/sonido.js";
 
 export function correr() {
   suite("Sonido (seguridad, no audio)");
@@ -35,6 +35,20 @@ export function correr() {
     let rompio = false;
     try { sonar("no-existe"); } catch { rompio = true; }
     igual(rompio, false, "nombre desconocido: no-op");
+  });
+
+  test("setMusica y retomarMusica no explotan sin AudioContext", () => {
+    let rompio = false;
+    try { setMusica(true); setMusica(false); retomarMusica(); }
+    catch { rompio = true; }
+    igual(rompio, false, "la música es tan a prueba de fallos como los efectos");
+  });
+
+  test("los efectos de navegación existen en el catálogo", () => {
+    // sonar("tab") y sonar("vestir") no deben romper (aunque no suenen)
+    let rompio = false;
+    try { sonar("tab"); sonar("vestir"); } catch { rompio = true; }
+    igual(rompio, false, "navegación segura");
   });
 
   test("initSonido lee el ajuste sin romper aunque falte", () => {

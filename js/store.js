@@ -22,9 +22,10 @@ const STORAGE_KEY = "mainquest_data";
    v8 — el objetivo Japón guarda el historial de aportes
    v9 — el objetivo Japón recuerda el día que se cumplió
    v10 — ajustes del usuario (hora del diario, sonido)
+   v11 — ajuste de música de fondo (aparte de los efectos)
    completarFaltantes() agrega los campos nuevos a los datos
    viejos, así que las migraciones son automáticas. */
-const DATA_VERSION = 10;
+const DATA_VERSION = 11;
 
 /* ------------------------------------------------------------
    Estado inicial (el "personaje nivel 1").
@@ -44,7 +45,8 @@ const DEFAULT_DATA = {
   },
   ajustes: {
     hora_diario: 21,   // a qué hora aparece el cierre del día (0-23)
-    sonido: false      // apagado por defecto (Entrega 5 lo usará)
+    sonido: false,     // efectos, apagado por defecto
+    musica: false      // pad ambiental de fondo, aparte de los efectos
   },
   arboles: {
     fitness:   { xp: 0, nivel: 1 },

@@ -39,7 +39,11 @@ const EFECTOS = {
   // Logro: brillo de tres notas altas.
   logro: { onda: "triangle", vol: 0.15, notas: [[880, 0, 0.08], [1047, 0.08, 0.08], [1319, 0.16, 0.16]] },
   // Abrir la app / entrar desde la ceremonia: un acorde cálido y suave.
-  entrar: { onda: "triangle", vol: 0.12, notas: [[392, 0, 0.22], [523, 0.04, 0.22], [659, 0.08, 0.26]] }
+  entrar: { onda: "triangle", vol: 0.12, notas: [[392, 0, 0.22], [523, 0.04, 0.22], [659, 0.08, 0.26]] },
+  // Cambiar de pestaña: un "pop" muy corto y bajo, casi táctil.
+  tab: { onda: "triangle", vol: 0.08, notas: [[587, 0, 0.05]] },
+  // Probarse ropa / cambiar el avatar: un "blip" suave y agudo.
+  vestir: { onda: "square", vol: 0.07, notas: [[784, 0, 0.04], [988, 0.03, 0.05]] }
 };
 
 /* Despierta el AudioContext. Debe llamarse desde un gesto real
@@ -110,4 +114,101 @@ export function initSonido(appData) {
     document.removeEventListener("pointerdown", primerGesto);
   };
   document.addEventListener("pointerdown", primerGesto);
+}
+
+/* ============================================================
+   MÚSICA DE FONDO — pad ambiental (Entrega 15)
+   ------------------------------------------------------------
+   No es una melodía: es una cama de acordes lentos, pensada
+   para estar SIN cansar. Onda triangular (suave), filtro
+   pasa-bajos que le quita el brillo metálico, volumen muy
+   bajo, y cambios de acorde cada ~8 segundos. Cero archivos.
+
+   Vive aparte de los efectos: su propio flag (data.ajustes.
+   musica) y su propio interruptor en Configuración.
+   ============================================================ */
+
+let musicaOn = false;
+let musicaNodos = null;   // { oscs, gain, filtro, timer }
+
+/* Una progresión suave en La menor pentatónica: cuatro acordes
+   que giran en loop. Cada acorde son 3 frecuencias (Hz). */
+const ACORDES = [
+  [220.0, 261.6, 329.6], // Am
+  [196.0, 246.9, 329.6], // G/B-ish
+  [174.6, 220.0, 261.6], // F
+  [196.0, 246.9, 293.7]  // G
+];
+let acordeIdx = 0;
+
+function arrancarMusica() {
+  if (musicaNodos || !ctx) return;
+
+  const master = ctx.createGain();
+  master.gain.value = 0;
+  // Filtro pasa-bajos: le saca el filo, lo vuelve "cálido".
+  const filtro = ctx.createBiquadFilter();
+  filtro.type = "lowpass";
+  filtro.frequency.value = 900;
+  filtro.Q.value = 0.4;
+  filtro.connect(master).connect(ctx.destination);
+
+  // Tres osciladores fijos: se les cambia la frecuencia por
+  // acorde, en vez de crear/destruir (más suave, sin clicks).
+  const oscs = ACORDES[0].map((f) => {
+    const o = ctx.createOscillator();
+    o.type = "triangle";
+    o.frequency.value = f;
+    const g = ctx.createGain();
+    g.gain.value = 0.33;
+    o.connect(g).connect(filtro);
+    o.start();
+    return { o, g };
+  });
+
+  // Fade-in suave hasta un volumen bajo.
+  master.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 2.5);
+
+  const cambiarAcorde = () => {
+    acordeIdx = (acordeIdx + 1) % ACORDES.length;
+    const acorde = ACORDES[acordeIdx];
+    const t = ctx.currentTime;
+    oscs.forEach((n, i) => {
+      // Glissando lento entre acordes: nada de saltos bruscos.
+      n.o.frequency.linearRampToValueAtTime(acorde[i], t + 3);
+    });
+  };
+  const timer = setInterval(cambiarAcorde, 8000);
+
+  musicaNodos = { oscs, master, filtro, timer };
+}
+
+function pararMusica() {
+  if (!musicaNodos) return;
+  const { oscs, master, timer } = musicaNodos;
+  clearInterval(timer);
+  try {
+    // Fade-out y recién ahí frenar los osciladores.
+    master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.2);
+    setTimeout(() => {
+      oscs.forEach((n) => { try { n.o.stop(); } catch {} });
+    }, 1400);
+  } catch {
+    oscs.forEach((n) => { try { n.o.stop(); } catch {} });
+  }
+  musicaNodos = null;
+}
+
+/* Prende/apaga la música. Necesita el contexto despierto (un
+   gesto previo), igual que los efectos. */
+export function setMusica(activo) {
+  musicaOn = !!activo;
+  if (musicaOn) { despertar(); arrancarMusica(); }
+  else pararMusica();
+}
+
+/* iOS suspende el audio al mandar la app al fondo. Al volver,
+   si la música estaba puesta, la reanudamos. */
+export function retomarMusica() {
+  if (musicaOn && ctx && ctx.state === "suspended") ctx.resume();
 }

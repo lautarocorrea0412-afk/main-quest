@@ -42,7 +42,7 @@ import { hoyISO } from "./util.js";
 import { dibujarAvatar } from "./avatar.js";
 import { franjaLuz } from "./util.js";
 import { fraseCeremonia } from "./engine.js";
-import { sonar, setSonido } from "./sonido.js";
+import { sonar, setSonido, setMusica } from "./sonido.js";
 
 let data;
 let escenaCache = null;
@@ -151,6 +151,8 @@ export async function correrCeremonia(datos) {
       // que el audio despierte y suene el acorde de bienvenida.
       setSonido(data.ajustes && data.ajustes.sonido);
       sonar("entrar");
+      // Si la música estaba puesta, este gesto la puede arrancar.
+      setMusica(data.ajustes && data.ajustes.musica);
       /* Travelling: la cámara AVANZA hacia el cuarto (zoom in)
          y funde a HOY. No es un fade plano: entrás al juego. */
       overlay.classList.add("cer-entrando");

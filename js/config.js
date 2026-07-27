@@ -15,7 +15,7 @@
 
 import { save } from "./store.js";
 import { escapar } from "./util.js";
-import { setSonido, sonar } from "./sonido.js";
+import { setSonido, sonar, setMusica } from "./sonido.js";
 
 let data;
 
@@ -36,6 +36,7 @@ export function renderConfig() {
   const nombre = data.perfil.nombre || "";
   const hora = data.ajustes.hora_diario;
   const sonido = !!data.ajustes.sonido;
+  const musica = !!data.ajustes.musica;
 
   // Opciones de hora razonables para el cierre del día.
   const horas = [18, 19, 20, 21, 22, 23, 0];
@@ -65,6 +66,17 @@ export function renderConfig() {
       </div>
       <button type="button" class="switch ${sonido ? "switch--on" : ""}" id="config-sonido"
               role="switch" aria-checked="${sonido}" aria-label="Sonido">
+        <span class="switch__bola"></span>
+      </button>
+    </div>
+
+    <div class="config-item config-item--fila">
+      <div>
+        <span class="config-label">Música de fondo</span>
+        <p class="config-ayuda">Un pad ambiental suave, tranqui. Aparte de los efectos: podés tener uno sin el otro. También lo calla el interruptor de silencio del iPhone.</p>
+      </div>
+      <button type="button" class="switch ${musica ? "switch--on" : ""}" id="config-musica"
+              role="switch" aria-checked="${musica}" aria-label="Música">
         <span class="switch__bola"></span>
       </button>
     </div>`;
@@ -97,6 +109,16 @@ export function renderConfig() {
       save(data);
       setSonido(data.ajustes.sonido);
       if (data.ajustes.sonido) sonar("secundaria"); // muestra cómo suena
+      renderConfig();
+    };
+  }
+
+  const swMusica = document.getElementById("config-musica");
+  if (swMusica) {
+    swMusica.onclick = () => {
+      data.ajustes.musica = !data.ajustes.musica;
+      save(data);
+      setMusica(data.ajustes.musica);
       renderConfig();
     };
   }

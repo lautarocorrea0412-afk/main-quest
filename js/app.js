@@ -23,7 +23,7 @@ import { initHistoria, setDatosHistoria } from "./history.js";
 import { initJapon, setDatosJapon } from "./japon.js";
 import { initConfig, setDatosConfig } from "./config.js";
 import { initStats, setDatosStats } from "./stats.js";
-import { initSonido } from "./sonido.js";
+import { initSonido, retomarMusica } from "./sonido.js";
 import { initVida, setDatosVida } from "./vida.js";
 import { contextoActual } from "./engine.js";
 import { ICONOS_TAB } from "./iconos.js";
@@ -56,7 +56,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 14 · sonido · datos v" + data.version;
+    "MAIN QUEST · Entrega 15 · música · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -69,6 +69,7 @@ document.querySelectorAll(".tab").forEach((tab) => {
     document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
     tab.classList.add("active");
     document.getElementById("view-" + tab.dataset.view).classList.add("active");
+    sonar("tab");
   });
 });
 
@@ -198,6 +199,7 @@ document.addEventListener("visibilitychange", () => {
     aplicarLuzAmbiente();
     aplicarModoParcial(); // un parcial puede haberse acercado desde ayer
     setDatosJapon(data);  // la proyección de Japón sube con los días que pasan
+    retomarMusica();      // iOS suspende el audio en el fondo; al volver, sigue
   }
 });
 

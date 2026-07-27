@@ -164,7 +164,7 @@ export function crearDatos(hoy = "2026-07-23") {
       creado_en: "2026-01-01T12:00:00.000Z",
       avatar: { pelo: "largo", remera: "oversize", pantalon: "jogging", accesorio: "ninguno" }
     },
-    ajustes: { hora_diario: 21, sonido: false },
+    ajustes: { hora_diario: 21, sonido: false, musica: false },
     arboles: Object.fromEntries(ARBOLES.map((k) => [k, { xp: 0, nivel: 1 }])),
     contexto: {
       parciales: [],

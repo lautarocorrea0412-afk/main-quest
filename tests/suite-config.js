@@ -34,5 +34,6 @@ export function correr() {
     assert(migrado.ajustes, "la migración crea ajustes");
     igual(migrado.ajustes.hora_diario, 21, "con la hora por defecto");
     igual(migrado.ajustes.sonido, false, "y el sonido apagado");
+    igual(migrado.ajustes.musica, false, "y la música apagada (v11)");
   });
 }
