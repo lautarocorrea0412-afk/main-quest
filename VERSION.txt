@@ -1,35 +1,21 @@
-Entrega 7A v3 — Ceremonia "El regreso"
-Caché SW: mq-entrega7a-v3-regreso
-La app debe mostrar en VOS: 'Entrega 7A-v3 · el regreso · datos v7'
+Entrega 7A v4 — Ceremonia "El regreso" · pasada de polish
+Caché SW: mq-entrega7a-v4-regreso
+La app debe mostrar en VOS: 'Entrega 7A-v4 · el regreso · datos v7'
 
-Rediseño narrativo completo: no es una intro que construye un cuarto,
-es un cuarto que YA ESTABA VIVO y al que volvés. Él ya estaba ahí.
+Sin cambios de datos ni de concepto: solo polish + los 6 ajustes pedidos.
 
-LOS CUATRO TIEMPOS (~5s, después espera tu toque):
-  T1 (0-1.5s)  penumbra azul; el avatar YA está, de espaldas, mirando la
-               ventana, respirando. Polvo flotando. No aparece: lo descubrís.
-  T2 (1.5-2.8) EL WOW: prende la lámpara y la luz cálida se DERRAMA desde
-               ese punto, revelando el cuarto (nada de bloques cuadrados).
-               El polvo brilla dorado.
-  T3 (2.8-4s)  TE MIRA: la silueta de espaldas gira y llega la cara de
-               frente, con un giro. Cae sakura.
-  T4 (4-5s +)  la luz revela el PÓSTER de MAIN QUEST en la pared (idea C).
-               Tu frase contextual debajo. Y SE QUEDA: el cuarto sigue
-               vivo (respira, cortina, monitor, lámpara titila, pétalos)
-               esperando "Tocar para entrar". Vos decidís.
+1. COOLDOWN ELIMINADO. La ceremonia aparece SIEMPRE que la app se abre.
+   Se fue toda la lógica de ventana de 30s.
+2. COMPOSICIÓN ORGÁNICA. Perspectiva de anime, nada centrado en cajas,
+   ventana con peso a la izquierda, muebles desparejos, póster rotado.
+3. ACCIONES EXAGERADAS: flash al prender la lámpara, giro con pose de
+   perfil intermedia, póster con destello, botón de entrar con pulso.
+4. PANTALLAZO ELIMINADO: telón (#telon) en el HTML desde el primer frame.
+5. MÁS MICROVIDA: respiración marcada, cortina, micro-parpadeo del
+   monitor, lámpara que titila, pétalos con deriva.
+6. PULIDO: timings, easing con rebote cálido, travelling que sube.
 
-  Al tocar: TRAVELLING hacia adelante (la cámara entra al cuarto) y funde
-  a HOY. No es un fade: entrás al juego.
+Modificados: index.html, js/ceremonia.js, js/app.js, css/app.css, sw.js,
+  tests/suite-ceremonia.js
 
-DECISIONES (con Lautaro):
-  - Aparece SIEMPRE, salvo reapertura accidental (<30s).
-  - NO desaparece sola: espera tu toque en "Tocar para entrar".
-  - Título = póster en la pared que la luz revela (idea C).
-  - Solo sakura + polvo, sin luciérnagas (rendimiento iPhone: 6 pétalos,
-    10 motas; se sienten sin trabar).
-  - Luz según la hora real. Respeta prefers-reduced-motion. Muda.
-
-Modificados: js/ceremonia.js (reescrito), css/app.css (coreografía nueva),
-  js/app.js, sw.js
-
-Suite: 102 tests. Todo en verde.
+Suite: 100 tests. Todo en verde.

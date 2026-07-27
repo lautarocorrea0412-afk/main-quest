@@ -22,7 +22,7 @@ import { initLogros, setDatosLogros } from "./achievements.js";
 import { initHistoria, setDatosHistoria } from "./history.js";
 import { contextoActual } from "./engine.js";
 import { ICONOS_TAB } from "./iconos.js";
-import { correrCeremonia, tocaCeremonia, registrarCierre } from "./ceremonia.js";
+import { correrCeremonia } from "./ceremonia.js";
 
 let data = load();
 
@@ -59,7 +59,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 7A-v3 · el regreso · datos v" + data.version;
+    "MAIN QUEST · Entrega 7A-v4 · el regreso · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -184,17 +184,13 @@ function aplicarLuzAmbiente() {
 pintarIconosTab();
 aplicarLuzAmbiente();
 
-/* La ceremonia de apertura corre ANTES de que la app quede
-   usable. Aparece siempre, salvo reapertura accidental
-   (cerraste hace menos de 30 segundos). */
-if (tocaCeremonia()) {
-  correrCeremonia(data);
-}
-
-/* Al irte de la app, registramos la hora: si volvés en menos
-   de 30s, fue sin querer y no repetimos la ceremonia. */
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") registrarCierre();
+/* La ceremonia corre SIEMPRE que la app se abre desde cero.
+   El telón (en el HTML) ya tapa todo desde el primer frame,
+   así que nunca se ve la app antes de la ceremonia. La
+   ceremonia se monta encima del telón y, al terminar, app.js
+   destapa. Sin cooldown: cada apertura es un regreso. */
+correrCeremonia(data).then(() => {
+  document.body.classList.remove("cargando");
 });
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {

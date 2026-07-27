@@ -30,8 +30,7 @@
    cuarto) y recién ahí aparece HOY. No un fade: entrás.
 
    Decisiones (con Lautaro):
-   - Aparece SIEMPRE (toda apertura), salvo reapertura
-     accidental (<30s).
+   - Aparece SIEMPRE que la app se abre desde cero.
    - No desaparece sola: espera tu toque.
    - Luz según la hora real.
    - Solo sakura, sin luciérnagas (rendimiento en iPhone).
@@ -46,26 +45,11 @@ import { fraseCeremonia } from "./engine.js";
 
 let data;
 
-const GRACIA_MS = 30000;
-const CLAVE_CIERRE = "mainquest_cerrada_en";
-
 const LUCES = {
   manana: "#FFD98C",
   tarde:  "#FFB067",
   noche:  "#8FA2E8"
 };
-
-export function tocaCeremonia(ahora = Date.now(), storage = globalThis.localStorage) {
-  try {
-    const cerrada = Number(storage?.getItem(CLAVE_CIERRE) || 0);
-    if (cerrada && ahora - cerrada < GRACIA_MS) return false;
-  } catch { /* sin storage: que aparezca */ }
-  return true;
-}
-
-export function registrarCierre(storage = globalThis.localStorage) {
-  try { storage?.setItem(CLAVE_CIERRE, String(Date.now())); } catch { /* nada */ }
-}
 
 function reduceMovimiento() {
   return typeof window !== "undefined" &&

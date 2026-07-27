@@ -19,7 +19,13 @@
 
   <link rel="stylesheet" href="./css/app.css">
 </head>
-<body>
+<body class="cargando">
+
+  <!-- Telón anti-pantallazo: existe desde el primer frame, antes
+       de que corra ningún JS, así nunca se ve la app un instante
+       antes de la ceremonia. La ceremonia se monta encima; si no
+       hay ceremonia, app.js le saca la clase y se desvanece. -->
+  <div id="telon"></div>
 
   <header>
     <span class="topbar-marca">
