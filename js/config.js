@@ -15,6 +15,7 @@
 
 import { save } from "./store.js";
 import { escapar } from "./util.js";
+import { setSonido, sonar } from "./sonido.js";
 
 let data;
 
@@ -60,7 +61,7 @@ export function renderConfig() {
     <div class="config-item config-item--fila">
       <div>
         <span class="config-label">Sonido</span>
-        <p class="config-ayuda">Todavía no hay sonidos: este interruptor queda listo para cuando los agreguemos.</p>
+        <p class="config-ayuda">Efectos suaves al cumplir misiones, comprar y subir de nivel. Ojo: el interruptor de silencio físico del iPhone los calla, aunque acá estén encendidos.</p>
       </div>
       <button type="button" class="switch ${sonido ? "switch--on" : ""}" id="config-sonido"
               role="switch" aria-checked="${sonido}" aria-label="Sonido">
@@ -94,6 +95,8 @@ export function renderConfig() {
     swSonido.onclick = () => {
       data.ajustes.sonido = !data.ajustes.sonido;
       save(data);
+      setSonido(data.ajustes.sonido);
+      if (data.ajustes.sonido) sonar("secundaria"); // muestra cómo suena
       renderConfig();
     };
   }

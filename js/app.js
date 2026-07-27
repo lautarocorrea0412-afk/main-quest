@@ -23,6 +23,7 @@ import { initHistoria, setDatosHistoria } from "./history.js";
 import { initJapon, setDatosJapon } from "./japon.js";
 import { initConfig, setDatosConfig } from "./config.js";
 import { initStats, setDatosStats } from "./stats.js";
+import { initSonido } from "./sonido.js";
 import { initVida, setDatosVida } from "./vida.js";
 import { contextoActual } from "./engine.js";
 import { ICONOS_TAB } from "./iconos.js";
@@ -55,7 +56,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 13 · avatar vivo · datos v" + data.version;
+    "MAIN QUEST · Entrega 14 · sonido · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------

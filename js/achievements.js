@@ -22,6 +22,7 @@ import { ganarMonedas, quitarMonedas } from "./economy.js";
 import { contextoActual } from "./engine.js";
 import { mostrarCartel } from "./ui.js";
 import { iconoLogro } from "./iconos.js";
+import { sonar } from "./sonido.js";
 
 let data;
 
@@ -209,6 +210,7 @@ export function verificarLogros({ celebrar = true } = {}) {
    las subidas de nivel. */
 function mostrarCelebracion(logro) {
   mostrarCartel(iconoLogro(logro.id), `Logro: ${logro.nombre}`, `+${logro.premio} 🪙`);
+    sonar("logro");
 }
 
 /* ------------------------------------------------------------

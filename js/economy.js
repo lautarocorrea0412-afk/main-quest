@@ -22,6 +22,7 @@ import { save } from "./store.js";
 import { hoyISO } from "./util.js";
 import { refrescarCuarto } from "./room.js";
 import { ICONOS_TIENDA } from "./iconos-tienda.js";
+import { sonar } from "./sonido.js";
 
 let data;
 
@@ -89,6 +90,7 @@ function comprar(itemId) {
 
   data.economia.monedas -= item.precio;
   data.economia.inventario.push({ id: item.id, comprado_en: new Date().toISOString() });
+  sonar("compra");
 
   // La compra queda en tu historia (la timeline de la
   // Fase 3 va a mostrar esto: los datos empiezan hoy).

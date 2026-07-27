@@ -19,6 +19,7 @@ import { save } from "./store.js";
 import { PROGRESION, proximaRecompensa, nuevasEntre, ICONO_TIPO } from "./progression.js";
 import { mostrarCartel } from "./ui.js";
 import { ICONOS_ARBOL } from "./iconos.js";
+import { sonar } from "./sonido.js";
 
 /* Metadatos de los árboles. Antes vivían en app.js;
    ahora que el XP tiene módulo propio, se mudan acá. */
@@ -73,7 +74,7 @@ export function ganarXp(data, arbolId, cantidad) {
   /* Bandera de animación: la barra elástica pertenece al
      EVENTO de subir de nivel, no al estado. El próximo
      renderArboles la consume una sola vez. */
-  if (subioNivel) arbolReciensubido = arbolId;
+  if (subioNivel) { arbolReciensubido = arbolId; sonar("nivel"); }
 
   /* Si el nivel nuevo desbloqueó recompensas de evolución,
      se celebran acá: la subida de nivel es el momento. */

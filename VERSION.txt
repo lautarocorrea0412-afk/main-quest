@@ -1,36 +1,37 @@
-Entrega 13 — Avatar vivo (7B)
-Caché SW: mq-entrega13-avatar-vivo
-La app debe mostrar en VOS: 'Entrega 13 · avatar vivo · datos v10'
+Entrega 14 — Sonido
+Caché SW: mq-entrega14-sonido
+La app debe mostrar en VOS: 'Entrega 14 · sonido · datos v10'
 
-Sin cambios de datos.
+Sin cambios de datos (usa el ajuste sonido que ya existía, apagado).
 
-El pestañeo y las micro-acciones existían solo en la intro. Ahora el
-avatar de la app (en Habitación y en VOS) también está vivo:
+Audio chiptune SINTETIZADO con Web Audio API. Cero archivos: cada efecto
+son unas pocas notas de onda cuadrada/triangular generadas por código.
 
-  - PESTAÑEO: una capa de párpados (avatar-arte.js) que el CSS baja un
-    instante en un ciclo LARGO e irregular, con un doble parpadeo
-    ocasional para que no se sienta mecánico. Los dos avatares (preview
-    y cuarto) pestañean a ritmos distintos para no sincronizarse. El
-    avatar cansado NO pestañea (ya tiene los ojos entornados).
-  - MICRO-INCLINACIÓN: cada tanto ladea apenas la cabeza, como quien se
-    acomoda.
-  - POSES CONTEXTUALES: el cuerpo reacciona a tu día, no solo la cara.
-    Cansado se afloja apenas; confiado se yergue; concentrado queda
-    quieto (está estudiando).
+Efectos: cumplir principal (arpegio triunfal), secundaria (tic corto),
+comprar (caja registradora suave), subir de nivel (fanfarria), logro
+(brillo alto), entrar desde la ceremonia (acorde cálido).
 
-Todo es CSS sobre el SVG ya dibujado: no se re-renderiza nada, cero
-costo en el iPhone. Respeta prefers-reduced-motion (sin pestañeo ni
-ladeo; la respiración mínima se queda).
+TRAMPAS DE iOS CONTEMPLADAS:
+  - El AudioContext arranca suspendido hasta el PRIMER gesto del usuario
+    (toque). Se despierta ahí, nunca antes: si sonara solo, iOS lo callaría.
+  - El interruptor físico de silencio del iPhone calla TODO esto sin que
+    la app se entere. No es un bug; es iOS. La ayuda de Configuración lo
+    advierte con todas las letras.
+  - Arranca APAGADO. Nada suena hasta que lo prendas en Configuración
+    (al prenderlo, suena un efecto de muestra).
+  - El motor es a prueba de fallos: si el navegador se queja, queda mudo,
+    nunca rompe la app (4 tests lo garantizan).
 
-Modificados: js/avatar-arte.js (capa de párpado), js/avatar.js (pose por
-  contexto), css/app.css, sw.js, js/app.js, tests/suite-iconos.js
+Modificados: js/sonido.js (nuevo), js/missions.js, js/economy.js, js/xp.js,
+  js/achievements.js, js/ceremonia.js, js/config.js, js/app.js, sw.js,
+  tests/suite-sonido.js
 
-QUÉ VES HOY, SIN NADA HECHO (lo que toca esta entrega):
-  - El avatar en Habitación y en VOS respira, pestañea y (en VOS) ladea
-    la cabeza desde el primer momento. NO necesita logros ni progreso:
-    está vivo desde el minuto cero.
-  - Su cara y su pose reflejan tu contexto: recién arrancando, sin racha
-    ni parcial ni energía cargada, verás la expresión "Tranquilo" con
-    pestañeo normal. Eso es lo correcto, no un estado incompleto.
+QUÉ VES (OÍS) HOY, SIN NADA HECHO:
+  - Nada suena todavía: el sonido arranca apagado. Eso es correcto.
+  - Si lo prendés en Configuración (VOS), a partir de ahí escuchás los
+    efectos al cumplir misiones, comprar y subir de nivel. Antes de
+    prenderlo, silencio total: no es un bug.
+  - Recordá el interruptor de silencio del iPhone: si está en silencio,
+    no vas a oír nada aunque el switch de la app esté encendido.
 
-Suite: 136 tests. Todo en verde.
+Suite: 140 tests. Todo en verde.

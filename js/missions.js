@@ -16,6 +16,7 @@
 import { save } from "./store.js";
 import { hoyISO, escapar } from "./util.js";
 import { sugerirMision } from "./engine.js";
+import { sonar } from "./sonido.js";
 import {
   ARBOLES_META, XP_PRINCIPAL, XP_SECUNDARIA,
   ganarXp, quitarXp, renderArboles, flotarXp
@@ -296,6 +297,7 @@ function accion(e) {
       hoy.principal.completada_en = new Date().toISOString();
       ganarMonedas(MONEDAS_PRINCIPAL);
       volarMonedas(btn);
+      sonar("principal");
       const res = ganarXp(data, hoy.principal.arbol, XP_PRINCIPAL);
       // Un solo texto flotante con todo lo ganado:
       // monedas siempre; XP y nivel solo si la misión tiene árbol.
@@ -346,6 +348,7 @@ function accion(e) {
         secundariaAnimada = s.id;
         ganarMonedas(MONEDAS_SECUNDARIA);
         volarMonedas(btn);
+        sonar("secundaria");
         const res = ganarXp(data, s.arbol, XP_SECUNDARIA);
         let texto = `+${MONEDAS_SECUNDARIA} 🪙`;
         if (res) {
