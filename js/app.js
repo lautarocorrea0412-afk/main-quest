@@ -56,7 +56,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 15 · música · datos v" + data.version;
+    "MAIN QUEST · Entrega 15b · audio ajustes · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------

@@ -29,21 +29,23 @@ let despierto = false;
    los errores suenen amables (nada estridente). */
 const EFECTOS = {
   // Completar la misión principal: un arpegio ascendente, triunfal.
-  principal: { onda: "square", vol: 0.16, notas: [[523, 0, 0.09], [659, 0.08, 0.09], [784, 0.16, 0.14]] },
-  // Secundaria: un "tic" corto y satisfactorio.
-  secundaria: { onda: "square", vol: 0.12, notas: [[659, 0, 0.06], [880, 0.05, 0.08]] },
+  principal: { onda: "triangle", vol: 0.13, notas: [[523, 0, 0.10], [659, 0.09, 0.10], [784, 0.18, 0.16]] },
+  // Secundaria: un "tic" corto y satisfactorio, más suave.
+  secundaria: { onda: "triangle", vol: 0.09, notas: [[659, 0, 0.06], [880, 0.05, 0.08]] },
   // Comprar en la tienda: dos notas tipo "caja registradora" suave.
-  compra: { onda: "triangle", vol: 0.14, notas: [[784, 0, 0.07], [1047, 0.07, 0.11]] },
+  compra: { onda: "triangle", vol: 0.11, notas: [[784, 0, 0.07], [1047, 0.07, 0.12]] },
   // Subir de nivel: fanfarria de cuatro notas.
-  nivel: { onda: "square", vol: 0.17, notas: [[523, 0, 0.09], [659, 0.09, 0.09], [784, 0.18, 0.09], [1047, 0.27, 0.18]] },
+  nivel: { onda: "triangle", vol: 0.14, notas: [[523, 0, 0.10], [659, 0.10, 0.10], [784, 0.20, 0.10], [1047, 0.30, 0.20]] },
   // Logro: brillo de tres notas altas.
-  logro: { onda: "triangle", vol: 0.15, notas: [[880, 0, 0.08], [1047, 0.08, 0.08], [1319, 0.16, 0.16]] },
+  logro: { onda: "triangle", vol: 0.12, notas: [[880, 0, 0.09], [1047, 0.09, 0.09], [1319, 0.18, 0.18]] },
   // Abrir la app / entrar desde la ceremonia: un acorde cálido y suave.
-  entrar: { onda: "triangle", vol: 0.12, notas: [[392, 0, 0.22], [523, 0.04, 0.22], [659, 0.08, 0.26]] },
-  // Cambiar de pestaña: un "pop" muy corto y bajo, casi táctil.
-  tab: { onda: "triangle", vol: 0.08, notas: [[587, 0, 0.05]] },
+  entrar: { onda: "triangle", vol: 0.11, notas: [[392, 0, 0.22], [523, 0.04, 0.22], [659, 0.08, 0.26]] },
+  // Cambiar de pestaña: agudo y BRILLANTE, fuera del rango de la
+  // música (que vive en los graves-medios). Antes caía justo
+  // encima del pad y no se oía. Ahora suena claro por arriba.
+  tab: { onda: "square", vol: 0.10, notas: [[1175, 0, 0.05], [1568, 0.04, 0.06]] },
   // Probarse ropa / cambiar el avatar: un "blip" suave y agudo.
-  vestir: { onda: "square", vol: 0.07, notas: [[784, 0, 0.04], [988, 0.03, 0.05]] }
+  vestir: { onda: "triangle", vol: 0.08, notas: [[988, 0, 0.05], [1319, 0.04, 0.06]] }
 };
 
 /* Despierta el AudioContext. Debe llamarse desde un gesto real
@@ -187,6 +189,7 @@ function pararMusica() {
   if (!musicaNodos) return;
   const { oscs, master, timer } = musicaNodos;
   clearInterval(timer);
+  if (latidoMusica) { clearInterval(latidoMusica); latidoMusica = null; }
   try {
     // Fade-out y recién ahí frenar los osciladores.
     master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.2);
@@ -199,16 +202,37 @@ function pararMusica() {
   musicaNodos = null;
 }
 
+/* El latido: cada pocos segundos revisa que el contexto siga
+   vivo. iOS suspende el AudioContext no solo al ir al fondo,
+   también por inactividad con la app abierta — y ahí el pad
+   "se apagaba". Esto lo reanima; y si los osciladores ya
+   murieron (iOS a veces los mata), reconstruye el pad. */
+let latidoMusica = null;
+function vigilarMusica() {
+  if (latidoMusica) clearInterval(latidoMusica);
+  latidoMusica = setInterval(() => {
+    if (!musicaOn) return;
+    if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
+    // Si el pad se perdió pero la música sigue "puesta", rearmar.
+    if (musicaOn && !musicaNodos && ctx && ctx.state === "running") {
+      arrancarMusica();
+    }
+  }, 4000);
+}
+
 /* Prende/apaga la música. Necesita el contexto despierto (un
    gesto previo), igual que los efectos. */
 export function setMusica(activo) {
   musicaOn = !!activo;
-  if (musicaOn) { despertar(); arrancarMusica(); }
+  if (musicaOn) { despertar(); arrancarMusica(); vigilarMusica(); }
   else pararMusica();
 }
 
 /* iOS suspende el audio al mandar la app al fondo. Al volver,
-   si la música estaba puesta, la reanudamos. */
+   si la música estaba puesta, la reanudamos (y el latido se
+   encarga del resto de los casos). */
 export function retomarMusica() {
-  if (musicaOn && ctx && ctx.state === "suspended") ctx.resume();
+  if (!musicaOn || !ctx) return;
+  if (ctx.state === "suspended") ctx.resume().catch(() => {});
+  if (!musicaNodos && ctx.state === "running") arrancarMusica();
 }

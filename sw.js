@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega15-musica";
+const CACHE_VERSION = "mq-entrega15b-audio";
 
 const CORE = [
   "./",
