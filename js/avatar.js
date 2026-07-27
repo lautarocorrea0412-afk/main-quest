@@ -114,6 +114,9 @@ export function renderAvatar() {
   if (vista) {
     vista.innerHTML = dibujarAvatar(2, gesto) +
       `<p class="avatar-gesto">${NOMBRES_EXPRESION[gesto]}</p>`;
+    // La expresión también como clase en el contenedor: deja que
+    // el CSS le dé una POSE de cuerpo al avatar (no solo cara).
+    vista.dataset.gesto = gesto;
   }
 
   const panel = document.getElementById("avatar-opciones");

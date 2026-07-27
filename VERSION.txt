@@ -1,21 +1,36 @@
-Entrega 12b — Dos correcciones (Japón y la intro)
-Caché SW: mq-entrega12b-arreglos
-La app debe mostrar en VOS: 'Entrega 12b · arreglos · datos v10'
+Entrega 13 — Avatar vivo (7B)
+Caché SW: mq-entrega13-avatar-vivo
+La app debe mostrar en VOS: 'Entrega 13 · avatar vivo · datos v10'
 
-Sin cambios de datos. (La Entrega 12 fue "datos de vida"; esto son dos
-arreglos sobre esa base.)
+Sin cambios de datos.
 
-1. JAPÓN — la proyección "USD X por mes" ahora sube con los días.
-   Antes contaba MESES DE CALENDARIO (getMonth): dentro del mismo mes el
-   número no cambiaba aunque pasaran los días. Ahora cuenta por DÍAS
-   REALES: si hoy necesitás 1430/mes y mañana no aportaste, mañana será
-   un poco más. El panel se refresca al volver a la app, así ves el
-   número al día cada vez que la abrís.
+El pestañeo y las micro-acciones existían solo en la intro. Ahora el
+avatar de la app (en Habitación y en VOS) también está vivo:
 
-2. INTRO — el personaje ya no "se apaga" al girar. El giro pasaba por
-   scaleX(0.15): el avatar se aplastaba hasta volverse casi una línea, y
-   se leía como un apagón. Ahora el punto medio no baja de 0.42.
+  - PESTAÑEO: una capa de párpados (avatar-arte.js) que el CSS baja un
+    instante en un ciclo LARGO e irregular, con un doble parpadeo
+    ocasional para que no se sienta mecánico. Los dos avatares (preview
+    y cuarto) pestañean a ritmos distintos para no sincronizarse. El
+    avatar cansado NO pestañea (ya tiene los ojos entornados).
+  - MICRO-INCLINACIÓN: cada tanto ladea apenas la cabeza, como quien se
+    acomoda.
+  - POSES CONTEXTUALES: el cuerpo reacciona a tu día, no solo la cara.
+    Cansado se afloja apenas; confiado se yergue; concentrado queda
+    quieto (está estudiando).
 
-Modificados: js/japon.js, js/app.js, css/app.css, tests/suite-japon.js
+Todo es CSS sobre el SVG ya dibujado: no se re-renderiza nada, cero
+costo en el iPhone. Respeta prefers-reduced-motion (sin pestañeo ni
+ladeo; la respiración mínima se queda).
 
-Suite: 135 tests. Todo en verde.
+Modificados: js/avatar-arte.js (capa de párpado), js/avatar.js (pose por
+  contexto), css/app.css, sw.js, js/app.js, tests/suite-iconos.js
+
+QUÉ VES HOY, SIN NADA HECHO (lo que toca esta entrega):
+  - El avatar en Habitación y en VOS respira, pestañea y (en VOS) ladea
+    la cabeza desde el primer momento. NO necesita logros ni progreso:
+    está vivo desde el minuto cero.
+  - Su cara y su pose reflejan tu contexto: recién arrancando, sin racha
+    ni parcial ni energía cargada, verás la expresión "Tranquilo" con
+    pestañeo normal. Eso es lo correcto, no un estado incompleto.
+
+Suite: 136 tests. Todo en verde.

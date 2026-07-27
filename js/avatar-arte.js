@@ -217,11 +217,21 @@ export const NOMBRES_EXPRESION = Object.fromEntries(
 
 export function dibujarCara(expr) {
   const e = EXPRESIONES[expr] || EXPRESIONES.normal;
+  // El párpado para el pestañeo: dos rectángulos del color de la
+  // piel sobre cada ojo, con clase para que el CSS los anime. En
+  // reposo tienen altura 0 (invisibles); el pestañeo los baja un
+  // instante. Van al final para quedar POR ENCIMA de los ojos.
+  // El avatar cansado no pestañea (ya tiene los ojos entornados).
+  const parpados = expr === "cansado" ? "" :
+    `<g class="avatar-parpado">
+       <rect x="17" y="16" width="6" height="8" fill="${P.piel}"/>
+       <rect x="26" y="16" width="6" height="8" fill="${P.piel}"/>
+     </g>`;
   return (
     r(15, 8, 18, 22, P.piel) +          // óvalo
     r(15, 27, 18, 3, P.piel_sh) +       // mentón sombreado
     r(20, 29, 8, 5, P.piel_sh) +        // cuello
-    e.cejas() + e.ojos() + e.extra() + e.boca()
+    e.cejas() + e.ojos() + e.extra() + e.boca() + parpados
   );
 }
 

@@ -86,6 +86,14 @@ export function correr() {
     assert(desbloqueadas <= total, "nunca más desbloqueadas que el total");
   });
 
+  test("avatar vivo: el párpado del pestañeo está, salvo en cansado", async () => {
+    const { dibujarCara } = await import("../js/avatar-arte.js");
+    assert(dibujarCara("normal").includes("avatar-parpado"), "normal pestañea");
+    assert(dibujarCara("feliz").includes("avatar-parpado"), "feliz pestañea");
+    assert(dibujarCara("confiado").includes("avatar-parpado"), "confiado pestañea");
+    assert(!dibujarCara("cansado").includes("avatar-parpado"), "cansado NO pestañea (ojos ya entornados)");
+  });
+
   test("cada pieza de arte sabe dibujarse", () => {
     for (const [grupo, coleccion] of Object.entries({ REMERAS, PANTALONES, ACCESORIOS })) {
       for (const [id, pieza] of Object.entries(coleccion)) {

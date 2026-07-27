@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega12b-arreglos";
+const CACHE_VERSION = "mq-entrega13-avatar-vivo";
 
 const CORE = [
   "./",

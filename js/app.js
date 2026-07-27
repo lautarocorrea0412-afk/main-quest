@@ -55,7 +55,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 12b · arreglos · datos v" + data.version;
+    "MAIN QUEST · Entrega 13 · avatar vivo · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------

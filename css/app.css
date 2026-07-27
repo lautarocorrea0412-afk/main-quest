@@ -1076,6 +1076,79 @@ body.luz-noche {
   50%      { transform: translateY(-1.2px); }
 }
 
+/* ============ Avatar vivo (Entrega 13 · 7B) ============
+   Pestañeo y micro-vida sobre el SVG ya dibujado. Todo CSS: no
+   se re-renderiza nada, así que no hay costo en el iPhone. El
+   párpado (dibujado por avatar-arte.js) baja un instante en un
+   ciclo LARGO e irregular, para que no se sienta mecánico. */
+
+.avatar-parpado rect {
+  /* En reposo, altura 0 (invisible): el pestañeo la abre. Se
+     anima scaleY desde el borde de arriba de cada ojo. */
+  transform-box: fill-box;
+  transform-origin: top;
+  transform: scaleY(0);
+}
+
+/* Dos ritmos distintos (preview y cuarto) para que los dos
+   avatares NO pestañeen sincronizados: rompe el efecto robot. */
+.avatar-preview .avatar-parpado rect {
+  animation: pestaneo 6.2s ease-in-out infinite;
+}
+#avatar-en-cuarto .avatar-parpado rect {
+  animation: pestaneo 7.9s ease-in-out infinite;
+}
+
+/* El pestañeo ocupa una fracción mínima del ciclo (un
+   parpadeo real dura ~120ms): el resto del tiempo, ojos
+   abiertos. Un doble parpadeo ocasional lo hace más orgánico. */
+@keyframes pestaneo {
+  0%, 92%, 100% { transform: scaleY(0); }
+  94%           { transform: scaleY(1); }
+  96%           { transform: scaleY(0); }
+  97.5%         { transform: scaleY(1); }  /* segundo parpadeo, a veces */
+  99%           { transform: scaleY(0); }
+}
+
+/* Micro-inclinación de cabeza: cada tanto el avatar ladea
+   apenas, como quien se acomoda. Muy sutil, ciclo largo. */
+.avatar-preview > svg { animation: cabezaLadea 13s ease-in-out infinite; transform-origin: center bottom; }
+
+@keyframes cabezaLadea {
+  0%, 40%, 100% { transform: rotate(0deg); }
+  46%           { transform: rotate(-1.5deg); }
+  54%           { transform: rotate(-1.5deg); }
+  60%           { transform: rotate(0deg); }
+}
+
+/* Poses de cuerpo según tu día (no solo la cara). Sutiles:
+   una inclinación distinta según el ánimo. El avatar cansado
+   se afloja apenas; el confiado se yergue; el concentrado
+   queda quieto (foco). */
+.avatar-preview[data-gesto="cansado"] > svg {
+  animation: cabezaLadea 13s ease-in-out infinite, poseCansado 5s ease-in-out infinite;
+}
+.avatar-preview[data-gesto="confiado"] > svg { animation: poseConfiado 6s ease-in-out infinite; }
+.avatar-preview[data-gesto="concentrado"] > svg { animation: none; } /* quieto: está estudiando */
+
+@keyframes poseCansado {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50%      { transform: rotate(1deg) translateY(0.6px); } /* se afloja */
+}
+@keyframes poseConfiado {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50%      { transform: translateY(-0.6px) scaleY(1.008); } /* pecho un poco más arriba */
+}
+
+/* Respeto por quien pidió menos movimiento: sin pestañeo ni
+   ladeo (la respiración ya es mínima y se queda). */
+@media (prefers-reduced-motion: reduce) {
+  .avatar-parpado rect,
+  .avatar-preview > svg { animation: none; }
+  .avatar-parpado rect { transform: scaleY(0); }
+}
+
+
 /* ============ Entrega 2: racha y microanimaciones ============ */
 
 /* El chip de racha, arriba de HOY */
