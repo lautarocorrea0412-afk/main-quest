@@ -119,6 +119,13 @@ function armarContexto() {
     diaSemana: ahora.getDay(),    // 0=domingo, 1=lunes...
     hora: ahora.getHours(),
     nivelEdicion: data.arboles.edicion.nivel,
+    ingresoMesEdicion: (() => {
+      const regs = data.contexto.ingresos_edicion || [];
+      const ahora = new Date();
+      const claveMes = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, "0")}`;
+      return regs.filter((r) => (r.fecha || "").slice(0, 7) === claveMes)
+                 .reduce((a, r) => a + (r.monto_usd || 0), 0);
+    })(),
     nivelFitness: data.arboles.fitness.nivel
   };
 }
@@ -200,6 +207,8 @@ const PLANTILLAS = [
   { arbol: "edicion", texto: () => `Cada timeline que armás en Premiere es una hora menos de distancia entre vos y tu primer cliente internacional.` },
   { arbol: "edicion", cond: (c) => c.nivelEdicion >= 3,
     texto: (c) => `Edición nivel ${c.nivelEdicion}. Eso no lo regala la app: lo ganaste hora por hora. Seguí apilando.` },
+  { arbol: "edicion", cond: (c) => c.ingresoMesEdicion >= 1000,
+    texto: (c) => `USD ${c.ingresoMesEdicion} editados este mes. El sueldo de editor no es un sueño abstracto: ya lo estás cobrando.` },
 
   /* ===== GYM ===== */
   { arbol: "fitness", texto: () => `Entrenar hoy es un paso más hacia el físico que querés recuperar. Uno solo, pero tuyo.` },

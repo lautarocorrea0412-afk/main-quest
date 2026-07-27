@@ -1,32 +1,21 @@
-Entrega 11 — "Tu leyenda" (rediseño completo de Estadísticas)
-Caché SW: mq-entrega11-leyenda
-La app debe mostrar en VOS: 'Entrega 11 · tu leyenda · datos v10'
+Entrega 12b — Dos correcciones (Japón y la intro)
+Caché SW: mq-entrega12b-arreglos
+La app debe mostrar en VOS: 'Entrega 12b · arreglos · datos v10'
 
-Sin cambios de datos: todo sale de lo que ya se registra (historial,
-diario, árboles, creado_en).
+Sin cambios de datos. (La Entrega 12 fue "datos de vida"; esto son dos
+arreglos sobre esa base.)
 
-De "dashboard" a FICHA DE PERSONAJE de RPG. Se descartó la presentación
-plana anterior (tres bloques de barras iguales); se conservaron los
-cálculos base ya testeados. Composición con jerarquía:
+1. JAPÓN — la proyección "USD X por mes" ahora sube con los días.
+   Antes contaba MESES DE CALENDARIO (getMonth): dentro del mismo mes el
+   número no cambiaba aunque pasaran los días. Ahora cuenta por DÍAS
+   REALES: si hoy necesitás 1430/mes y mañana no aportaste, mañana será
+   un poco más. El panel se refresca al volver a la app, así ves el
+   número al día cada vez que la abrís.
 
-  1. CARTA DE PERSONAJE (protagonista) — avatar, nombre, título que te
-     ganás según tu árbol dominante ("El Editor", "El Viajero"...), días
-     de viaje y nivel total. Brillo que barre la carta.
-  2. MAPA DE CONSTANCIA — calendario tipo GitHub, 112 días, intensidad
-     0-3 según cuánto hiciste. Se enciende celda por celda al entrar.
-  3. RÉCORDS — cuatro cartas: racha más larga, mejor semana, misiones
-     totales, día más activo. Los números cuentan hacia arriba desde 0.
-  4. RADAR — los 6 árboles en gráfico de araña: la FORMA de tu personaje
-     de un vistazo. Se dibuja con un rebote.
-  5. LÍNEA DE ÁNIMO — energía del diario por semana, no un promedio
-     suelto: se ven los ciclos (los valles son semanas de parcial). La
-     línea se traza sola.
+2. INTRO — el personaje ya no "se apaga" al girar. El giro pasaba por
+   scaleX(0.15): el avatar se aplastaba hasta volverse casi una línea, y
+   se leía como un apagón. Ahora el punto medio no baja de 0.42.
 
-Umbral anti-ruido: con menos de 3 cumplidas, invita a seguir en vez de
-mostrar números que mentirían. Microanimaciones respetan reduce-motion.
-Todo dibujado a mano (SVG + CSS), cero librerías.
+Modificados: js/japon.js, js/app.js, css/app.css, tests/suite-japon.js
 
-Modificados: js/stats.js (reescrito), index.html, css/app.css, sw.js,
-  js/app.js, tests/suite-stats.js
-
-Suite: 128 tests. Todo en verde.
+Suite: 135 tests. Todo en verde.

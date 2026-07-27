@@ -1614,27 +1614,31 @@ body:not(.cargando) #telon { opacity: 0; }
   margin-left: -11%;
   z-index: 5;
   opacity: 0;
-  transform: translateY(6px);
   transition: opacity 0.7s ease;
-  animation: cerRespira 3.2s ease-in-out infinite;
 }
-.cer-revelado .cer-avatar { opacity: 1; transform: scaleX(0.55); }
+/* Antes de girar mira "hacia la ventana" (espejado leve); al
+   revelarse queda así hasta el giro. La respiración vive en el
+   SVG de adentro para no pelear con el scaleX del flip. */
+.cer-revelado .cer-avatar { opacity: 1; }
+.cer-avatar { transform: scaleX(0.55); }
 .cer-gira .cer-avatar, .cer-titulo .cer-avatar { transform: scaleX(1); }
+.cer-avatar svg { animation: cerRespira 3.2s ease-in-out infinite; }
 @keyframes cerRespira {
   0%, 100% { transform: translateY(0) scaleY(1); }
   50%      { transform: translateY(-2%) scaleY(1.015); }
 }
-/* T3: el avatar "se gira" a mirarte (flip suave con brillo) */
+/* T3: el avatar "se gira" a mirarte. NO toca el brillo (la
+   lámpara ya lo ilumina). El punto medio del giro NO baja de
+   scaleX 0.42: antes llegaba a 0.15 y el personaje se aplastaba
+   hasta volverse una línea, y eso se leía como si se apagara.
+   Ahora el giro se ve como un giro, no como una desaparición. */
 .cer-gira .cer-avatar {
-  animation: cerGiro 0.9s cubic-bezier(0.4,0.1,0.3,1) forwards,
-             cerRespira 3.2s ease-in-out infinite 0.9s;
+  animation: cerGiro 0.8s cubic-bezier(0.45,0.05,0.4,1) forwards;
 }
-/* El giro NO oscurece (la lámpara ya lo ilumina) y el flip es
-   suave, sin pasar por espejado extremo que lo "trababa". */
 @keyframes cerGiro {
-  0%   { transform: scaleX(0.55); filter: brightness(0.8); }
-  50%  { transform: scaleX(0.2); filter: brightness(0.9); }
-  100% { transform: scaleX(1); filter: brightness(1); }
+  0%   { transform: scaleX(0.55); }
+  50%  { transform: scaleX(0.42); }
+  100% { transform: scaleX(1); }
 }
 
 /* --- El título en el marco de la pared (idea C: la luz lo revela) --- */
@@ -2366,7 +2370,75 @@ body.hoja-abierta { overflow: hidden; }
 @keyframes lineaDibuja { to { stroke-dashoffset: 0; } }
 .linea-punto { fill: var(--sakura); }
 
+/* ============ Datos de vida / edición (Entrega 12) ============ */
+
+.vida-resumen { margin-bottom: 14px; }
+
+.vida-dato { display: flex; flex-direction: column; margin-bottom: 8px; }
+.vida-dato__num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  color: var(--accent);
+}
+.vida-dato__lbl { font-size: 13px; color: var(--ink-dim); }
+
+.vida-mini { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-dim); }
+.vida-mini b { font-family: var(--font-display); font-weight: 800; color: var(--ink); font-size: 14px; }
+
+.vida-mes { margin: 14px 0; }
+.vida-mes__cab {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 13px; color: var(--ink-dim); margin-bottom: 6px;
+}
+.vida-mes__cifra { font-family: var(--font-display); font-weight: 800; color: var(--ink); }
+.barra--vida .barra__fill { background: linear-gradient(90deg, var(--accent), var(--oro)); }
+
+.vida-form { display: flex; flex-direction: column; gap: 4px; }
+.vida-form .config-label { margin-top: 8px; }
+.vida-form .btn { margin-top: 14px; }
+
+.vida-historial { display: flex; flex-direction: column; }
+.vida-fila { padding: 10px 0; border-bottom: 2px solid var(--line); }
+.vida-fila:last-child { border-bottom: none; }
+.vida-fila__top { font-size: 15px; color: var(--ink); }
+.vida-fila__sub { font-size: 12px; color: var(--ink-dim); margin-top: 2px; }
+
 /* ============ Detalles ============ */
+
+/* ============ Datos de vida / edición (Entrega 12) ============ */
+
+.vida-resumen { margin-bottom: 14px; }
+
+.vida-dato { display: flex; flex-direction: column; margin-bottom: 8px; }
+.vida-dato__num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  color: var(--accent);
+}
+.vida-dato__lbl { font-size: 13px; color: var(--ink-dim); }
+
+.vida-mini { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-dim); }
+.vida-mini b { font-family: var(--font-display); font-weight: 800; color: var(--ink); font-size: 14px; }
+
+.vida-mes { margin: 14px 0; }
+.vida-mes__cab {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 13px; color: var(--ink-dim); margin-bottom: 6px;
+}
+.vida-mes__cifra { font-family: var(--font-display); font-weight: 800; color: var(--ink); }
+.barra--vida .barra__fill { background: linear-gradient(90deg, var(--accent), var(--oro)); }
+
+.vida-form { display: flex; flex-direction: column; gap: 4px; }
+.vida-form .config-label { margin-top: 8px; }
+.vida-form .btn { margin-top: 14px; }
+
+.vida-historial { display: flex; flex-direction: column; }
+.vida-fila { padding: 10px 0; border-bottom: 2px solid var(--line); }
+.vida-fila:last-child { border-bottom: none; }
+.vida-fila__top { font-size: 15px; color: var(--ink); }
+.vida-fila__sub { font-size: 12px; color: var(--ink-dim); margin-top: 2px; }
 
 /* ============ Detalles ============ */
 

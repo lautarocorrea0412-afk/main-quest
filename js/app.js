@@ -23,6 +23,7 @@ import { initHistoria, setDatosHistoria } from "./history.js";
 import { initJapon, setDatosJapon } from "./japon.js";
 import { initConfig, setDatosConfig } from "./config.js";
 import { initStats, setDatosStats } from "./stats.js";
+import { initVida, setDatosVida } from "./vida.js";
 import { contextoActual } from "./engine.js";
 import { ICONOS_TAB } from "./iconos.js";
 import { correrCeremonia } from "./ceremonia.js";
@@ -54,7 +55,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 11 · tu leyenda · datos v" + data.version;
+    "MAIN QUEST · Entrega 12b · arreglos · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -102,6 +103,7 @@ inputImportar.addEventListener("change", async () => {
     setDatosJapon(data);
     setDatosConfig(data);
     setDatosStats(data);
+    setDatosVida(data);
     renderBackup();
     alert("Backup restaurado. Bienvenido de vuelta.");
   } catch (err) {
@@ -194,6 +196,7 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
     aplicarLuzAmbiente();
     aplicarModoParcial(); // un parcial puede haberse acercado desde ayer
+    setDatosJapon(data);  // la proyección de Japón sube con los días que pasan
   }
 });
 
@@ -214,6 +217,7 @@ initHistoria(data);
 initJapon(data);
 initConfig(data);
 initStats(data);
+initVida(data);
 renderBackup();
 aplicarModoParcial();
 

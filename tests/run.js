@@ -151,6 +151,7 @@ async function correrTests() {
     await import("./suite-distribucion.js"),
     await import("./suite-config.js"),
     await import("./suite-stats.js"),
+    await import("./suite-vida.js"),
     await import("./suite-arranque.js")  // va último: deja datos cargados
   ];
 

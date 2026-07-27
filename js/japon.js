@@ -23,11 +23,7 @@ let data;
 
 /* Meses que faltan hasta la fecha ideal (fin del mes objetivo) */
 function mesesHastaMeta() {
-  const [y, m] = data.contexto.objetivo_japon.fecha_ideal.split("-").map(Number);
-  const meta = new Date(y, m, 0); // último día del mes objetivo
-  const hoy = new Date();
-  const meses = (meta.getFullYear() - hoy.getFullYear()) * 12 + (meta.getMonth() - hoy.getMonth());
-  return Math.max(0, meses);
+  return mesesHastaMetaDe(data);
 }
 
 /* ------------------------------------------------------------
@@ -42,18 +38,25 @@ export function estadoJapon(datos) {
   const falta = Math.max(0, meta - ahorrado);
   const pct = Math.min(100, Math.round((ahorrado / meta) * 100));
   const meses = mesesHastaMetaDe(datos);
-  // Cuánto por mes hace falta de acá en más para llegar.
-  const porMes = meses > 0 ? Math.ceil(falta / meses) : falta;
+  // Cuánto por mes hace falta de acá en más para llegar. Con
+  // menos de medio mes por delante, mostramos el total (dividir
+  // por casi cero daría un número absurdo).
+  const porMes = meses >= 0.5 ? Math.ceil(falta / meses) : falta;
   return { ahorrado, meta, falta, pct, meses, porMes, cumplido: ahorrado >= meta };
 }
 
-/* Versión pura de mesesHastaMeta (recibe datos), para testear */
+/* Versión pura de mesesHastaMeta (recibe datos), para testear.
+   Cuenta por DÍAS reales y los divide en meses de 30.4, no por
+   meses de calendario: así el "por mes" sube a medida que pasan
+   los días sin aportar, aunque sea el mismo mes. La meta es el
+   último día del mes objetivo. */
 function mesesHastaMetaDe(datos) {
   const [y, m] = datos.contexto.objetivo_japon.fecha_ideal.split("-").map(Number);
-  const meta = new Date(y, m, 0);
+  const meta = new Date(y, m, 0);       // último día del mes objetivo
+  meta.setHours(23, 59, 59, 0);
   const hoy = new Date();
-  const meses = (meta.getFullYear() - hoy.getFullYear()) * 12 + (meta.getMonth() - hoy.getMonth());
-  return Math.max(0, meses);
+  const dias = Math.max(0, (meta.getTime() - hoy.getTime()) / 86400000);
+  return dias / 30.4;                    // meses fraccionarios reales
 }
 
 /* ------------------------------------------------------------

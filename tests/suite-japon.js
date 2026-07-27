@@ -89,6 +89,22 @@ export function correr() {
     igual(estadoJapon(d).pct, 100, "topeado en 100%");
   });
 
+  test("proyección: cuenta por días reales, sube al pasar el tiempo", () => {
+    // Con la meta MÁS lejos, el por-mes es MENOR (más tiempo para
+    // juntar lo mismo). Esto prueba que el cálculo mira días, no
+    // meses de calendario redondeados.
+    const lejos = crearDatos();
+    lejos.contexto.objetivo_japon.fecha_ideal = "2027-12";
+    registrarAporte(lejos, 1000);
+
+    const cerca = crearDatos();
+    cerca.contexto.objetivo_japon.fecha_ideal = "2027-02";
+    registrarAporte(cerca, 1000);
+
+    assert(estadoJapon(lejos).porMes < estadoJapon(cerca).porMes,
+      "meta más lejana => menos por mes: el tiempo cuenta");
+  });
+
   test("proyección: divide lo que falta por los meses restantes", () => {
     const d = crearDatos();
     d.contexto.objetivo_japon.fecha_ideal = "2027-02";
