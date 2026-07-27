@@ -28,7 +28,7 @@ const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
                "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
-const ICONO_EVENTO = { compra: "🪙", logro: "🏆" };
+const ICONO_EVENTO = { compra: "🪙", logro: "🏆", japon: "🇯🇵", "japon-meta": "⛩️" };
 
 /* Un YYYY-MM-DD se parte a mano: new Date("2026-07-23") lo
    interpreta como UTC y en Argentina devolvería el día

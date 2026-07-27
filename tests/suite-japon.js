@@ -60,6 +60,29 @@ export function correr() {
     igual(e.falta, 0, "no falta nada");
   });
 
+  test("cruzar la meta devuelve 'meta' UNA sola vez", () => {
+    const d = crearDatos();
+    igual(registrarAporte(d, 5000), true, "aporte normal: true");
+    igual(registrarAporte(d, 5000), "meta", "el aporte que cruza: 'meta'");
+    assert(d.contexto.objetivo_japon.cumplido_en, "queda registrada la fecha");
+    igual(registrarAporte(d, 1000), true, "un aporte MÁS ya no repite la ceremonia");
+  });
+
+  test("la meta cruzada de un saque también dispara una vez", () => {
+    const d = crearDatos();
+    igual(registrarAporte(d, 15000), "meta", "de 0 a 15000 cruza");
+    igual(registrarAporte(d, -20000), true, "bajar no re-arma la ceremonia");
+    // y si vuelve a subir, tampoco: ya se cumplió una vez
+    igual(registrarAporte(d, 20000), true, "volver a subir tampoco repite");
+  });
+
+  test("el evento de meta queda en la timeline", () => {
+    const d = crearDatos();
+    registrarAporte(d, 10000);
+    const hito = d.timeline.find((t) => t.tipo === "japon-meta");
+    assert(hito, "hay un hito de meta en la historia");
+  });
+
   test("el pct nunca pasa de 100 aunque te pases de la meta", () => {
     const d = crearDatos();
     registrarAporte(d, 12000);

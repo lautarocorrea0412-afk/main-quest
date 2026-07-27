@@ -15,7 +15,7 @@ export function correr() {
   test("usuario nuevo arranca en la versión actual y con los 6 árboles", () => {
     localStorage.clear();
     const d = load();
-    igual(d.version, 8, "versión inicial");
+    igual(d.version, 9, "versión inicial");
     igual(Object.keys(d.arboles).length, 6, "cantidad de árboles");
     igual(d.economia.monedas, 0, "monedas iniciales");
     assert(d.perfil.creado_en, "creado_en debe fijarse en el primer arranque");
@@ -37,7 +37,7 @@ export function correr() {
 
     const d = load();
 
-    igual(d.version, 8, "debe quedar migrado a la versión actual");
+    igual(d.version, 9, "debe quedar migrado a la versión actual");
     // Lo del usuario se respeta
     igual(d.economia.monedas, 999, "las monedas no se pisan");
     igual(d.arboles.fitness.nivel, 2, "el nivel ganado no se pierde");
@@ -61,7 +61,7 @@ export function correr() {
     localStorage.setItem("mainquest_data", JSON.stringify({ version: 2, economia: { monedas: 50 } }));
     load();
     const guardado = JSON.parse(localStorage.getItem("mainquest_data"));
-    igual(guardado.version, 8, "la versión migrada se guarda en disco");
+    igual(guardado.version, 9, "la versión migrada se guarda en disco");
     igual(guardado.economia.monedas, 50, "los datos del usuario siguen ahí");
   });
 
@@ -69,7 +69,7 @@ export function correr() {
     localStorage.clear();
     localStorage.setItem("mainquest_data", "{esto no es json valido");
     const d = load();
-    igual(d.version, 8, "cae al estado inicial");
+    igual(d.version, 9, "cae al estado inicial");
     igual(Object.keys(d.arboles).length, 6, "con todos los árboles");
   });
 
