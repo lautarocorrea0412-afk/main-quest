@@ -1618,40 +1618,47 @@ body:not(.cargando) #telon { opacity: 0; }
   transition: opacity 0.7s ease;
   animation: cerRespira 3.2s ease-in-out infinite;
 }
-.cer-revelado .cer-avatar { opacity: 1; }
+.cer-revelado .cer-avatar { opacity: 1; transform: scaleX(0.55); }
+.cer-gira .cer-avatar, .cer-titulo .cer-avatar { transform: scaleX(1); }
 @keyframes cerRespira {
   0%, 100% { transform: translateY(0) scaleY(1); }
   50%      { transform: translateY(-2%) scaleY(1.015); }
 }
 /* T3: el avatar "se gira" a mirarte (flip suave con brillo) */
-.cer-gira .cer-avatar { animation: cerGiro 1s cubic-bezier(0.4,0.1,0.3,1), cerRespira 3.2s ease-in-out infinite 1s; }
+.cer-gira .cer-avatar {
+  animation: cerGiro 0.9s cubic-bezier(0.4,0.1,0.3,1) forwards,
+             cerRespira 3.2s ease-in-out infinite 0.9s;
+}
+/* El giro NO oscurece (la lámpara ya lo ilumina) y el flip es
+   suave, sin pasar por espejado extremo que lo "trababa". */
 @keyframes cerGiro {
-  0%   { transform: scaleX(-0.5); filter: brightness(0.4); }
-  45%  { transform: scaleX(0.15); filter: brightness(0.65); }
-  70%  { transform: scaleX(0.9); filter: brightness(0.95); }
+  0%   { transform: scaleX(0.55); filter: brightness(0.8); }
+  50%  { transform: scaleX(0.2); filter: brightness(0.9); }
   100% { transform: scaleX(1); filter: brightness(1); }
 }
 
 /* --- El título en el marco de la pared (idea C: la luz lo revela) --- */
 .cer-titulo-txt {
   position: absolute;
-  left: 75%; top: 22%;
-  transform: translate(-50%, -50%) scale(0.9);
-  z-index: 6;
+  left: 0; right: 0;
+  top: 15%;
+  z-index: 9;
   opacity: 0;
+  transform: translateY(-8px) scale(0.94);
   transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.34,1.6,0.5,1);
   text-align: center;
+  pointer-events: none;
 }
-.cer-titulo .cer-titulo-txt { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.cer-titulo .cer-titulo-txt { opacity: 1; transform: translateY(0) scale(1); }
 .cer-titulo-txt span {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(11px, 3.4vw, 15px);
-  letter-spacing: 0.5px;
+  font-size: clamp(22px, 7vw, 34px);
+  letter-spacing: 2px;
   color: var(--ink);
-  text-shadow: 0 0 12px rgba(255,216,140,0.6);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 0 22px rgba(255,216,140,0.7);
 }
-.cer-titulo-txt b { color: var(--luz-ceremonia); }
+.cer-titulo-txt b { color: var(--luz-ceremonia); margin: 0 2px; }
 
 /* --- Partículas --- */
 .cer-polvo, .cer-sakura {
@@ -1685,7 +1692,9 @@ body:not(.cargando) #telon { opacity: 0; }
 
 /* --- Frase + botón entrar --- */
 .cer-marca {
-  position: absolute; bottom: 116px; left: 0; right: 0;
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + 128px);
+  left: 0; right: 0;
   text-align: center; z-index: 10;
   opacity: 0; transform: translateY(8px);
   transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34,1.6,0.5,1);

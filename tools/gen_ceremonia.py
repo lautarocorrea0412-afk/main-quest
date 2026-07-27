@@ -109,13 +109,10 @@ r(21, 51, 58, 3, C["ventana_marco"])
 r(15, 84, 70, 4, C["escritorio_sh"])
 g_close()
 
-# ============ CUADRITO / PÓSTER a la derecha de la ventana ============
-# (el título MAIN QUEST se dibuja como capa aparte en el CSS,
-#  pero dejamos un marco vacío en la pared para ubicarlo)
-g_open("esc-marco-titulo")
-r(150, 18, 44, 30, C["poster_marco"])
-r(152, 20, 40, 26, C["poster_bg"])
-g_close()
+# (El título MAIN QUEST ya no vive en la pared como cuadro:
+#  se dibuja como texto grande flotante en el CSS, centrado
+#  arriba. Antes había un marco acá que se superponía con el
+#  texto y se veía mal.)
 
 # ============ CAMA (derecha del todo, en perspectiva) ============
 g_open("esc-cama")
