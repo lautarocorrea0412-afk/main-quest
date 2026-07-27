@@ -24,7 +24,12 @@ let data;
 let editando = false;   // true mientras el formulario está abierto para editar
 let energiaSel = null;  // energía elegida en el formulario (estado temporal)
 
-const HORA_CIERRE = 21;
+/* La hora del cierre es configurable (Configuración). Con un
+   respaldo a las 21 por si son datos viejos sin el ajuste. */
+function horaCierre() {
+  return (data && data.ajustes && Number.isInteger(data.ajustes.hora_diario))
+    ? data.ajustes.hora_diario : 21;
+}
 const EMOJIS = { 1: "😴", 2: "😕", 3: "😐", 4: "🙂", 5: "🔥" };
 
 function entradaDeHoy() {
@@ -42,7 +47,7 @@ function render() {
   const entrada = entradaDeHoy();
   const hora = new Date().getHours();
 
-  if (!entrada && hora < HORA_CIERRE) {
+  if (!entrada && hora < horaCierre()) {
     cont.innerHTML = "";
     return;
   }
@@ -153,7 +158,7 @@ export function initDiario(appData) {
   const cont = document.getElementById("diario-cierre");
   cont.addEventListener("click", accion);
 
-  // Si la app quedó abierta y pasan las 21 (o cambia el día),
+  // Si la app quedó abierta y pasa la hora del diario (o cambia el día),
   // al volver a primer plano el panel aparece o se renueva.
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {

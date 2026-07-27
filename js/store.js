@@ -21,9 +21,10 @@ const STORAGE_KEY = "mainquest_data";
    v7 — el perfil recuerda el día de la última ceremonia
    v8 — el objetivo Japón guarda el historial de aportes
    v9 — el objetivo Japón recuerda el día que se cumplió
+   v10 — ajustes del usuario (hora del diario, sonido)
    completarFaltantes() agrega los campos nuevos a los datos
    viejos, así que las migraciones son automáticas. */
-const DATA_VERSION = 9;
+const DATA_VERSION = 10;
 
 /* ------------------------------------------------------------
    Estado inicial (el "personaje nivel 1").
@@ -40,6 +41,10 @@ const DEFAULT_DATA = {
     avatar: { pelo: "largo", remera: "oversize", pantalon: "jogging", accesorio: "ninguno" },
     ultimo_backup: null, // C-26: para avisar cuando pasó demasiado tiempo
     ultima_ceremonia: null // Entrega 7: la ceremonia es 1 vez por día
+  },
+  ajustes: {
+    hora_diario: 21,   // a qué hora aparece el cierre del día (0-23)
+    sonido: false      // apagado por defecto (Entrega 5 lo usará)
   },
   arboles: {
     fitness:   { xp: 0, nivel: 1 },

@@ -1,27 +1,25 @@
-Entrega 8d — Avatar en acordeón (mismo criterio de distribución)
-Caché SW: mq-entrega8d-avatar
-La app debe mostrar en VOS: 'Entrega 8d · avatar acordeón · datos v9'
+Entrega 9 — Configuración
+Caché SW: mq-entrega9-config
+La app debe mostrar en VOS: 'Entrega 9 · configuración · datos v10'
 
-Sin cambios de datos ni de funcionalidad: solo distribución.
+DATA_VERSION sube a 10: bloque "ajustes" (hora del diario, sonido).
+Migración automática: datos viejos se completan con los valores por
+defecto (21:00, sonido apagado).
 
-EL PROBLEMA: las cuatro grillas de ropa (Peinado, Ropa, Pantalón,
-Accesorio) se apilaban en un chorizo vertical enorme, sobre todo con
-muchas prendas desbloqueadas.
+Nuevo panel Configuración en la pestaña VOS (js/config.js):
+  - NOMBRE editable: se aplica al instante en el saludo y el perfil.
+    Nunca queda vacío (si lo borrás, vuelve a "vos").
+  - HORA DEL DIARIO configurable (18 a medianoche). El diario dejó de
+    estar clavado a las 21: ahora journal.js lee data.ajustes.hora_diario.
+    AVISO HONESTO en la ayuda: no es una alarma. Una PWA en iOS no puede
+    despertar sola a una hora; esto controla cuándo APARECE el cierre del
+    día al abrir la app.
+  - INTERRUPTOR DE SONIDO: apagado por defecto, listo para la próxima
+    entrega. La ayuda aclara que todavía no hay sonidos.
 
-LA SOLUCIÓN: acordeón in-place (NO hoja, a diferencia de Japón/Historia).
-Cada categoría es una fila que se toca y despliega SOLO su grilla, con el
-avatar de arriba siempre visible mientras te probás ropa. Se eligió
-acordeón y no hoja justamente porque acá estás eligiendo activamente:
-tenés que ver el resultado en el muñeco al instante.
+Modificados: js/store.js (v10 + ajustes), js/journal.js (hora del perfil),
+  index.html, css/app.css (switch, select), js/app.js, sw.js,
+  tests/helpers.js, tests/suite-store.js, tests/suite-arranque.js,
+  tests/suite-config.js (nuevo)
 
-  - Cada fila cerrada resume: qué tenés puesto y cuántas desbloqueaste
-    (ej: "Haori · 3/11").
-  - Pueden quedar VARIAS abiertas a la vez (decisión de Lautaro).
-  - Puntito rosa en la categoría con prendas nuevas sin ver.
-  - Al elegir una prenda, las categorías abiertas siguen abiertas
-    (el estado no se pierde en el re-render).
-
-Modificados: js/avatar.js, css/app.css, sw.js, js/app.js,
-  tests/suite-iconos.js
-
-Suite: 115 tests. Todo en verde.
+Suite: 118 tests. Todo en verde.

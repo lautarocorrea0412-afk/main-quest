@@ -21,6 +21,7 @@ import { initAvatar, setDatosAvatar } from "./avatar.js";
 import { initLogros, setDatosLogros } from "./achievements.js";
 import { initHistoria, setDatosHistoria } from "./history.js";
 import { initJapon, setDatosJapon } from "./japon.js";
+import { initConfig, setDatosConfig } from "./config.js";
 import { contextoActual } from "./engine.js";
 import { ICONOS_TAB } from "./iconos.js";
 import { correrCeremonia } from "./ceremonia.js";
@@ -52,7 +53,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 8d · avatar acordeón · datos v" + data.version;
+    "MAIN QUEST · Entrega 9 · configuración · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -98,6 +99,7 @@ inputImportar.addEventListener("change", async () => {
     setDatosLogros(data);
     setDatosHistoria(data);
     setDatosJapon(data);
+    setDatosConfig(data);
     renderBackup();
     alert("Backup restaurado. Bienvenido de vuelta.");
   } catch (err) {
@@ -208,6 +210,7 @@ initCuarto(data);
 initLogros(data);
 initHistoria(data);
 initJapon(data);
+initConfig(data);
 renderBackup();
 aplicarModoParcial();
 
