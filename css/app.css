@@ -2211,6 +2211,151 @@ body.hoja-abierta { overflow: hidden; }
   background: #2A2130;
 }
 
+/* ============ Estadísticas (Entrega 10) ============ */
+
+.stats-vacio {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+
+.stat-bloque { margin-bottom: 22px; }
+.stat-bloque:last-child { margin-bottom: 0; }
+
+.stat-titulo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.stat-lectura {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  margin-top: 10px;
+}
+
+/* --- Constancia: barras verticales por semana --- */
+.stat-semanas {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 110px;
+}
+
+.stat-semana {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+.stat-semana__barra {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  background: var(--bg);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.stat-semana__fill {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent), var(--sakura));
+  border-radius: 6px 6px 0 0;
+  transition: height 0.5s var(--bounce);
+  min-height: 3px;
+}
+
+.stat-semana__num {
+  position: absolute;
+  top: 4px; left: 0; right: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--ink);
+}
+
+.stat-semana__label {
+  font-size: 10px;
+  color: var(--ink-dim);
+}
+
+/* --- Balance: barras horizontales por árbol --- */
+.stat-arbol {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.stat-arbol__nombre {
+  flex: none;
+  width: 96px;
+  font-size: 12px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-arbol__barra {
+  flex: 1;
+  height: 10px;
+  background: var(--bg);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.stat-arbol__fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--matcha), var(--accent));
+  border-radius: 999px;
+  transition: width 0.5s var(--bounce);
+}
+
+.stat-arbol__pct {
+  flex: none;
+  width: 34px;
+  text-align: right;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+/* --- Energía --- */
+.stat-energia {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.stat-energia__num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--matcha);
+}
+
+.stat-energia__de { font-size: 15px; color: var(--ink-dim); }
+
+.stat-energia__base {
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-left: 6px;
+}
+
 /* ============ Detalles ============ */
 
 .meta {

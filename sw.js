@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega9-config";
+const CACHE_VERSION = "mq-entrega10-stats";
 
 const CORE = [
   "./",
@@ -34,6 +34,7 @@ const CORE = [
   "./js/history.js",
   "./js/japon.js",
   "./js/config.js",
+  "./js/stats.js",
   "./js/progression.js",
   "./js/ui.js",
   "./assets/cuarto.svg",

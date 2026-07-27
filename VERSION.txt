@@ -1,25 +1,29 @@
-Entrega 9 — Configuración
-Caché SW: mq-entrega9-config
-La app debe mostrar en VOS: 'Entrega 9 · configuración · datos v10'
+Entrega 10 — Estadísticas (Tus números)
+Caché SW: mq-entrega10-stats
+La app debe mostrar en VOS: 'Entrega 10 · estadísticas · datos v10'
 
-DATA_VERSION sube a 10: bloque "ajustes" (hora del diario, sonido).
-Migración automática: datos viejos se completan con los valores por
-defecto (21:00, sonido apagado).
+Sin cambios de datos: usa lo que ya existe (historial, diario, árboles).
 
-Nuevo panel Configuración en la pestaña VOS (js/config.js):
-  - NOMBRE editable: se aplica al instante en el saludo y el perfil.
-    Nunca queda vacío (si lo borrás, vuelve a "vos").
-  - HORA DEL DIARIO configurable (18 a medianoche). El diario dejó de
-    estar clavado a las 21: ahora journal.js lee data.ajustes.hora_diario.
-    AVISO HONESTO en la ayuda: no es una alarma. Una PWA en iOS no puede
-    despertar sola a una hora; esto controla cuándo APARECE el cierre del
-    día al abrir la app.
-  - INTERRUPTOR DE SONIDO: apagado por defecto, listo para la próxima
-    entrega. La ayuda aclara que todavía no hay sonidos.
+Nuevo panel "Tus números" al inicio de la pestaña Progreso (js/stats.js).
+Pensado como ESPEJO, no dashboard: cada bloque no muestra un número
+suelto, te dice algo de vos.
 
-Modificados: js/store.js (v10 + ajustes), js/journal.js (hora del perfil),
-  index.html, css/app.css (switch, select), js/app.js, sw.js,
-  tests/helpers.js, tests/suite-store.js, tests/suite-arranque.js,
-  tests/suite-config.js (nuevo)
+  1. TU CONSTANCIA — misiones principales cumplidas por semana (últimas 6),
+     en barras verticales. Lectura: compara la semana en curso con tu
+     promedio ("vas igual o mejor", "más tranquila que tu promedio").
+  2. HACIA DÓNDE VA TU ENERGÍA — % de cumplidas por árbol, barras
+     horizontales ordenadas de más a menos. Lectura: cuál domina. No
+     busca que estén parejos; busca que VEAS a dónde va tu tiempo.
+  3. TU ÁNIMO — energía promedio del diario (últimos 14 cierres). Lectura
+     según el nivel, sin alarmar ("descansar también es avanzar").
 
-Suite: 118 tests. Todo en verde.
+UMBRAL ANTI-RUIDO: con menos de 3 misiones cumplidas no muestra números
+(mentirían); invita a seguir usando la app. La energía es null si no hay
+diario: nunca inventa un promedio.
+
+Todo dibujado a mano (cero librerías de gráficos).
+
+Modificados: index.html, js/app.js, css/app.css, sw.js,
+  tests/suite-arranque.js, tests/suite-stats.js (nuevo)
+
+Suite: 124 tests. Todo en verde.
