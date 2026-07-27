@@ -147,6 +147,7 @@ async function correrTests() {
     await import("./suite-historia.js"),
     await import("./suite-iconos.js"),
     await import("./suite-ceremonia.js"),
+    await import("./suite-japon.js"),
     await import("./suite-arranque.js")  // va último: deja datos cargados
   ];
 

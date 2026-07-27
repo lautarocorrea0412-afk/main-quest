@@ -33,6 +33,7 @@ import { initAvatar } from "../js/avatar.js";
 import { initCuarto } from "../js/room.js";
 import { initLogros } from "../js/achievements.js";
 import { initHistoria } from "../js/history.js";
+import { initJapon } from "../js/japon.js";
 import { renderArboles } from "../js/xp.js";
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -43,13 +44,13 @@ const IDS = [
   "diario-cierre", "arboles", "tienda", "cuarto", "cuarto-progreso",
   "monedas-contador", "logros", "logros-contador", "lista-parciales",
   "avatar-preview", "avatar-opciones", "perfil-nombre", "perfil-desde",
-  "version-info", "topbar-fecha", "historia", "historia-contador", "backup-estado",
+  "version-info", "topbar-fecha", "historia", "historia-contador", "backup-estado", "japon-panel",
   "view-hoy", "view-habitacion", "view-progreso", "view-vos"
 ];
 
 const FUNCIONES = {
   initEngine, initMisiones, initDiario, initEconomia,
-  initAvatar, initCuarto, initLogros, initHistoria
+  initAvatar, initCuarto, initLogros, initHistoria, initJapon
 };
 
 /* app.js hace render() ANTES de los init: ahí dibuja el

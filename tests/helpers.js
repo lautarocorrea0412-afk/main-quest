@@ -167,7 +167,7 @@ export function crearDatos(hoy = "2026-07-23") {
     arboles: Object.fromEntries(ARBOLES.map((k) => [k, { xp: 0, nivel: 1 }])),
     contexto: {
       parciales: [],
-      objetivo_japon: { meta_usd: 10000, ahorrado_usd: 0, fecha_ideal: "2027-02" },
+      objetivo_japon: { meta_usd: 10000, ahorrado_usd: 0, fecha_ideal: "2027-02", aportes: [] },
       ingresos_edicion: []
     },
     misiones: { hoy: { fecha: hoy, principal: null, secundarias: [] }, historial: [] },

@@ -19,9 +19,10 @@ const STORAGE_KEY = "mainquest_data";
    v5 — el look suma el slot de accesorio
    v6 — el perfil recuerda la fecha del último backup
    v7 — el perfil recuerda el día de la última ceremonia
+   v8 — el objetivo Japón guarda el historial de aportes
    completarFaltantes() agrega los campos nuevos a los datos
    viejos, así que las migraciones son automáticas. */
-const DATA_VERSION = 7;
+const DATA_VERSION = 8;
 
 /* ------------------------------------------------------------
    Estado inicial (el "personaje nivel 1").
@@ -49,7 +50,7 @@ const DEFAULT_DATA = {
   },
   contexto: {
     parciales: [],
-    objetivo_japon: { meta_usd: 10000, ahorrado_usd: 0, fecha_ideal: "2027-02" },
+    objetivo_japon: { meta_usd: 10000, ahorrado_usd: 0, fecha_ideal: "2027-02", aportes: [] },
     ingresos_edicion: []
   },
   misiones: { hoy: null, historial: [] },

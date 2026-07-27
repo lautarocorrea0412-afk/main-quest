@@ -1737,6 +1737,64 @@ body:not(.cargando) #telon { opacity: 0; }
 .cer-lampara-on #esc-lampara { animation: cerLamp 3s ease-in-out infinite 0.6s; transform-origin: 88px 50px; }
 @keyframes cerLamp { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
 
+/* ============ Objetivo Japón (Entrega 8) ============ */
+
+.japon-cifra { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+
+.japon-ahorrado {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  color: var(--matcha);
+}
+
+.japon-meta { font-size: 14px; color: var(--ink-dim); }
+
+.barra--japon { height: 12px; margin-bottom: 4px; }
+
+.barra--japon .barra__fill {
+  background: linear-gradient(90deg, var(--matcha), var(--sakura));
+}
+
+.japon-pct {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--ink-dim);
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.japon-proy {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+  border-left: 3px solid var(--sakura);
+  padding: 8px 12px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin-bottom: 12px;
+}
+
+.japon-proy--ok { border-left-color: var(--matcha); color: var(--matcha); }
+
+.japon-historial {
+  margin-top: 12px;
+  border-top: 2px solid var(--line);
+  padding-top: 8px;
+}
+
+.japon-aporte {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--ink-dim);
+  padding: 3px 0;
+}
+
+.japon-mas { color: var(--matcha); font-weight: 600; }
+.japon-menos { color: var(--sakura); font-weight: 600; }
+
 /* ============ Detalles ============ */
 
 .meta {

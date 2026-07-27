@@ -20,6 +20,7 @@ import { initCuarto, setDatosCuarto } from "./room.js";
 import { initAvatar, setDatosAvatar } from "./avatar.js";
 import { initLogros, setDatosLogros } from "./achievements.js";
 import { initHistoria, setDatosHistoria } from "./history.js";
+import { initJapon, setDatosJapon } from "./japon.js";
 import { contextoActual } from "./engine.js";
 import { ICONOS_TAB } from "./iconos.js";
 import { correrCeremonia } from "./ceremonia.js";
@@ -44,14 +45,6 @@ function render() {
   // Árboles de habilidades (los dibuja el módulo de XP)
   renderArboles(data);
 
-  // Objetivo Japón
-  const japon = data.contexto.objetivo_japon;
-  const pct = Math.min(100, Math.round((japon.ahorrado_usd / japon.meta_usd) * 100));
-  document.getElementById("japon-titulo").textContent = "Japón · Feb 2027";
-  document.getElementById("japon-barra").style.width = pct + "%";
-  document.getElementById("japon-detalle").innerHTML =
-    `<strong>USD ${japon.ahorrado_usd}</strong> de ${japon.meta_usd} · ${pct}%`;
-
   // Perfil
   document.getElementById("perfil-nombre").textContent = data.perfil.nombre;
   const desde = new Date(data.perfil.creado_en);
@@ -59,7 +52,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 7A-v6 · el regreso · datos v" + data.version;
+    "MAIN QUEST · Entrega 8 · Japón · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -104,6 +97,7 @@ inputImportar.addEventListener("change", async () => {
     setDatosAvatar(data);
     setDatosLogros(data);
     setDatosHistoria(data);
+    setDatosJapon(data);
     renderBackup();
     alert("Backup restaurado. Bienvenido de vuelta.");
   } catch (err) {
@@ -213,6 +207,7 @@ initAvatar(data);
 initCuarto(data);
 initLogros(data);
 initHistoria(data);
+initJapon(data);
 renderBackup();
 aplicarModoParcial();
 

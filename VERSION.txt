@@ -1,22 +1,24 @@
-Entrega 7A v6 — Ceremonia "El regreso" · ajustes finales
-Caché SW: mq-entrega7a-v6-ajustes
-La app debe mostrar en VOS: 'Entrega 7A-v6 · el regreso · datos v7'
+Entrega 8 — Volver a Japón (F6): el ahorro por fin se ve y se carga
+Caché SW: mq-entrega8-japon
+La app debe mostrar en VOS: 'Entrega 8 · Japón · datos v8'
 
-Sin cambios de datos ni de concepto. Cuatro correcciones puntuales:
+DATA_VERSION sube a 8: el objetivo Japón guarda el historial de aportes.
+Migración automática.
 
-1. EL AVATAR SE PONÍA OSCURO / SE TRABABA en el giro. El giro usaba
-   brightness(0.4) y un espejado extremo (scaleX -0.5) que lo apagaba y
-   lo trababa. Ahora el giro NO oscurece (la lámpara ya lo ilumina) y es
-   un flip suave, sin espejado extremo.
+El panel de Japón existía desde la Fase 0 pero mostraba siempre USD 0
+porque NUNCA hubo forma de cargar lo ahorrado. Ahora sí:
 
-2. EL TÍTULO MAIN QUEST se superponía con un marco en la pared. Se
-   eliminó el marco del SVG; el título ahora es texto grande flotante
-   (clamp 22-34px) centrado arriba, con sombra y glow, sin cuadro detrás.
+Nuevo: js/japon.js
+  - Registrás aportes (sumar un ahorro en USD), cada uno con su fecha.
+  - Barra de progreso real hacia los USD 10.000.
+  - Proyección SIN culpa: "Al ritmo de USD X por mes llegás a febrero
+    2027" — nunca "vas atrasado".
+  - Los aportes van a la timeline: son parte de tu historia.
+  - Muestra los últimos 3 movimientos.
 
-3. LA FRASE la tapaba el botón. La frase subió a 128px+safe y el botón
-   quedó en 44px+safe: ~84px de separación, ya no se pisan.
+Modificados: js/store.js (v8 + aportes), index.html (panel nuevo),
+  js/app.js (usa el módulo, saca el render viejo), css/app.css, sw.js,
+  tests/helpers.js, tests/suite-store.js, tests/suite-arranque.js,
+  tests/suite-japon.js (nuevo)
 
-Modificados: css/app.css, tools/gen_ceremonia.py, assets/ceremonia.svg,
-  js/app.js, sw.js
-
-Suite: 100 tests. Todo en verde.
+Suite: 108 tests. Todo en verde.
