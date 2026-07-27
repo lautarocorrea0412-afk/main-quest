@@ -1,21 +1,29 @@
-Entrega 7A v4 — Ceremonia "El regreso" · pasada de polish
-Caché SW: mq-entrega7a-v4-regreso
-La app debe mostrar en VOS: 'Entrega 7A-v4 · el regreso · datos v7'
+Entrega 7A v5 — Ceremonia "El regreso" · ilustración de verdad
+Caché SW: mq-entrega7a-v5-ilustracion
+La app debe mostrar en VOS: 'Entrega 7A-v5 · el regreso · datos v7'
 
-Sin cambios de datos ni de concepto: solo polish + los 6 ajustes pedidos.
+Sin cambios de datos ni de concepto.
 
-1. COOLDOWN ELIMINADO. La ceremonia aparece SIEMPRE que la app se abre.
-   Se fue toda la lógica de ventana de 30s.
-2. COMPOSICIÓN ORGÁNICA. Perspectiva de anime, nada centrado en cajas,
-   ventana con peso a la izquierda, muebles desparejos, póster rotado.
-3. ACCIONES EXAGERADAS: flash al prender la lámpara, giro con pose de
-   perfil intermedia, póster con destello, botón de entrar con pulso.
-4. PANTALLAZO ELIMINADO: telón (#telon) en el HTML desde el primer frame.
-5. MÁS MICROVIDA: respiración marcada, cortina, micro-parpadeo del
-   monitor, lámpara que titila, pétalos con deriva.
-6. PULIDO: timings, easing con rebote cálido, travelling que sube.
+EL CAMBIO DE FONDO: la escena dejó de ser <div> de colores (que se leían
+como bloques y rompían la ilusión) y pasó a ser UNA ILUSTRACIÓN pixel-art
+en SVG (assets/ceremonia.svg), compuesta como habitación, no como layout.
 
-Modificados: index.html, js/ceremonia.js, js/app.js, css/app.css, sw.js,
-  tests/suite-ceremonia.js
+Lo pedido, resuelto:
+1. La "remera del medio" (era el avatar de espaldas en bloque) — eliminada.
+   Ahora el avatar es el mismo pixel-art de la app, sentado en la escena.
+2. El "cuadrado de la izquierda" (era la ventana en bloque) — ahora es una
+   ventana dibujada, con ciudad al atardecer y ventanitas encendidas.
+3. Composición como ilustración: ventana con skyline, escritorio con
+   monitor + taza de café + Switch + libros, lámpara de escritorio con
+   CONO DE LUZ real, cama en el rincón, planta, alfombra, sombras de
+   contacto que dan peso, perspectiva de anime y viñeta cinematográfica.
+4-5. Detalles que dan vida: cono de luz que respira, halo cálido que tiñe
+   la escena, polvo dorado en el haz, café, consola, ciudad al fondo,
+   monitor que late, sakura. El "wow" es el encendido de la lámpara
+   derramando el cono de luz sobre el escritorio.
+
+Nuevo: tools/gen_ceremonia.py, assets/ceremonia.svg
+Modificados: js/ceremonia.js (carga la ilustración, async, if !ok throw),
+  css/app.css (reescritura de la capa visual), js/app.js, sw.js
 
 Suite: 100 tests. Todo en verde.

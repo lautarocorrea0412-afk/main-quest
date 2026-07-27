@@ -44,6 +44,22 @@ import { franjaLuz } from "./util.js";
 import { fraseCeremonia } from "./engine.js";
 
 let data;
+let escenaCache = null;
+
+/* Carga la ilustración una vez. La trampa de iOS de siempre:
+   fetch NO falla con 404, hay que chequear resp.ok o se
+   inyecta el HTML de error dentro de la escena. */
+async function cargarEscena() {
+  if (escenaCache) return escenaCache;
+  try {
+    const resp = await fetch("./assets/ceremonia.svg");
+    if (!resp.ok) throw new Error("no se pudo cargar la escena");
+    escenaCache = await resp.text();
+  } catch {
+    escenaCache = ""; // sin ilustración, la ceremonia sigue (solo luz)
+  }
+  return escenaCache;
+}
 
 const LUCES = {
   manana: "#FFD98C",
@@ -86,9 +102,11 @@ function sakura(n = 6) {
    Corre la ceremonia. La promesa se resuelve cuando el
    usuario TOCA para entrar (no sola), tras el travelling.
    ------------------------------------------------------------ */
-export function correrCeremonia(datos) {
+export async function correrCeremonia(datos) {
   data = datos;
-  if (reduceMovimiento()) return Promise.resolve();
+  if (reduceMovimiento()) return;
+
+  const svgTexto = await cargarEscena();
 
   return new Promise((resolve) => {
     let entrado = false;
@@ -103,23 +121,17 @@ export function correrCeremonia(datos) {
     /* El avatar arranca DE ESPALDAS (mirando la ventana) y en
        T3 gira al frente. Dos versiones: la de espaldas es una
        silueta simple; la de frente es el avatar de siempre. */
+    /* La escena es una ILUSTRACIÓN pixel-art (assets/ceremonia.svg),
+       no bloques CSS. Se carga inline para poder animar sus
+       capas (<g id="esc-...">) y superponerle la luz. */
     overlay.innerHTML = `
+      <div class="cer-vineta"></div>
       <div class="cer-camara">
-        <div class="cer-cuarto">
-          <div class="cer-pared"></div>
-          <div class="cer-poster"><span>MAIN<b>/</b>QUEST</span></div>
-          <div class="cer-ventana">
-            <div class="cer-vidrio"></div>
-            <div class="cer-cortina"></div>
-          </div>
-          <div class="cer-lampara"></div>
-          <div class="cer-halo"></div>
-          <div class="cer-cama"></div>
-          <div class="cer-escritorio"><span class="cer-monitor"></span></div>
-          <div class="cer-avatar">
-            <div class="cer-av-espaldas"></div>
-            <div class="cer-av-frente">${dibujarAvatar(1)}</div>
-          </div>
+        <div class="cer-escena">
+          ${svgTexto}
+          <div class="cer-cono"></div>
+          <div class="cer-avatar">${dibujarAvatar(1)}</div>
+          <div class="cer-titulo-txt"><span>MAIN<b>/</b>QUEST</span></div>
           <div class="cer-polvo">${polvo()}</div>
           <div class="cer-sakura">${sakura()}</div>
         </div>
@@ -127,7 +139,7 @@ export function correrCeremonia(datos) {
       <div class="cer-marca">
         <div class="cer-frase">${fraseCeremonia()}</div>
       </div>
-      <button class="cer-entrar" type="button">Tocar para entrar</button>`;
+      <button class="cer-entrar" type="button">Tocar para comenzar</button>`;
 
     document.body.appendChild(overlay);
 
