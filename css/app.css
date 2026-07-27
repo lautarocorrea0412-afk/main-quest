@@ -2211,150 +2211,162 @@ body.hoja-abierta { overflow: hidden; }
   background: #2A2130;
 }
 
-/* ============ Estadísticas (Entrega 10) ============ */
+/* ============ Tu leyenda (Entrega 11) ============
+   Ficha de personaje de RPG, no dashboard. Jerarquía: la carta
+   manda, el mapa impacta, los récords dan orgullo, el radar da
+   identidad, la línea da contexto. */
 
-.stats-vacio {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--ink-dim);
-}
+.stats-vacio { font-size: 14px; line-height: 1.6; color: var(--ink-dim); }
 
-.stat-bloque { margin-bottom: 22px; }
-.stat-bloque:last-child { margin-bottom: 0; }
-
-.stat-titulo {
+.leyenda-bloque { margin-top: 22px; }
+.leyenda-titulo {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 14px;
   color: var(--ink);
   margin-bottom: 12px;
 }
+.stat-lectura { font-size: 13px; line-height: 1.5; color: var(--ink-dim); margin-top: 10px; }
+.stat-lectura b { color: var(--ink); }
 
-.stat-lectura {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--ink-dim);
-  margin-top: 10px;
-}
-
-/* --- Constancia: barras verticales por semana --- */
-.stat-semanas {
+/* --- LA CARTA DE PERSONAJE (protagonista) --- */
+.leyenda-carta {
+  position: relative;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 8px;
-  height: 110px;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--bg-raise), var(--bg-panel));
+  border: 2px solid var(--accent);
+  box-shadow: 0 8px 0 rgba(0,0,0,0.18), inset 0 0 30px rgba(255,176,103,0.08);
 }
+/* Brillo que barre la carta, sutil */
+.leyenda-carta__brillo {
+  position: absolute; top: 0; left: -60%;
+  width: 40%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.12), transparent);
+  animation: cartaBrillo 5s ease-in-out infinite;
+}
+@keyframes cartaBrillo {
+  0%, 70% { left: -60%; }
+  100% { left: 130%; }
+}
+.leyenda-carta__avatar {
+  flex: none;
+  width: 74px; height: 96px;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(0,0,0,0.15);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.leyenda-carta__avatar svg { width: 64px; height: auto; }
+.leyenda-carta__info { flex: 1; min-width: 0; }
+.leyenda-carta__titulo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.leyenda-carta__nombre {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 24px;
+  color: var(--ink);
+  margin: 2px 0 8px;
+  line-height: 1;
+}
+.leyenda-carta__stats { display: flex; flex-direction: column; gap: 3px; }
+.leyenda-carta__stats span { font-size: 13px; color: var(--ink-dim); }
+.leyenda-carta__stats b { font-family: var(--font-display); font-weight: 800; color: var(--matcha); font-size: 15px; }
 
-.stat-semana {
-  flex: 1;
+/* --- EL MAPA DE CONSTANCIA --- */
+.leyenda-mapa {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 3px;
+}
+.leyenda-celda {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--bg);
+  animation: celdaEnciende 0.4s ease both;
+  animation-delay: calc(var(--i, 0) * 6ms);
+}
+.leyenda-celda--0 { background: var(--bg); }
+.leyenda-celda--1 { background: rgba(143,214,169,0.35); }
+.leyenda-celda--2 { background: var(--matcha); }
+.leyenda-celda--3 { background: var(--accent); box-shadow: 0 0 6px rgba(255,176,103,0.6); }
+@keyframes celdaEnciende { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: scale(1); } }
+
+.leyenda-mapa__leyenda {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.leyenda-mapa__leyenda .leyenda-celda { width: 12px; height: 12px; aspect-ratio: auto; animation: none; }
+
+/* --- RÉCORDS (cartas chicas) --- */
+.leyenda-records {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.record-carta {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  height: 100%;
-}
-
-.stat-semana__barra {
-  position: relative;
-  width: 100%;
-  flex: 1;
-  display: flex;
-  align-items: flex-end;
-  background: var(--bg);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.stat-semana__fill {
-  width: 100%;
-  background: linear-gradient(180deg, var(--accent), var(--sakura));
-  border-radius: 6px 6px 0 0;
-  transition: height 0.5s var(--bounce);
-  min-height: 3px;
-}
-
-.stat-semana__num {
-  position: absolute;
-  top: 4px; left: 0; right: 0;
   text-align: center;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 11px;
-  color: var(--ink);
-}
-
-.stat-semana__label {
-  font-size: 10px;
-  color: var(--ink-dim);
-}
-
-/* --- Balance: barras horizontales por árbol --- */
-.stat-arbol {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 9px;
-}
-
-.stat-arbol__nombre {
-  flex: none;
-  width: 96px;
-  font-size: 12px;
-  color: var(--ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.stat-arbol__barra {
-  flex: 1;
-  height: 10px;
+  gap: 3px;
+  padding: 14px 10px;
   background: var(--bg);
-  border-radius: 999px;
-  overflow: hidden;
+  border: 2px solid var(--line);
+  border-radius: 14px;
 }
+.record-ico { font-size: 22px; }
+.record-num { font-size: 13px; color: var(--ink-dim); }
+.record-num b { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--ink); }
+.record-num em { font-style: normal; font-size: 11px; }
+.record-txt { font-size: 11px; color: var(--ink-dim); }
 
-.stat-arbol__fill {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--matcha), var(--accent));
-  border-radius: 999px;
-  transition: width 0.5s var(--bounce);
+/* --- RADAR --- */
+.leyenda-radar { width: 100%; max-width: 240px; display: block; margin: 0 auto; }
+.radar-anillo { fill: none; stroke: var(--line); stroke-width: 1; opacity: 0.5; }
+.radar-eje { stroke: var(--line); stroke-width: 1; opacity: 0.4; }
+.radar-label { font-size: 13px; text-anchor: middle; dominant-baseline: middle; }
+.radar-datos {
+  fill: rgba(255,176,103,0.28);
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  animation: radarEntra 0.7s var(--bounce) both;
+  transform-origin: center;
 }
+@keyframes radarEntra { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
 
-.stat-arbol__pct {
-  flex: none;
-  width: 34px;
-  text-align: right;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 12px;
-  color: var(--ink-dim);
+/* --- LÍNEA DE ENERGÍA --- */
+.leyenda-linea { width: 100%; max-width: 300px; display: block; }
+.linea-path {
+  fill: none;
+  stroke: var(--sakura);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: lineaDibuja 1.2s ease forwards;
 }
+@keyframes lineaDibuja { to { stroke-dashoffset: 0; } }
+.linea-punto { fill: var(--sakura); }
 
-/* --- Energía --- */
-.stat-energia {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.stat-energia__num {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 32px;
-  color: var(--matcha);
-}
-
-.stat-energia__de { font-size: 15px; color: var(--ink-dim); }
-
-.stat-energia__base {
-  font-size: 12px;
-  color: var(--ink-dim);
-  margin-left: 6px;
-}
+/* ============ Detalles ============ */
 
 /* ============ Detalles ============ */
 

@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega10-stats";
+const CACHE_VERSION = "mq-entrega11-leyenda";
 
 const CORE = [
   "./",

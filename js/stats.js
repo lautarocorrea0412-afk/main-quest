@@ -20,6 +20,7 @@
    ============================================================ */
 
 import { ARBOLES_META } from "./xp.js";
+import { dibujarAvatar } from "./avatar.js";
 
 let data;
 
@@ -132,65 +133,184 @@ export function renderStats() {
   const cont = document.getElementById("stats-panel");
   if (!cont || !data) return;
 
-  const historicoCumplidas =
-    data.misiones.historial.filter((d) => d.principal && d.principal.completada).length +
-    (data.misiones.hoy && data.misiones.hoy.principal && data.misiones.hoy.principal.completada ? 1 : 0);
+  const rec = records(data);
 
-  // Umbral: con muy poco no hay nada honesto que mostrar.
-  if (historicoCumplidas < 3) {
-    cont.innerHTML = `<p class="stats-vacio">Cumplí unas cuantas misiones y acá vas a ver cómo se reparte tu energía, tu constancia semana a semana y cómo venís de ánimo. Todavía es pronto: seguí un poco más.</p>`;
+  // Umbral anti-ruido: con muy poco, invitamos a seguir.
+  if (rec.totalMisiones < 3) {
+    cont.innerHTML = `<p class="stats-vacio">Acá se va a escribir tu leyenda: tu constancia, tus récords, la forma de tu personaje. Todavía es pronto — cumplí unas misiones y volvé.</p>`;
     return;
   }
 
-  const semanas = porSemana(data);
+  const ficha = fichaPersonaje(data);
+  const mapa = mapaConstancia(data);
   const arboles = porArbol(data);
-  const energia = energiaPromedio(data);
-
-  // Lectura de la constancia: comparar esta semana con el promedio.
-  const totales = semanas.map((s) => s.total);
-  const estaSemana = totales[totales.length - 1];
-  const promSemanas = totales.slice(0, -1).reduce((a, n) => a + n, 0) / Math.max(1, totales.length - 1);
-  let lecturaConstancia = "";
-  if (promSemanas >= 1) {
-    if (estaSemana >= promSemanas) lecturaConstancia = "Vas igual o mejor que tu promedio. Buena semana.";
-    else lecturaConstancia = "Esta semana venís más tranquila que tu promedio. Un día a la vez.";
-  }
-
-  // Lectura del balance: cuál domina.
-  const orden = Object.entries(arboles).sort((a, b) => b[1] - a[1]);
-  const dominante = orden[0][1] > 0 ? ARBOLES_META[orden[0][0]].nombre : null;
-
-  // Lectura de la energía.
-  let lecturaEnergia = "";
-  if (energia) {
-    if (energia.promedio >= 3.8) lecturaEnergia = "Venís con buena energía en general.";
-    else if (energia.promedio >= 2.5) lecturaEnergia = "Energía intermedia: ojo con no exigirte de más.";
-    else lecturaEnergia = "Venís con la energía baja últimamente. Descansar también es avanzar.";
-  }
+  const energiaSem = energiaPorSemana(data);
 
   cont.innerHTML = `
-    <div class="stat-bloque">
-      <div class="stat-titulo">Tu constancia</div>
-      ${barrasSemana(semanas)}
-      ${lecturaConstancia ? `<p class="stat-lectura">${lecturaConstancia}</p>` : ""}
-    </div>
+    ${cartaHTML(ficha)}
+    ${mapaHTML(mapa)}
+    ${recordsHTML(rec)}
+    ${radarHTML(arboles)}
+    ${lineaEnergiaHTML(energiaSem)}
+  `;
 
-    <div class="stat-bloque">
-      <div class="stat-titulo">Hacia dónde va tu energía</div>
-      ${barrasArbol(arboles)}
-      ${dominante ? `<p class="stat-lectura">Últimamente le estás dando más a <strong>${dominante}</strong>.</p>` : ""}
-    </div>
+  // Microanimaciones al entrar: contadores que suben y celdas
+  // del mapa que se encienden escalonadas.
+  animarEntrada(cont, rec);
+}
 
-    ${energia ? `
-    <div class="stat-bloque">
-      <div class="stat-titulo">Tu ánimo</div>
-      <div class="stat-energia">
-        <span class="stat-energia__num">${energia.promedio.toFixed(1)}</span>
-        <span class="stat-energia__de">/ 5</span>
-        <span class="stat-energia__base">promedio de tus últimos ${energia.cantidad} cierres</span>
+/* --- Carta de personaje (protagonista) --- */
+function cartaHTML(f) {
+  return `
+    <div class="leyenda-carta" id="leyenda-carta">
+      <div class="leyenda-carta__brillo"></div>
+      <div class="leyenda-carta__avatar">${dibujarAvatarMini()}</div>
+      <div class="leyenda-carta__info">
+        <div class="leyenda-carta__titulo">${f.titulo}</div>
+        <div class="leyenda-carta__nombre">${escaparT(data.perfil.nombre || "vos")}</div>
+        <div class="leyenda-carta__stats">
+          <span><b data-cuenta="${f.dias}">0</b> días de viaje</span>
+          <span><b data-cuenta="${f.nivelTotal}">0</b> nivel total</span>
+        </div>
       </div>
-      <p class="stat-lectura">${lecturaEnergia}</p>
-    </div>` : ""}`;
+    </div>`;
+}
+
+/* --- Mapa de constancia (calendario tipo GitHub) --- */
+function mapaHTML(celdas) {
+  const cuadros = celdas.map((c, i) =>
+    `<span class="leyenda-celda leyenda-celda--${c.nivel}" style="--i:${i}" title="${c.fecha}"></span>`
+  ).join("");
+  return `
+    <div class="leyenda-bloque">
+      <div class="leyenda-titulo">Tu constancia</div>
+      <div class="leyenda-mapa">${cuadros}</div>
+      <div class="leyenda-mapa__leyenda">
+        <span>menos</span>
+        <span class="leyenda-celda leyenda-celda--0"></span>
+        <span class="leyenda-celda leyenda-celda--1"></span>
+        <span class="leyenda-celda leyenda-celda--2"></span>
+        <span class="leyenda-celda leyenda-celda--3"></span>
+        <span>más</span>
+      </div>
+    </div>`;
+}
+
+/* --- Récords personales (cartas chicas) --- */
+function recordsHTML(r) {
+  const cartas = [
+    { ico: "🔥", n: r.mejorRacha, txt: "racha más larga", suf: r.mejorRacha === 1 ? "día" : "días" },
+    { ico: "⭐", n: r.mejorSemana, txt: "mejor semana", suf: "misiones" },
+    { ico: "🏅", n: r.totalMisiones, txt: "misiones totales", suf: "" },
+    { ico: "⚡", n: r.diaTopSecundarias, txt: "día más activo", suf: "extras" }
+  ];
+  return `
+    <div class="leyenda-bloque">
+      <div class="leyenda-titulo">Tus récords</div>
+      <div class="leyenda-records">
+        ${cartas.map((c) => `
+          <div class="record-carta">
+            <span class="record-ico">${c.ico}</span>
+            <span class="record-num"><b data-cuenta="${c.n}">0</b> <em>${c.suf}</em></span>
+            <span class="record-txt">${c.txt}</span>
+          </div>`).join("")}
+      </div>
+    </div>`;
+}
+
+/* --- Radar de árboles (la forma de tu personaje) --- */
+function radarHTML(conteo) {
+  const ids = Object.keys(ARBOLES_META);
+  const total = Object.values(conteo).reduce((a, n) => a + n, 0);
+  if (total === 0) return "";
+  const max = Math.max(1, ...Object.values(conteo));
+  const N = ids.length;
+  const cx = 100, cy = 100, R = 74;
+
+  const punto = (i, r) => {
+    const ang = (Math.PI * 2 * i) / N - Math.PI / 2;
+    return [cx + Math.cos(ang) * r, cy + Math.sin(ang) * r];
+  };
+  // Anillos de referencia
+  let anillos = "";
+  for (let k = 1; k <= 3; k++) {
+    const pts = ids.map((_, i) => punto(i, (R * k) / 3).map((v) => v.toFixed(1)).join(",")).join(" ");
+    anillos += `<polygon points="${pts}" class="radar-anillo"/>`;
+  }
+  // Ejes + etiquetas
+  let ejes = "", labels = "";
+  ids.forEach((id, i) => {
+    const [x, y] = punto(i, R);
+    ejes += `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" class="radar-eje"/>`;
+    const [lx, ly] = punto(i, R + 14);
+    labels += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" class="radar-label">${ARBOLES_META[id].emoji}</text>`;
+  });
+  // El polígono de datos
+  const pts = ids.map((id, i) => punto(i, (conteo[id] / max) * R).map((v) => v.toFixed(1)).join(",")).join(" ");
+
+  return `
+    <div class="leyenda-bloque">
+      <div class="leyenda-titulo">La forma de tu personaje</div>
+      <svg class="leyenda-radar" viewBox="0 0 200 200" aria-hidden="true">
+        ${anillos}${ejes}
+        <polygon points="${pts}" class="radar-datos"/>
+        ${labels}
+      </svg>
+    </div>`;
+}
+
+/* --- Línea de energía por semana --- */
+function lineaEnergiaHTML(serie) {
+  const conDatos = serie.filter((s) => s.prom !== null);
+  if (conDatos.length < 2) return "";
+  const W = 260, H = 70, pad = 8;
+  const paso = (W - pad * 2) / (serie.length - 1);
+  const y = (v) => H - pad - ((v - 1) / 4) * (H - pad * 2); // energía 1..5
+  let d = "", puntos = "";
+  serie.forEach((s, i) => {
+    if (s.prom === null) return;
+    const px = pad + i * paso, py = y(s.prom);
+    d += (d ? " L" : "M") + px.toFixed(1) + "," + py.toFixed(1);
+    puntos += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3" class="linea-punto"/>`;
+  });
+  return `
+    <div class="leyenda-bloque">
+      <div class="leyenda-titulo">Tu ánimo en el tiempo</div>
+      <svg class="leyenda-linea" viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <path d="${d}" class="linea-path"/>
+        ${puntos}
+      </svg>
+      <p class="stat-lectura">De <b>${conDatos.length}</b> semanas con diario. Los valles suelen ser semanas de parcial.</p>
+    </div>`;
+}
+
+/* Avatar chico para la carta (sin la lógica de expresión). */
+function dibujarAvatarMini() {
+  try { return dibujarAvatar(1, "confiado"); } catch { return ""; }
+}
+
+function escaparT(s) {
+  return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+/* Contadores que suben desde 0 + mapa que se enciende. */
+function animarEntrada(cont, rec) {
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
+    cont.querySelectorAll("[data-cuenta]").forEach((el) => { el.textContent = el.dataset.cuenta; });
+    return;
+  }
+  cont.querySelectorAll("[data-cuenta]").forEach((el) => {
+    const fin = parseInt(el.dataset.cuenta, 10) || 0;
+    if (fin === 0) { el.textContent = "0"; return; }
+    const t0 = performance.now(), dur = 900;
+    const tick = (t) => {
+      const p = Math.min(1, (t - t0) / dur);
+      const val = Math.round(fin * (1 - Math.pow(1 - p, 3)));
+      el.textContent = val;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
 }
 
 /* ===================== API ===================== */
@@ -204,4 +324,120 @@ export function initStats(appData) {
   data = appData;
   document.addEventListener("contexto-cambiado", renderStats);
   renderStats();
+}
+
+/* ============================================================
+   "TU LEYENDA" — cálculos del rediseño (Entrega 11)
+   Todo sobre datos que ya existen. Exportados para testear.
+   ============================================================ */
+
+/* Todos los días con actividad, unificados: para el mapa y los
+   récords. Cada uno: { fecha, cumplida, secundarias, energia }. */
+function diasActividad(datos) {
+  const mapa = new Map();
+  const tocar = (f) => {
+    if (!mapa.has(f)) mapa.set(f, { fecha: f, cumplida: false, secundarias: 0, energia: null });
+    return mapa.get(f);
+  };
+  const todas = [...datos.misiones.historial];
+  if (datos.misiones.hoy) todas.push(datos.misiones.hoy);
+  for (const d of todas) {
+    if (!d.fecha) continue;
+    const e = tocar(d.fecha);
+    if (d.principal && d.principal.completada) e.cumplida = true;
+    e.secundarias = (d.secundarias || []).filter((s) => s.completada).length;
+  }
+  for (const e of datos.diario) {
+    if (e.fecha) tocar(e.fecha).energia = e.energia || null;
+  }
+  return [...mapa.values()].sort((a, b) => a.fecha.localeCompare(b.fecha));
+}
+
+/* La carta de personaje: días de viaje, nivel total y título. */
+export function fichaPersonaje(datos) {
+  const creado = datos.perfil.creado_en ? new Date(datos.perfil.creado_en) : new Date();
+  const dias = Math.max(1, Math.floor((Date.now() - creado.getTime()) / 86400000) + 1);
+  const nivelTotal = Object.values(datos.arboles).reduce((a, x) => a + x.nivel, 0);
+
+  // El título sale del árbol más avanzado (nivel, después XP).
+  const arboles = Object.entries(datos.arboles)
+    .sort((a, b) => b[1].nivel - a[1].nivel || b[1].xp - a[1].xp);
+  const [domId, domVal] = arboles[0];
+  const TITULOS = {
+    edicion: "El Editor", fitness: "El Atleta", facultad: "El Estudiante",
+    japones: "El Viajero", finanzas: "El Estratega", streaming: "El Creador"
+  };
+  // Si todo está muy parejo y bajo, todavía no hay título ganado.
+  const titulo = domVal.nivel >= 2 ? (TITULOS[domId] || "El Aventurero") : "Recién llegado";
+
+  return { dias, nivelTotal, titulo, arbolDominante: domId };
+}
+
+/* Récords personales: los números de orgullo. */
+export function records(datos) {
+  const dias = diasActividad(datos);
+  const cumplidas = dias.filter((d) => d.cumplida);
+
+  // Racha más larga histórica (días consecutivos con cumplida).
+  let mejorRacha = 0, rachaActual = 0, prev = null;
+  for (const d of dias) {
+    if (!d.cumplida) { rachaActual = 0; prev = null; continue; }
+    if (prev) {
+      const gap = (new Date(d.fecha) - new Date(prev)) / 86400000;
+      rachaActual = gap === 1 ? rachaActual + 1 : 1;
+    } else rachaActual = 1;
+    mejorRacha = Math.max(mejorRacha, rachaActual);
+    prev = d.fecha;
+  }
+
+  // Mejor semana (más cumplidas en una ventana lunes-domingo).
+  const semanas = porSemana(datos, 52).map((s) => s.total);
+  const mejorSemana = Math.max(0, ...semanas);
+
+  // Día más productivo (más secundarias en un día).
+  const diaTop = dias.reduce((max, d) => d.secundarias > (max?.secundarias ?? -1) ? d : max, null);
+
+  return {
+    totalMisiones: cumplidas.length,
+    mejorRacha,
+    mejorSemana,
+    diaTopSecundarias: diaTop ? diaTop.secundarias : 0
+  };
+}
+
+/* Mapa de constancia: los últimos ~112 días (16 semanas) con
+   su intensidad (0-3) según cuánto hiciste ese día. */
+export function mapaConstancia(datos, dias = 112) {
+  const act = new Map(diasActividad(datos).map((d) => [d.fecha, d]));
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const celdas = [];
+  for (let i = dias - 1; i >= 0; i--) {
+    const f = new Date(hoy); f.setDate(f.getDate() - i);
+    const clave = `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, "0")}-${String(f.getDate()).padStart(2, "0")}`;
+    const d = act.get(clave);
+    let nivel = 0;
+    if (d) {
+      if (d.cumplida) nivel = 2 + Math.min(1, d.secundarias); // 2 o 3
+      else if (d.secundarias > 0 || d.energia) nivel = 1;     // algo pasó
+    }
+    celdas.push({ fecha: clave, nivel });
+  }
+  return celdas;
+}
+
+/* Serie de energía por semana (para la línea de ánimo). */
+export function energiaPorSemana(datos, semanas = 8) {
+  const conE = datos.diario.filter((e) => e.energia && e.fecha);
+  const hoyLunes = lunesDe(new Date());
+  const buckets = [];
+  for (let i = semanas - 1; i >= 0; i--) {
+    const l = new Date(hoyLunes); l.setDate(l.getDate() - i * 7);
+    buckets.push({ lunes: claveISO(l), suma: 0, n: 0 });
+  }
+  const idx = new Map(buckets.map((b, i) => [b.lunes, i]));
+  for (const e of conE) {
+    const clave = claveISO(lunesDe(new Date(e.fecha)));
+    if (idx.has(clave)) { const b = buckets[idx.get(clave)]; b.suma += e.energia; b.n += 1; }
+  }
+  return buckets.map((b) => ({ lunes: b.lunes, prom: b.n ? b.suma / b.n : null }));
 }

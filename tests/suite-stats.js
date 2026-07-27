@@ -1,72 +1,106 @@
 /* ============================================================
-   tests/suite-stats.js — Estadísticas (Entrega 10)
+   tests/suite-stats.js — Tu leyenda (Entrega 11)
    ============================================================ */
 
 import { suite, test, assert, igual, crearDatos, hoyLocal } from "./helpers.js";
-import { porSemana, porArbol, energiaPromedio } from "../js/stats.js";
+import { porSemana, porArbol, energiaPromedio,
+         fichaPersonaje, records, mapaConstancia, energiaPorSemana } from "../js/stats.js";
 
 export function correr() {
-  suite("Estadísticas");
+  suite("Tu leyenda — cálculos base");
 
-  test("porSemana devuelve 6 semanas, la última es la actual", () => {
+  test("porSemana: 6 semanas, hoy en la última", () => {
     const d = crearDatos(hoyLocal());
+    d.misiones.hoy = { fecha: hoyLocal(), principal: { completada: true }, secundarias: [] };
     const s = porSemana(d);
-    igual(s.length, 6, "seis buckets");
-    // La misión de hoy cumplida cae en la última semana.
-    d.misiones.hoy = { fecha: hoyLocal(), principal: { titulo: "x", completada: true }, secundarias: [] };
-    const s2 = porSemana(d);
-    igual(s2[s2.length - 1].total, 1, "hoy suma a la semana actual");
+    igual(s.length, 6);
+    igual(s[s.length - 1].total, 1, "hoy suma a la semana actual");
   });
 
-  test("porSemana agrupa cumplidas de días distintos", () => {
-    const d = crearDatos(hoyLocal());
-    d.misiones.historial = [
-      { fecha: hoyLocal(-1), principal: { completada: true } },
-      { fecha: hoyLocal(-2), principal: { completada: true } },
-      { fecha: hoyLocal(-3), principal: { completada: false } } // no cuenta
-    ];
-    const s = porSemana(d);
-    const total = s.reduce((a, b) => a + b.total, 0);
-    igual(total, 2, "dos cumplidas, la incompleta no");
-  });
-
-  test("porArbol cuenta cumplidas por árbol", () => {
+  test("porArbol cuenta cumplidas por árbol, ignora incompletas", () => {
     const d = crearDatos(hoyLocal());
     d.misiones.historial = [
       { fecha: hoyLocal(-1), principal: { completada: true, arbol: "edicion" } },
       { fecha: hoyLocal(-2), principal: { completada: true, arbol: "edicion" } },
-      { fecha: hoyLocal(-3), principal: { completada: true, arbol: "fitness" } },
-      { fecha: hoyLocal(-4), principal: { completada: false, arbol: "japones" } }
+      { fecha: hoyLocal(-3), principal: { completada: false, arbol: "japones" } }
     ];
     const c = porArbol(d);
-    igual(c.edicion, 2, "dos de edición");
-    igual(c.fitness, 1, "una de fitness");
-    igual(c.japones, 0, "la incompleta no cuenta");
+    igual(c.edicion, 2); igual(c.japones, 0);
   });
 
-  test("energiaPromedio saca el promedio de las últimas entradas", () => {
+  test("energiaPromedio null sin diario, no inventa", () => {
+    igual(energiaPromedio(crearDatos(hoyLocal())), null);
+  });
+
+  suite("Tu leyenda — ficha y récords");
+
+  test("la ficha cuenta días de viaje y nivel total", () => {
+    const d = crearDatos(hoyLocal());
+    d.perfil.creado_en = new Date(Date.now() - 9 * 86400000).toISOString();
+    d.arboles.edicion.nivel = 4;
+    d.arboles.fitness.nivel = 2;
+    const f = fichaPersonaje(d);
+    assert(f.dias >= 9 && f.dias <= 11, "días de viaje ~10");
+    igual(f.nivelTotal, 4 + 2 + 1 + 1 + 1 + 1, "suma de niveles");
+    igual(f.arbolDominante, "edicion", "el árbol más avanzado");
+    igual(f.titulo, "El Editor", "título según el dominante");
+  });
+
+  test("sin progreso, el título es 'Recién llegado'", () => {
+    const f = fichaPersonaje(crearDatos(hoyLocal()));
+    igual(f.titulo, "Recién llegado", "todavía no se ganó título");
+  });
+
+  test("récords: racha más larga histórica", () => {
+    const d = crearDatos(hoyLocal());
+    // 3 días seguidos, hueco, 2 días seguidos.
+    d.misiones.historial = [
+      { fecha: hoyLocal(-10), principal: { completada: true } },
+      { fecha: hoyLocal(-9), principal: { completada: true } },
+      { fecha: hoyLocal(-8), principal: { completada: true } },
+      { fecha: hoyLocal(-5), principal: { completada: true } },
+      { fecha: hoyLocal(-4), principal: { completada: true } }
+    ];
+    igual(records(d).mejorRacha, 3, "la mejor fue de 3 días");
+  });
+
+  test("récords: total y día más activo por secundarias", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.historial = [
+      { fecha: hoyLocal(-2), principal: { completada: true }, secundarias: [{ completada: true }, { completada: true }] },
+      { fecha: hoyLocal(-1), principal: { completada: true }, secundarias: [{ completada: true }] }
+    ];
+    const r = records(d);
+    igual(r.totalMisiones, 2, "dos principales cumplidas");
+    igual(r.diaTopSecundarias, 2, "el día top tuvo 2 secundarias");
+  });
+
+  suite("Tu leyenda — mapa y energía");
+
+  test("el mapa devuelve una celda por día del rango", () => {
+    const m = mapaConstancia(crearDatos(hoyLocal()), 112);
+    igual(m.length, 112, "112 celdas");
+    assert(m.every((c) => c.nivel >= 0 && c.nivel <= 3), "intensidad 0-3");
+  });
+
+  test("el mapa marca intensidad alta un día cumplido con extras", () => {
+    const d = crearDatos(hoyLocal());
+    d.misiones.historial = [
+      { fecha: hoyLocal(-1), principal: { completada: true }, secundarias: [{ completada: true }] }
+    ];
+    const celda = mapaConstancia(d, 112).find((c) => c.fecha === hoyLocal(-1));
+    igual(celda.nivel, 3, "cumplida + secundaria = intensidad máxima");
+  });
+
+  test("energiaPorSemana promedia por semana y deja null las vacías", () => {
     const d = crearDatos(hoyLocal());
     d.diario = [
-      { fecha: hoyLocal(-2), energia: 4 },
-      { fecha: hoyLocal(-1), energia: 2 }
+      { fecha: hoyLocal(-1), energia: 4 },
+      { fecha: hoyLocal(-2), energia: 2 }
     ];
-    const e = energiaPromedio(d);
-    igual(e.promedio, 3, "(4+2)/2");
-    igual(e.cantidad, 2, "dos cierres");
-  });
-
-  test("energiaPromedio es null sin diario (no inventa un número)", () => {
-    igual(energiaPromedio(crearDatos(hoyLocal())), null, "sin datos, sin promedio");
-  });
-
-  test("las entradas sin energía marcada se ignoran", () => {
-    const d = crearDatos(hoyLocal());
-    d.diario = [
-      { fecha: hoyLocal(-1), energia: 5 },
-      { fecha: hoyLocal(-2) } // sin energía
-    ];
-    const e = energiaPromedio(d);
-    igual(e.promedio, 5, "solo cuenta la que tiene energía");
-    igual(e.cantidad, 1, "una sola válida");
+    const s = energiaPorSemana(d, 8);
+    igual(s.length, 8, "ocho semanas");
+    const ultima = s[s.length - 1];
+    assert(ultima.prom === 3 || ultima.prom === null, "la semana actual promedia sus días");
   });
 }

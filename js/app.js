@@ -54,7 +54,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 10 · estadísticas · datos v" + data.version;
+    "MAIN QUEST · Entrega 11 · tu leyenda · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
