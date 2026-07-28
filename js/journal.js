@@ -18,6 +18,7 @@
    ============================================================ */
 
 import { save } from "./store.js";
+import { sonar } from "./sonido.js";
 import { hoyISO, escapar } from "./util.js";
 
 let data;
@@ -112,6 +113,7 @@ function accion(e) {
     }
 
     case "guardar-diario": {
+      sonar("diario");
       const mejor = document.getElementById("diario-mejor").value.trim();
       const orgullo = document.getElementById("diario-orgullo").value.trim();
       const manana = document.getElementById("diario-manana").value.trim();

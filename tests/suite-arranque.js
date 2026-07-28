@@ -36,6 +36,7 @@ import { initHistoria } from "../js/history.js";
 import { initJapon } from "../js/japon.js";
 import { initConfig } from "../js/config.js";
 import { initStats } from "../js/stats.js";
+import { initRituales } from "../js/rituales.js";
 import { initVida } from "../js/vida.js";
 import { renderArboles } from "../js/xp.js";
 
@@ -47,13 +48,13 @@ const IDS = [
   "diario-cierre", "arboles", "tienda", "cuarto", "cuarto-progreso",
   "monedas-contador", "logros", "logros-contador", "lista-parciales",
   "avatar-preview", "avatar-opciones", "perfil-nombre", "perfil-desde",
-  "version-info", "topbar-fecha", "historia", "historia-contador", "backup-estado", "japon-panel", "config-panel", "stats-panel", "vida-panel",
+  "version-info", "topbar-fecha", "historia", "historia-contador", "backup-estado", "japon-panel", "config-panel", "stats-panel", "rituales-panel", "vida-panel",
   "view-hoy", "view-habitacion", "view-progreso", "view-vos"
 ];
 
 const FUNCIONES = {
   initEngine, initMisiones, initDiario, initEconomia,
-  initAvatar, initCuarto, initLogros, initHistoria, initJapon, initConfig, initStats, initVida
+  initAvatar, initCuarto, initLogros, initHistoria, initJapon, initConfig, initStats, initVida, initRituales
 };
 
 /* app.js hace render() ANTES de los init: ahí dibuja el

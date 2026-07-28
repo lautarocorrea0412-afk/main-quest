@@ -47,8 +47,11 @@ export function correr() {
   test("los efectos de navegación existen en el catálogo", () => {
     // sonar("tab") y sonar("vestir") no deben romper (aunque no suenen)
     let rompio = false;
-    try { sonar("tab"); sonar("vestir"); } catch { rompio = true; }
-    igual(rompio, false, "navegación segura");
+    try {
+      sonar("tab"); sonar("vestir"); sonar("aporte");
+      sonar("diario"); sonar("abrir");
+    } catch { rompio = true; }
+    igual(rompio, false, "navegación y acciones seguras");
   });
 
   test("initSonido lee el ajuste sin romper aunque falte", () => {

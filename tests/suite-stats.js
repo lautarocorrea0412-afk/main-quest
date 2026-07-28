@@ -94,13 +94,16 @@ export function correr() {
 
   test("energiaPorSemana promedia por semana y deja null las vacías", () => {
     const d = crearDatos(hoyLocal());
+    // Dos días de UNA misma semana (mié y jue de la misma semana),
+    // para no depender de qué día real sea hoy.
     d.diario = [
-      { fecha: hoyLocal(-1), energia: 4 },
-      { fecha: hoyLocal(-2), energia: 2 }
+      { fecha: "2026-07-22", energia: 4 }, // miércoles
+      { fecha: "2026-07-23", energia: 2 }  // jueves de la misma semana
     ];
-    const s = energiaPorSemana(d, 8);
-    igual(s.length, 8, "ocho semanas");
-    const ultima = s[s.length - 1];
-    assert(ultima.prom === 3 || ultima.prom === null, "la semana actual promedia sus días");
+    const s = energiaPorSemana(d, 60); // ventana amplia para incluir julio
+    igual(s.length, 60, "sesenta semanas");
+    const semana = s.find((x) => x.prom !== null);
+    assert(semana, "hay una semana con datos");
+    igual(semana.prom, 3, "(4+2)/2 en esa semana");
   });
 }

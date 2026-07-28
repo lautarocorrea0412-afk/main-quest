@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega15b-audio";
+const CACHE_VERSION = "mq-entrega16-rituales";
 
 const CORE = [
   "./",
@@ -35,6 +35,7 @@ const CORE = [
   "./js/japon.js",
   "./js/config.js",
   "./js/stats.js",
+  "./js/rituales.js",
   "./js/sonido.js",
   "./js/vida.js",
   "./js/progression.js",

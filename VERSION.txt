@@ -1,29 +1,44 @@
-Entrega 15b — Ajustes de audio (tres correcciones)
-Caché SW: mq-entrega15b-audio
-La app debe mostrar en VOS: 'Entrega 15b · audio ajustes · datos v11'
+Entrega 16 — Rituales
+Caché SW: mq-entrega16-rituales
+La app debe mostrar en VOS: 'Entrega 16 · rituales · datos v12'
 
-Sin cambios de datos.
+DATA_VERSION sube a 12: array de rituales. Migración automática.
 
-1. LA MÚSICA SE APAGABA TRAS UN RATO — arreglado. iOS suspende el
-   AudioContext no solo al ir al fondo, también por INACTIVIDAD con la app
-   abierta, y ahí el pad quedaba congelado. Ahora un "latido" cada 4s
-   revisa el contexto: si iOS lo suspendió, lo reanima; si mató los
-   osciladores, reconstruye el pad. La música ya no se corta sola.
+Rituales: misiones recurrentes que la app te OFRECE el día que tocan,
+sin reclamártelas nunca. Las cosas que hacés porque son parte tuya (gym,
+japonés, editar), no una lista de tareas.
 
-2. EFECTOS MÁS SUAVES — todos pasados a onda triangular (menos áspera que
-   la cuadrada) y con menos volumen: la secundaria de 0.12 a 0.09, el
-   nivel de 0.17 a 0.14, etc. Menos "bip 8-bit", más redondos.
+CÓMO FUNCIONA:
+  - Cada ritual tiene un título, un árbol y los días que aplica.
+  - El día que toca, aparece en HOY arriba del campo de misión, con el
+    tag "Hoy toca" y un botón Usar que lo precarga. El tap final sigue
+    siendo tuyo: sugiere, no impone.
+  - Tiene PRIORIDAD sobre la sugerencia genérica del motor (es más
+    específico para vos).
+  - Si no lo hiciste, NO hay culpa: no hay ❌ ni "te lo perdiste". El día
+    que vuelve a tocar, vuelve a ofrecerse. Punto.
+  - Si la misión de hoy ya salió de ese ritual, no se vuelve a ofrecer.
 
-3. EL SONIDO DE CAMBIAR DE PANEL NO SE OÍA — se pisaba con la música. El
-   pad vive en los graves-medios y el "pop" del tab caía justo ahí. Ahora
-   el tab es agudo y brillante (1175-1568 Hz), bien por encima del rango
-   de la música: se escucha claro aunque el pad esté sonando.
+PANEL EN VOS: lista tus rituales (título + días), botón para crear uno
+nuevo (título, árbol y chips de días en una hoja deslizable) y borrar.
 
-Modificados: js/sonido.js, js/app.js, sw.js
+SUGERIDOS SEGÚN TU CRONOGRAMA (los podés cambiar o borrar):
+  - Gimnasio → lun, mié, sáb (tus días libres)
+  - Japonés 20 min → lun y jue
+  - Editar 1 hora → mié y sáb
+  - Leer un rato → días de facultad + domingo (algo liviano)
+  Pensados sabiendo que ma/ju/vie tenés la tarde tomada con facultad +
+  viaje (salís 11:30, volvés 19:30; jue 21:00).
 
-QUÉ OÍS HOY, SIN NADA HECHO:
-  - Silencio (todo apagado por defecto). Al prender música y efectos en
-    Configuración: la música ya no se corta, los efectos suenan más
-    suaves, y el cambio de pestaña se oye por encima de la música.
+Modificados: js/rituales.js (nuevo), js/store.js (v12), js/missions.js
+  (sugerencia del ritual), index.html, js/app.js, css/app.css, sw.js,
+  tests (helpers, store, arranque, stats, suite-rituales nueva)
 
-Suite: 142 tests. Todo en verde.
+QUÉ VES HOY, SIN NADA HECHO:
+  - En VOS → Rituales: el panel vacío, con un botón "Empezar con algunos
+    sugeridos" (que carga los 4 de arriba) y "+ Nuevo ritual".
+  - En HOY: si el día de hoy coincide con algún ritual que tengas, aparece
+    "Hoy toca ..." arriba del campo de misión. Sin rituales cargados, no
+    aparece nada nuevo: HOY se ve igual que siempre. Eso es correcto.
+
+Suite: 148 tests. Todo en verde.

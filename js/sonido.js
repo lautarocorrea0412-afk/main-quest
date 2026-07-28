@@ -21,6 +21,7 @@
    ============================================================ */
 
 let habilitado = false;   // refleja data.ajustes.sonido
+const VOL_MUSICA = 0.06;  // volumen base del pad (bajo, de fondo)
 let ctx = null;           // AudioContext, creado en el primer gesto
 let despierto = false;
 
@@ -43,9 +44,15 @@ const EFECTOS = {
   // Cambiar de pestaña: agudo y BRILLANTE, fuera del rango de la
   // música (que vive en los graves-medios). Antes caía justo
   // encima del pad y no se oía. Ahora suena claro por arriba.
-  tab: { onda: "square", vol: 0.10, notas: [[1175, 0, 0.05], [1568, 0.04, 0.06]] },
+  tab: { onda: "triangle", vol: 0.07, notas: [[1175, 0, 0.05], [1568, 0.045, 0.06]] },
   // Probarse ropa / cambiar el avatar: un "blip" suave y agudo.
-  vestir: { onda: "triangle", vol: 0.08, notas: [[988, 0, 0.05], [1319, 0.04, 0.06]] }
+  vestir: { onda: "triangle", vol: 0.08, notas: [[988, 0, 0.05], [1319, 0.04, 0.06]] },
+  // Aportar ahorro a Japón: dos notas que suben, esperanzadas.
+  aporte: { onda: "triangle", vol: 0.11, notas: [[587, 0, 0.09], [880, 0.09, 0.14]] },
+  // Guardar el cierre del diario: una nota tibia, de calma.
+  diario: { onda: "triangle", vol: 0.09, notas: [[440, 0, 0.16], [587, 0.06, 0.18]] },
+  // Abrir una hoja/panel: un "swish" corto y suave.
+  abrir: { onda: "triangle", vol: 0.06, notas: [[698, 0, 0.05], [880, 0.03, 0.05]] }
 };
 
 /* Despierta el AudioContext. Debe llamarse desde un gesto real
@@ -57,6 +64,10 @@ function despertar() {
     if (!AC) return;
     ctx = new AC();
     if (ctx.state === "suspended") ctx.resume();
+    // Bus propio para los efectos, separado de la música.
+    efectosBus = ctx.createGain();
+    efectosBus.gain.value = 1;
+    efectosBus.connect(ctx.destination);
     despierto = true;
   } catch {
     ctx = null;
@@ -64,35 +75,61 @@ function despertar() {
 }
 
 /* ------------------------------------------------------------
-   sonar(nombre): reproduce un efecto, si el sonido está
-   habilitado y el contexto ya despertó. Silencioso y seguro si
-   algo falta: nunca tira un error hacia la app.
+   sonar(nombre): reproduce un efecto. Si la música está
+   sonando, la baja un instante (ducking) para que el efecto
+   SIEMPRE se oiga por encima, sin importar su frecuencia.
+   Silencioso y seguro si algo falta: nunca tira un error.
    ------------------------------------------------------------ */
 export function sonar(nombre) {
   if (!habilitado || !despierto || !ctx) return;
   const efecto = EFECTOS[nombre];
   if (!efecto) return;
 
+  // Cada toque es una oportunidad de reanimar el contexto que
+  // iOS pudo haber suspendido. Barato y salva la música.
+  if (ctx.state === "suspended") ctx.resume().catch(() => {});
+
   try {
     const ahora = ctx.currentTime;
+
+    // Ducking: la música cede el paso al efecto y vuelve.
+    const durTotal = Math.max(...efecto.notas.map(([, t0, d]) => t0 + d));
+    agacharMusica(durTotal);
+
     for (const [freq, t0, dur] of efecto.notas) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = efecto.onda;
       osc.frequency.value = freq;
-      // Envolvente corta: ataque rápido, caída suave. Evita el
-      // "click" de cortar una onda de golpe.
       const inicio = ahora + t0;
       gain.gain.setValueAtTime(0, inicio);
-      gain.gain.linearRampToValueAtTime(efecto.vol, inicio + 0.01);
+      gain.gain.linearRampToValueAtTime(efecto.vol, inicio + 0.012);
       gain.gain.exponentialRampToValueAtTime(0.0001, inicio + dur);
-      osc.connect(gain).connect(ctx.destination);
+      osc.connect(gain).connect(efectosBus || ctx.destination);
       osc.start(inicio);
       osc.stop(inicio + dur + 0.02);
     }
   } catch {
     // Si el navegador se queja, mejor mudo que roto.
   }
+}
+
+/* El bus de efectos: un gain fijo por el que pasan todos los
+   efectos, separado de la música. Se crea al despertar. */
+let efectosBus = null;
+
+/* Baja la música durante ~dur segundos y la devuelve, para que
+   el efecto se destaque. No hace nada si la música está apagada. */
+function agacharMusica(dur) {
+  if (!musicaNodos || !ctx) return;
+  try {
+    const g = musicaNodos.master.gain;
+    const t = ctx.currentTime;
+    g.cancelScheduledValues(t);
+    g.setValueAtTime(g.value, t);
+    g.linearRampToValueAtTime(VOL_MUSICA * 0.35, t + 0.05); // agacha
+    g.linearRampToValueAtTime(VOL_MUSICA, t + dur + 0.5);    // vuelve
+  } catch { /* nada */ }
 }
 
 /* ------------------------------------------------------------
@@ -107,7 +144,9 @@ export function setSonido(activo) {
 }
 
 /* Engancha el primer gesto del usuario para despertar el audio.
-   Una vez. Sin esto, iOS nunca deja sonar nada. */
+   Y además deja un handler PERMANENTE que, en cada toque,
+   reanima el contexto si iOS lo suspendió por inactividad — es
+   lo que evita que la música "se apague sola" al rato. */
 export function initSonido(appData) {
   habilitado = !!(appData && appData.ajustes && appData.ajustes.sonido);
 
@@ -116,6 +155,15 @@ export function initSonido(appData) {
     document.removeEventListener("pointerdown", primerGesto);
   };
   document.addEventListener("pointerdown", primerGesto);
+
+  // Handler permanente: cada toque es una chance de revivir el
+  // audio. Barato (solo actúa si está suspendido) y salva la
+  // música sin que el usuario note nada.
+  document.addEventListener("pointerdown", () => {
+    if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
+    // Si la música debía sonar pero el pad se perdió, rearmar.
+    if (musicaOn && ctx && ctx.state === "running" && !musicaNodos) arrancarMusica();
+  });
 }
 
 /* ============================================================
@@ -169,7 +217,7 @@ function arrancarMusica() {
   });
 
   // Fade-in suave hasta un volumen bajo.
-  master.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 2.5);
+  master.gain.linearRampToValueAtTime(VOL_MUSICA, ctx.currentTime + 2.5);
 
   const cambiarAcorde = () => {
     acordeIdx = (acordeIdx + 1) % ACORDES.length;
@@ -217,7 +265,7 @@ function vigilarMusica() {
     if (musicaOn && !musicaNodos && ctx && ctx.state === "running") {
       arrancarMusica();
     }
-  }, 4000);
+  }, 2500);
 }
 
 /* Prende/apaga la música. Necesita el contexto despierto (un

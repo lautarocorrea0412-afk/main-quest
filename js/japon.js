@@ -18,6 +18,7 @@
 import { save } from "./store.js";
 import { hoyISO, escapar, diasHasta } from "./util.js";
 import { abrirHoja } from "./ui.js";
+import { sonar } from "./sonido.js";
 
 let data;
 
@@ -138,6 +139,7 @@ export function renderJapon() {
   const sumar = () => {
     const r = registrarAporte(data, input.value);
     if (r) {
+      if (r !== "meta") sonar("aporte"); // la meta tiene su propia ceremonia
       input.value = "";
       renderJapon();
       document.dispatchEvent(new CustomEvent("contexto-cambiado"));

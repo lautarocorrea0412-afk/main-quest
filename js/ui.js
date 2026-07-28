@@ -1,3 +1,4 @@
+import { sonar } from "./sonido.js";
 /* ============================================================
    MAIN QUEST — ui.js
    ------------------------------------------------------------
@@ -73,6 +74,7 @@ export function abrirHoja(titulo, htmlContenido, alRenderizar) {
     </div>`;
   document.body.appendChild(fondo);
   document.body.classList.add("hoja-abierta");
+  sonar("abrir");
 
   const hoja = fondo.querySelector(".hoja");
   const cuerpo = fondo.querySelector(".hoja__cuerpo");

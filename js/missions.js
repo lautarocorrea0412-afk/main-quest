@@ -16,6 +16,7 @@
 import { save } from "./store.js";
 import { hoyISO, escapar } from "./util.js";
 import { sugerirMision } from "./engine.js";
+import { ritualSugeridoHoy } from "./rituales.js";
 import { sonar } from "./sonido.js";
 import {
   ARBOLES_META, XP_PRINCIPAL, XP_SECUNDARIA,
@@ -111,6 +112,10 @@ function renderPrincipal() {
     // Puede venir null si el motor todavía no arrancó: la
     // pantalla funciona igual, solo sin sugerencia.
     const sug = sugerirMision();
+    // El ritual del día tiene PRIORIDAD sobre la sugerencia
+    // genérica: es más específico para vos ("hoy toca japonés").
+    // Sugiere, no reclama: es un atajo para llenar el campo.
+    const ritual = ritualSugeridoHoy(data);
     // Menos cosas en pantalla en modo parcial: las frecuentes
     // son atajos a tus otras vidas, y esta semana la vida es
     // una sola. La sugerencia (que ya apunta a estudiar) queda.
@@ -124,6 +129,10 @@ function renderPrincipal() {
       <div class="panel panel--main">
         <div class="panel__label">Misión principal</div>
         <h2>¿Cuál es LA misión de hoy?</h2>
+        ${ritual ? `<div class="ritual-hoy">
+          <span class="ritual-hoy__texto"><span class="ritual-hoy__tag">Hoy toca</span> ${escapar(ritual.titulo)}</span>
+          <button class="btn-usar" id="btn-usar-ritual">Usar</button>
+        </div>` : ""}
         ${sug ? `<div class="sugerencia">
           <span class="sugerencia__texto">💡 ${escapar(sug.titulo)}</span>
           <button class="btn-usar" id="btn-usar-sugerencia">Usar</button>
@@ -148,6 +157,8 @@ function renderPrincipal() {
         c.classList.toggle("activa", c.dataset.arbol === arbolSeleccionado);
       });
     };
+    const btnRit = document.getElementById("btn-usar-ritual");
+    if (btnRit && ritual) btnRit.onclick = () => prellenar(ritual.titulo, ritual.arbol);
     const btnSug = document.getElementById("btn-usar-sugerencia");
     if (btnSug && sug) btnSug.onclick = () => prellenar(sug.titulo, sug.arbol);
     frecuentes.forEach((f, i) => {

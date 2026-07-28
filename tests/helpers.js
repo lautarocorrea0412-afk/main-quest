@@ -171,6 +171,7 @@ export function crearDatos(hoy = "2026-07-23") {
       objetivo_japon: { meta_usd: 10000, ahorrado_usd: 0, fecha_ideal: "2027-02", aportes: [], cumplido_en: null },
       ingresos_edicion: []
     },
+    rituales: [],
     misiones: { hoy: { fecha: hoy, principal: null, secundarias: [] }, historial: [] },
     economia: { monedas: 0, recompensas_reales: [], inventario: [] },
     diario: [],
