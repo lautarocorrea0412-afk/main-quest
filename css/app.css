@@ -1524,402 +1524,326 @@ body.modo-parcial .racha {
   justify-content: center;
 }
 
-/* ============ Ceremonia "El regreso" (7A v5 · ilustración) ============
-   La escena ya no son <div> de colores: es una ilustración
-   pixel-art (assets/ceremonia.svg) animada por capas. Se lee
-   como una habitación, no como un layout. */
+/* ============ Intro "¿Vamos?" (Entrega 18) ============
+   Una colina al atardecer con valle, lago y sakura. El mundo
+   ya está vivo; vos lo interrumpís. El avatar te ofrece un mate
+   y, al tocar, se para y arranca la aventura. Todo SVG + CSS,
+   animado por capas y clases de tiempo. Cero librerías. */
 
-.ceremonia {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  background: radial-gradient(130% 100% at 50% 42%, #1C1526 0%, #100C18 55%, #080610 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.intro {
+  position: fixed; inset: 0; z-index: 500;
+  background: #1a1622;
   overflow: hidden;
-  opacity: 1;
-  transition: opacity 0.8s ease;
+  display: flex; align-items: center; justify-content: center;
 }
+.intro * { -webkit-tap-highlight-color: transparent; }
 
-#telon {
-  position: fixed; inset: 0; z-index: 490;
-  background: radial-gradient(130% 100% at 50% 42%, #1C1526 0%, #100C18 55%, #080610 100%);
-  pointer-events: none; opacity: 1;
-  transition: opacity 0.6s ease;
-}
-body:not(.cargando) #telon { opacity: 0; }
-
-/* Viñeta: oscurece los bordes, enfoca el centro. Cine. */
-.cer-vineta {
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: radial-gradient(120% 100% at 50% 45%, transparent 45%, rgba(6,4,12,0.65) 100%);
-}
-
-/* --- Cámara: contiene la escena, hace el travelling final --- */
-.cer-camara {
-  position: relative;
-  width: min(94vw, 400px);
-  aspect-ratio: 200 / 150;
-  transform: scale(1) translateY(0);
-  transition: transform 1.05s cubic-bezier(0.5, 0, 0.3, 1), opacity 0.8s ease;
-}
-.cer-entrando .cer-camara { transform: scale(2.7) translateY(4%); opacity: 0; }
-.cer-entrando { opacity: 0; transition: opacity 0.95s ease 0.2s; }
-
-.cer-escena {
+/* La cámara: contiene la escena y hace el travelling al entrar. */
+.intro-camara {
   position: absolute; inset: 0;
-  border-radius: 14px;
   overflow: hidden;
-  /* Leve perspectiva de anime */
-  transform: perspective(1000px) rotateX(2deg);
-  transform-origin: center 62%;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
 }
 
-/* La ilustración ocupa toda la escena */
-.cer-escena > svg {
+/* La escena ocupa todo, un poco más grande que el viewport para
+   dar aire al leve parallax y al arranque "alejado". */
+.intro-escena {
+  position: absolute;
+  left: -4%; top: -4%; width: 108%; height: 108%;
+}
+.intro-escena > svg {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  display: block;
 }
 
-/* --- Penumbra inicial que la lámpara disipa --- */
-.cer-escena::after {
-  content: "";
+/* Al revelar, la escena entra desde un poquito más cerca/oscura
+   hacia su posición: no un zoom brusco, una exhalación. */
+.intro-escena {
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 1.2s ease, transform 2.4s cubic-bezier(0.22,0.61,0.36,1);
+}
+.intro-revelada .intro-escena { opacity: 1; transform: scale(1); }
+
+/* ---- Capa de LUZ por hora: tiñe toda la escena ---- */
+.intro-luz {
   position: absolute; inset: 0;
-  background: radial-gradient(80% 70% at 44% 32%, rgba(10,8,20,0.55), rgba(8,6,16,0.92));
-  opacity: 1;
-  transition: opacity 1.7s ease;
-  z-index: 8;
   pointer-events: none;
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+  background:
+    radial-gradient(circle at 74% 42%, var(--luz-intro), transparent 60%),
+    linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.25));
 }
-.cer-revelado .cer-escena::after { opacity: 0; }
+.intro-revelada .intro-luz { opacity: 0.9; }
+/* De noche, un velo azul extra y el astro más frío */
+.intro-noche .intro-luz { background:
+    radial-gradient(circle at 74% 42%, #9AB0F0, transparent 55%),
+    linear-gradient(180deg, rgba(30,40,80,0.3), rgba(0,0,0,0.4)); }
+.intro-noche #intro-astro { fill: #E8EEFF; }
 
-/* --- El cono de luz de la lámpara: el corazón del "wow".
-   Un haz que cae desde la lámpara (sobre el escritorio, arriba
-   a la izquierda del centro) e ilumina la mesa. --- */
-.cer-cono {
+/* ---- Parallax sutil: capas lejanas se mueven menos ---- */
+.intro-revelada #intro-montes { animation: introDeriva 22s ease-in-out infinite alternate; }
+@keyframes introDeriva { from { transform: translateX(0); } to { transform: translateX(-4px); } }
+
+/* ---- VIENTO: las briznas del pasto se mecen ---- */
+.intro-brizna {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: introBrizna 3.4s ease-in-out infinite;
+  animation-delay: calc(var(--b) * 0.5s);
+}
+@keyframes introBrizna {
+  0%, 100% { transform: rotate(-4deg); }
+  50%      { transform: rotate(5deg); }
+}
+
+/* ---- AGUA: los destellos del lago titilan ---- */
+.intro-destello {
+  animation: introDestello 2.6s ease-in-out infinite;
+  animation-delay: calc(var(--d) * 0.7s);
+}
+@keyframes introDestello {
+  0%, 100% { opacity: 0.2; }
+  50%      { opacity: 0.75; }
+}
+#intro-reflejo { animation: introReflejo 4s ease-in-out infinite; }
+@keyframes introReflejo { 0%,100% { opacity: 0.35; } 50% { opacity: 0.6; } }
+
+/* ---- FAUNA lejana: el pajarito cruza el cielo ---- */
+.intro-fauna { position: absolute; inset: 0; pointer-events: none; }
+.intro-ave {
+  position: absolute; top: 24%; left: -6%;
+  width: 10px; height: 6px;
+  opacity: 0;
+}
+/* El ave es un par de trazos: alas en "v" abierta que aletean */
+.intro-ave::before, .intro-ave::after {
+  content: ""; position: absolute; top: 0; width: 6px; height: 3px;
+  border-top: 2px solid #2A2438; border-radius: 50%;
+}
+.intro-ave::before { left: 0; transform: rotate(18deg); }
+.intro-ave::after  { right: 0; transform: rotate(-18deg); }
+.intro-revelada .intro-ave { animation: introVuela 5s ease-in 0.6s forwards; }
+@keyframes introVuela {
+  0%   { opacity: 0; left: -6%; top: 26%; }
+  15%  { opacity: 0.8; }
+  85%  { opacity: 0.8; }
+  100% { opacity: 0; left: 82%; top: 18%; }
+}
+
+/* El pez del easter egg: un arco de salto sobre el lago */
+.intro-fauna--pez .intro-pez {
+  position: absolute; top: 60%; left: 44%;
+  width: 26px; height: auto; opacity: 0;
+}
+.intro-revelada .intro-fauna--pez .intro-pez {
+  animation: introPez 1.4s ease-in 1.1s forwards;
+}
+@keyframes introPez {
+  0%   { opacity: 0; transform: translateY(10px) rotate(-30deg); }
+  20%  { opacity: 1; }
+  50%  { transform: translateY(-18px) rotate(0deg); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(12px) rotate(30deg); }
+}
+
+/* ---- EL AVATAR: sentado contra el sakura, de espaldas primero ---- */
+.intro-avatar {
   position: absolute;
-  left: 30%; top: 28%;
-  width: 46%; height: 60%;
-  z-index: 6;
+  left: 22%; bottom: 8%;
+  width: 82px; height: auto;
+  transform-origin: bottom center;
+  z-index: 3;
+}
+.intro-avatar svg { width: 100%; height: auto; display: block; }
+/* Arranca "de espaldas": lo simulamos volteado y apenas encogido
+   (mirando el valle). Al notarte, gira al frente. */
+.intro-avatar__frente {
+  transform: scaleX(-1) scale(0.98);
+  transition: transform 0.7s cubic-bezier(0.34,1.4,0.5,1);
+}
+.intro-mira .intro-avatar__frente { transform: scaleX(1) scale(1); }
+
+/* respira siempre */
+.intro-avatar { animation: introRespira 3.6s ease-in-out infinite; }
+@keyframes introRespira { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+
+/* EL "¿VAMOS?": al tocar, se para de un envión */
+.intro-vamos .intro-avatar {
+  animation: introParado 0.6s cubic-bezier(0.34,1.6,0.5,1) forwards;
+}
+@keyframes introParado {
+  0%   { transform: translateY(0) scale(1); }
+  40%  { transform: translateY(-3px) scale(1.02, 0.98); }
+  100% { transform: translateY(-8%) scale(1); }
+}
+
+/* ---- EL MATE: aparece ofrecido hacia vos en el momento ---- */
+.intro-mate {
+  position: absolute;
+  left: 38%; bottom: 22%;
+  width: 14px; height: 16px;
+  z-index: 4;
+  opacity: 0;
+  border-radius: 3px 3px 5px 5px;
+  background: #8A5A3A;               /* la calabaza */
+  box-shadow: inset 0 -3px 0 #6B4429, 0 0 0 1.5px #C98A5A;
+  transform: translateX(-6px) scale(0.7);
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.34,1.5,0.5,1);
+}
+.intro-mate::before { /* la bombilla */
+  content: ""; position: absolute; top: -5px; right: -2px;
+  width: 2px; height: 9px; background: #D4D8DC; transform: rotate(20deg);
+}
+.intro-mate::after { /* el vapor */
+  content: ""; position: absolute; top: -10px; left: 3px;
+  width: 3px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  animation: introVapor 2.4s ease-in-out infinite;
+}
+@keyframes introVapor {
+  0% { opacity: 0; transform: translateY(2px) scaleY(0.6); }
+  50% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-8px) scaleY(1.2); }
+}
+.intro-mate-on .intro-mate { opacity: 1; transform: translateX(0) scale(1); }
+
+/* ---- EL COMPAÑERO-BRASA: dormido, despierta al notarte ---- */
+.intro-brasa {
+  position: absolute;
+  left: 47%; bottom: 9%;
+  width: 50px; height: auto;
+  z-index: 3;
+}
+.intro-brasa svg { width: 100%; height: auto; display: block; }
+.intro-brasa__dormida, .intro-brasa__alerta {
+  position: absolute; bottom: 0; left: 0; width: 100%;
+  transition: opacity 0.5s ease;
+}
+.intro-brasa__alerta { opacity: 0; }
+/* Al notarte: cambia de dormida a alerta */
+.intro-mira .intro-brasa__dormida { opacity: 0; }
+.intro-mira .intro-brasa__alerta { opacity: 1; }
+
+/* respira dormido (sube y baja apenas) */
+.intro-brasa__dormida { animation: introRespira 3s ease-in-out infinite 0.4s; }
+
+/* Al "¿vamos?": pega un saltito */
+.intro-vamos .intro-brasa {
+  animation: introBrinca 0.6s cubic-bezier(0.34,1.7,0.5,1) forwards;
+}
+@keyframes introBrinca {
+  0%   { transform: translateY(0); }
+  45%  { transform: translateY(-14px); }
+  100% { transform: translateY(-6%); }
+}
+
+/* ---- LA LLAMA del compañero: titila e ILUMINA ---- */
+.brasa-llama {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: introLlama 0.9s ease-in-out infinite;
+}
+@keyframes introLlama {
+  0%,100% { transform: scaleY(1) scaleX(1); }
+  50%     { transform: scaleY(1.18) scaleX(0.9); }
+}
+/* De noche la llama ilumina más: un halo cálido detrás */
+.intro-noche .intro-brasa::after {
+  content: ""; position: absolute; right: 2px; top: 10%;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,150,60,0.5), transparent 70%);
   pointer-events: none;
-  /* Un trapecio de luz: angosto arriba (la lámpara), ancho
-     abajo (la mesa iluminada). */
-  background: linear-gradient(180deg,
-    rgba(255,224,158,0.55) 0%,
-    rgba(255,206,130,0.22) 45%,
-    transparent 85%);
-  clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
+  animation: introHalo 1.8s ease-in-out infinite;
+}
+@keyframes introHalo { 0%,100% { opacity: 0.5; } 50% { opacity: 0.85; } }
+/* Al "¿vamos?", la llama prende fuerte */
+.intro-vamos .brasa-llama { animation: introLlamaFuerte 0.5s ease-out forwards; }
+@keyframes introLlamaFuerte { to { transform: scaleY(1.5) scaleX(1.1); } }
+
+/* ---- PÉTALOS de sakura cayendo sobre todo ---- */
+.intro-petalos { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.cer-petalo {
+  position: absolute; top: -16px;
+  width: 8px; height: 8px;
+  background: #F8B8CC;
+  border-radius: 0 100% 0 100%;
   opacity: 0;
-  transform: scaleY(0.4);
-  transform-origin: top center;
-  transition: opacity 1s ease, transform 1.2s cubic-bezier(0.3,0.7,0.4,1);
-  mix-blend-mode: screen;
 }
-.cer-revelado .cer-cono {
-  opacity: 1;
-  transform: scaleY(1);
-  animation: cerConoResp 4s ease-in-out infinite 1.2s;
-}
-@keyframes cerConoResp {
-  0%, 100% { opacity: 0.85; }
-  50%      { opacity: 1; }
+.intro-revelada .cer-petalo { animation: introPetalo linear infinite; }
+@keyframes introPetalo {
+  0%   { opacity: 0; transform: translateY(-16px) translateX(0) rotate(0deg); }
+  10%  { opacity: 0.85; }
+  100% { opacity: 0; transform: translateY(105vh) translateX(30px) rotate(360deg); }
 }
 
-/* Halo cálido general que tiñe toda la escena al encender */
-.cer-escena::before {
-  content: "";
-  position: absolute; inset: 0;
-  background: radial-gradient(60% 55% at 42% 34%, rgba(255,200,120,0.18), transparent 70%);
-  opacity: 0;
-  transition: opacity 1.3s ease;
-  z-index: 7; pointer-events: none;
-  mix-blend-mode: screen;
-}
-.cer-revelado .cer-escena::before { opacity: 1; }
-
-/* --- El avatar sentado frente al escritorio. Ya está ahí. --- */
-.cer-avatar {
+/* ---- TÍTULO: aparece en el momento del mate, flotando ---- */
+.intro-titulo {
   position: absolute;
-  left: 50%; bottom: 8%;
-  width: 22%;
-  margin-left: -11%;
-  z-index: 5;
-  opacity: 0;
-  transition: opacity 0.7s ease;
-}
-/* Antes de girar mira "hacia la ventana" (espejado leve); al
-   revelarse queda así hasta el giro. La respiración vive en el
-   SVG de adentro para no pelear con el scaleX del flip. */
-.cer-revelado .cer-avatar { opacity: 1; }
-.cer-avatar { transform: scaleX(0.55); }
-.cer-gira .cer-avatar, .cer-titulo .cer-avatar { transform: scaleX(1); }
-.cer-avatar svg { animation: cerRespira 3.2s ease-in-out infinite; }
-@keyframes cerRespira {
-  0%, 100% { transform: translateY(0) scaleY(1); }
-  50%      { transform: translateY(-2%) scaleY(1.015); }
-}
-/* T3: el avatar "se gira" a mirarte. NO toca el brillo (la
-   lámpara ya lo ilumina). El punto medio del giro NO baja de
-   scaleX 0.42: antes llegaba a 0.15 y el personaje se aplastaba
-   hasta volverse una línea, y eso se leía como si se apagara.
-   Ahora el giro se ve como un giro, no como una desaparición. */
-.cer-gira .cer-avatar {
-  animation: cerGiro 0.8s cubic-bezier(0.45,0.05,0.4,1) forwards;
-}
-@keyframes cerGiro {
-  0%   { transform: scaleX(0.55); }
-  50%  { transform: scaleX(0.42); }
-  100% { transform: scaleX(1); }
-}
-
-/* --- El título en el marco de la pared (idea C: la luz lo revela) --- */
-.cer-titulo-txt {
-  position: absolute;
-  left: 0; right: 0;
-  top: 15%;
-  z-index: 9;
-  opacity: 0;
-  transform: translateY(-8px) scale(0.94);
-  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.34,1.6,0.5,1);
+  top: 16%; left: 0; right: 0;
   text-align: center;
   pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.9s ease, transform 1s cubic-bezier(0.34,1.4,0.5,1);
 }
-.cer-titulo .cer-titulo-txt { opacity: 1; transform: translateY(0) scale(1); }
-.cer-titulo-txt span {
+.intro-titulo span {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(22px, 7vw, 34px);
+  font-size: 34px;
   letter-spacing: 2px;
   color: var(--ink);
-  text-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 0 22px rgba(255,216,140,0.7);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 24px rgba(255,176,103,0.3);
 }
-.cer-titulo-txt b { color: var(--luz-ceremonia); margin: 0 2px; }
+.intro-titulo b { color: var(--accent); font-style: normal; }
+.intro-titulo-on .intro-titulo { opacity: 1; transform: translateY(0); }
 
-/* --- Partículas --- */
-.cer-polvo, .cer-sakura {
-  position: absolute; inset: 0; pointer-events: none; z-index: 6;
-  opacity: 0; transition: opacity 1.4s ease;
-}
-.cer-revelado .cer-polvo { opacity: 1; }
-.cer-titulo .cer-sakura { opacity: 1; }
-.cer-mota {
-  position: absolute; width: 2px; height: 2px; border-radius: 50%;
-  background: rgba(255,224,158,0.9);
-  box-shadow: 0 0 4px rgba(255,216,140,0.7);
-  animation: cerFlota ease-in-out infinite;
-}
-@keyframes cerFlota {
-  0%,100% { transform: translateY(0) translateX(0); opacity: 0.2; }
-  50%     { transform: translateY(-14px) translateX(6px); opacity: 0.95; }
-}
-.cer-petalo {
-  position: absolute; top: -12px; width: 7px; height: 7px;
-  background: var(--sakura); border-radius: 0 100% 0 100%;
-  animation: cerCae linear infinite; opacity: 0.8;
-}
-.cer-noche .cer-petalo { opacity: 0.45; }
-@keyframes cerCae {
-  0%   { transform: translateY(0) rotate(0) translateX(0); opacity: 0; }
-  12%  { opacity: 0.8; }
-  50%  { transform: translateY(50%) rotate(180deg) translateX(12px); }
-  100% { transform: translateY(150%) rotate(340deg) translateX(-6px); opacity: 0; }
-}
-
-/* --- Frase + botón entrar --- */
-.cer-marca {
+/* ---- FRASE + BOTÓN ---- */
+.intro-marca {
   position: absolute;
-  bottom: calc(env(safe-area-inset-bottom) + 128px);
-  left: 0; right: 0;
-  text-align: center; z-index: 10;
-  opacity: 0; transform: translateY(8px);
-  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34,1.6,0.5,1);
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  left: 0; right: 0; text-align: center;
+  pointer-events: none; padding: 0 30px;
 }
-.cer-titulo .cer-marca { opacity: 1; transform: translateY(0); }
-.cer-frase {
-  font-family: var(--font-body); font-size: 15px;
-  color: var(--luz-ceremonia); text-shadow: 0 0 12px rgba(255,216,140,0.3);
-}
-
-.cer-entrar {
-  position: absolute;
-  bottom: calc(env(safe-area-inset-bottom) + 44px);
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
-  padding: 15px 36px;
-  font-family: var(--font-display); font-weight: 800; font-size: 16px;
-  letter-spacing: 0.5px; color: #2A2130;
-  background: var(--luz-ceremonia); border: none; border-radius: 999px;
-  box-shadow: 0 5px 0 rgba(0,0,0,0.25);
-  cursor: pointer; opacity: 0; pointer-events: none; z-index: 10;
-  -webkit-user-select: none; user-select: none;
-}
-.cer-lista .cer-entrar {
-  opacity: 1; pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
-  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34,1.7,0.5,1);
-  animation: cerPulso 2s ease-in-out infinite 0.8s;
-}
-.cer-entrar:active { transform: translateX(-50%) translateY(4px); box-shadow: 0 1px 0 rgba(0,0,0,0.25); }
-@keyframes cerPulso {
-  0%,100% { box-shadow: 0 5px 0 rgba(0,0,0,0.25), 0 0 0 0 rgba(255,216,140,0); }
-  50%     { box-shadow: 0 5px 0 rgba(0,0,0,0.25), 0 0 26px 4px rgba(255,216,140,0.45); }
-}
-
-/* Microvida sobre las capas del SVG: el monitor y la lámpara
-   laten; se aplica a los <g> de la ilustración. */
-.cer-revelado #esc-monitor { animation: cerMon 3.5s ease-in-out infinite; transform-origin: center; }
-@keyframes cerMon { 0%,100% { opacity: 0.9; } 50% { opacity: 1; } }
-.cer-lampara-on #esc-lampara { animation: cerLamp 3s ease-in-out infinite 0.6s; transform-origin: 88px 50px; }
-@keyframes cerLamp { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
-
-/* ============ Objetivo Japón (Entrega 8) ============ */
-
-.japon-cifra { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
-
-.japon-ahorrado {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 26px;
-  color: var(--matcha);
-}
-
-.japon-meta { font-size: 14px; color: var(--ink-dim); }
-
-.barra--japon { height: 12px; margin-bottom: 4px; }
-
-.barra--japon .barra__fill {
-  background: linear-gradient(90deg, var(--matcha), var(--sakura));
-}
-
-.japon-pct {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 12px;
-  color: var(--ink-dim);
-  text-align: right;
-  margin-bottom: 10px;
-}
-
-.japon-proy {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--ink);
-  background: var(--bg);
-  border-left: 3px solid var(--sakura);
-  padding: 8px 12px;
-  border-radius: 0 var(--radius) var(--radius) 0;
-  margin-bottom: 12px;
-}
-
-.japon-proy--ok { border-left-color: var(--matcha); color: var(--matcha); }
-
-.japon-historial {
-  margin-top: 12px;
-  border-top: 2px solid var(--line);
-  padding-top: 8px;
-}
-
-.japon-aporte {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--ink-dim);
-  padding: 3px 0;
-}
-
-.japon-mas { color: var(--matcha); font-weight: 600; }
-.japon-menos { color: var(--sakura); font-weight: 600; }
-
-/* ============ Camino a Japón (Entrega 8b) ============ */
-
-.camino-titulo {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  color: var(--ink-dim);
-  margin: 16px 0 10px;
-}
-
-/* La ruta: una línea vertical con nudos. Altura fija; al
-   abrir, scroll interno para recorrer todo el viaje. */
-.camino {
-  position: relative;
-  padding-left: 6px;
-}
-
-.camino--scroll {
-  max-height: 220px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-right: 4px;
-}
-
-.camino-parada {
-  position: relative;
-  display: flex;
-  gap: 14px;
-  padding: 0 0 14px 16px;
-}
-
-/* La línea que une las paradas */
-.camino-parada::before {
-  content: "";
-  position: absolute;
-  left: 4px; top: 4px;
-  width: 2px; height: 100%;
-  background: var(--line);
-}
-.camino-parada:last-child::before { display: none; }
-
-.camino-nudo {
-  position: absolute;
-  left: 0; top: 3px;
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--bg-raise);
-  border: 2px solid var(--sakura);
-}
-
-.camino-parada--actual .camino-nudo {
-  background: var(--sakura);
-  box-shadow: 0 0 10px var(--sakura);
-}
-
-.camino-info { flex: 1; }
-
-.camino-monto {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 15px;
-}
-
-.camino-fecha { font-size: 12px; color: var(--ink-dim); margin-top: 1px; }
-
-.camino-total { font-size: 12px; color: var(--matcha); margin-top: 2px; }
-
-.camino-toggle {
-  width: 100%;
-  margin-top: 4px;
-  padding: 8px;
-  background: none;
-  border: 2px dashed var(--line);
-  border-radius: var(--radius);
-  color: var(--ink-dim);
+.intro-frase {
   font-family: var(--font-body);
-  font-size: 13px;
-  cursor: pointer;
+  font-size: 15px; line-height: 1.5;
+  color: var(--ink);
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.intro-titulo-on .intro-frase { opacity: 0.9; }
+
+.intro-entrar {
+  position: absolute;
+  bottom: calc(40px + env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%);
+  padding: 14px 34px;
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 15px;
+  color: #2A2130; background: var(--accent);
+  border: none; border-radius: 999px;
+  box-shadow: 0 5px 0 #C9814A;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+.intro-lista .intro-entrar { opacity: 1; pointer-events: auto; animation: introLatido 2.2s ease-in-out infinite; }
+.intro-entrar:active { transform: translateX(-50%) translateY(4px); box-shadow: 0 1px 0 #C9814A; }
+@keyframes introLatido {
+  0%,100% { box-shadow: 0 5px 0 #C9814A, 0 0 0 rgba(255,176,103,0); }
+  50%     { box-shadow: 0 5px 0 #C9814A, 0 0 18px rgba(255,176,103,0.5); }
 }
 
-.camino-vacio, .japon-camino-vacio {
-  font-size: 13px;
-  color: var(--ink-dim);
-  font-style: italic;
-  margin-top: 12px;
+/* ---- EL TRAVELLING de entrada: la cámara avanza y funde ---- */
+.intro-entrando .intro-camara {
+  transition: transform 1s cubic-bezier(0.5,0,0.75,0), opacity 1s ease;
+  transform: scale(1.5);
+  opacity: 0;
 }
+.intro-entrando .intro-titulo,
+.intro-entrando .intro-marca,
+.intro-entrando .intro-entrar { transition: opacity 0.5s ease; opacity: 0; }
 
 /* ============ Ceremonia de llegada a Japón (Entrega 8b) ============
    El momento más importante de Main Quest. Emocional, no ruidoso. */

@@ -43,6 +43,7 @@ import { dibujarAvatar } from "./avatar.js";
 import { franjaLuz } from "./util.js";
 import { fraseCeremonia } from "./engine.js";
 import { sonar, setSonido, setMusica } from "./sonido.js";
+import { brasaDormida, brasaAlerta, pezEasterEgg } from "./brasa.js";
 
 let data;
 let escenaCache = null;
@@ -53,7 +54,7 @@ let escenaCache = null;
 async function cargarEscena() {
   if (escenaCache) return escenaCache;
   try {
-    const resp = await fetch("./assets/ceremonia.svg");
+    const resp = await fetch("./assets/intro.svg");
     if (!resp.ok) throw new Error("no se pudo cargar la escena");
     escenaCache = await resp.text();
   } catch {
@@ -88,7 +89,7 @@ function polvo(n = 10) {
   return html;
 }
 
-function sakura(n = 6) {
+function sakura(n = 10) {
   let html = "";
   for (let i = 0; i < n; i++) {
     const x = Math.round(Math.random() * 100);
@@ -105,79 +106,108 @@ function sakura(n = 6) {
    ------------------------------------------------------------ */
 export async function correrCeremonia(datos) {
   data = datos;
-  if (reduceMovimiento()) return;
 
   const svgTexto = await cargarEscena();
+  const franja = franjaLuz(new Date().getHours());
+  const luz = LUCES[franja];
+
+  // El easter egg: 1 de cada 50 aberturas, en vez del pajarito
+  // lejano salta un pez en el lago. Tan raro que dudás si lo viste.
+  const easterEgg = Math.floor(Math.random() * 50) === 0;
+
+  // reduce-motion: sin coreografía, pero NO nos saltamos la intro
+  // entera —mostramos la escena quieta y el botón—, así el momento
+  // (el mate, el compañero) sigue existiendo para quien lo pidió.
+  const quieto = reduceMovimiento();
 
   return new Promise((resolve) => {
     let entrado = false;
-    const franja = franjaLuz(new Date().getHours());
-    const luz = LUCES[franja];
 
     const overlay = document.createElement("div");
-    overlay.className = `ceremonia cer-${franja}`;
-    overlay.style.setProperty("--luz-ceremonia", luz);
+    overlay.className = `intro intro-${franja}` + (quieto ? " intro-quieto" : "");
+    overlay.style.setProperty("--luz-intro", luz);
     overlay.setAttribute("role", "presentation");
 
-    /* El avatar arranca DE ESPALDAS (mirando la ventana) y en
-       T3 gira al frente. Dos versiones: la de espaldas es una
-       silueta simple; la de frente es el avatar de siempre. */
-    /* La escena es una ILUSTRACIÓN pixel-art (assets/ceremonia.svg),
-       no bloques CSS. Se carga inline para poder animar sus
-       capas (<g id="esc-...">) y superponerle la luz. */
+    /* Estructura por planos, de atrás hacia adelante:
+       - la escena SVG (colina/valle/lago/sakura) con su capa de luz
+       - la fauna lejana (pajarito o, raras veces, el pez)
+       - el avatar (de espaldas primero, mirando el valle)
+       - el compañero-brasa (dormido primero)
+       - los pétalos que caen sobre todo
+       - el título + la frase + el botón */
+    const fauna = easterEgg
+      ? `<div class="intro-fauna intro-fauna--pez">${pezEasterEgg()}</div>`
+      : `<div class="intro-fauna intro-fauna--ave"><span class="intro-ave"></span></div>`;
+
     overlay.innerHTML = `
-      <div class="cer-vineta"></div>
-      <div class="cer-camara">
-        <div class="cer-escena">
+      <div class="intro-camara">
+        <div class="intro-escena">
           ${svgTexto}
-          <div class="cer-cono"></div>
-          <div class="cer-avatar">${dibujarAvatar(1)}</div>
-          <div class="cer-titulo-txt"><span>MAIN<b>/</b>QUEST</span></div>
-          <div class="cer-polvo">${polvo()}</div>
-          <div class="cer-sakura">${sakura()}</div>
+          <div class="intro-luz"></div>
+          ${fauna}
+          <div class="intro-avatar">
+            <div class="intro-avatar__frente">${dibujarAvatar(1)}</div>
+          </div>
+          <div class="intro-brasa">
+            <div class="intro-brasa__dormida">${brasaDormida()}</div>
+            <div class="intro-brasa__alerta">${brasaAlerta()}</div>
+          </div>
+          <div class="intro-mate"></div>
+          <div class="intro-petalos">${sakura()}</div>
         </div>
       </div>
-      <div class="cer-marca">
-        <div class="cer-frase">${fraseCeremonia()}</div>
-      </div>
-      <button class="cer-entrar" type="button">Tocar para comenzar</button>`;
+      <div class="intro-titulo"><span>MAIN<b>/</b>QUEST</span></div>
+      <div class="intro-marca"><div class="intro-frase">${fraseCeremonia()}</div></div>
+      <button class="intro-entrar" type="button">Tocá para aceptar el mate</button>`;
 
     document.body.appendChild(overlay);
 
     const entrar = () => {
       if (entrado) return;
       entrado = true;
-      // El toque de "entrar" es un gesto real: buen momento para
-      // que el audio despierte y suene el acorde de bienvenida.
+      // El toque despierta el audio (gesto real) y suena el acorde.
       setSonido(data.ajustes && data.ajustes.sonido);
       sonar("entrar");
-      // Si la música estaba puesta, este gesto la puede arrancar.
       setMusica(data.ajustes && data.ajustes.musica);
-      /* Travelling: la cámara AVANZA hacia el cuarto (zoom in)
-         y funde a HOY. No es un fade plano: entrás al juego. */
-      overlay.classList.add("cer-entrando");
+      /* EL "¿VAMOS?": el avatar se para de un envión y el compañero
+         salta, la llama prende fuerte. Después, la cámara avanza y
+         funde a HOY. No cerrás una postal: arranca la aventura. */
+      overlay.classList.add("intro-vamos");
       const salir = () => { overlay.remove(); resolve(); };
-      overlay.addEventListener("transitionend", salir, { once: true });
-      setTimeout(salir, 1100); // red de seguridad > animación
+      // Damos tiempo al "let's go" antes del fundido.
+      setTimeout(() => {
+        overlay.classList.add("intro-entrando");
+        overlay.addEventListener("transitionend", salir, { once: true });
+        setTimeout(salir, 1200); // red de seguridad
+      }, quieto ? 0 : 620);
     };
 
-    const btn = overlay.querySelector(".cer-entrar");
-    // El botón aparece recién al final; hasta entonces no responde.
+    const btn = overlay.querySelector(".intro-entrar");
     btn.addEventListener("click", entrar);
-    // Tocar en cualquier lado del cuarto ya revelado también entra.
-    overlay.querySelector(".cer-camara").addEventListener("click", () => {
-      if (overlay.classList.contains("cer-lista")) entrar();
+    // Tocar en la escena ya revelada también entra.
+    overlay.querySelector(".intro-camara").addEventListener("click", () => {
+      if (overlay.classList.contains("intro-lista")) entrar();
     });
 
-    /* La coreografía por tiempos. Clases que entran a su hora;
-       el CSS hace todo el resto. Sin librerías. */
+    if (quieto) {
+      // Sin animación: mostramos todo listo y el botón activo.
+      overlay.classList.add("intro-revelada", "intro-mira", "intro-lista");
+      return;
+    }
+
+    /* LA COREOGRAFÍA. Clases que entran a su tiempo; el CSS hace
+       el resto. Ritmo pensado para que en los primeros ~2s ya
+       haya pasado algo (fauna, viento) y el mundo se sienta vivo
+       ANTES de que el avatar te note. */
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => overlay.classList.add("cer-t1")); // penumbra + silueta
+      requestAnimationFrame(() => overlay.classList.add("intro-revelada"));
     });
-    setTimeout(() => overlay.classList.add("cer-lampara-on"), 1500); // WOW: prende la luz
-    setTimeout(() => overlay.classList.add("cer-revelado"), 1900);   // el cuarto se derrama
-    setTimeout(() => overlay.classList.add("cer-gira"), 2800);       // te mira
-    setTimeout(() => overlay.classList.add("cer-titulo"), 4000);     // póster + frase
-    setTimeout(() => overlay.classList.add("cer-lista"), 4700);      // "tocar para entrar"
+    // 1.6s: el avatar te nota y gira; el compañero despierta.
+    setTimeout(() => overlay.classList.add("intro-mira"), 1600);
+    // 2.8s: EL MOMENTO — ofrece el mate, aparece el título.
+    setTimeout(() => overlay.classList.add("intro-mate-on"), 2800);
+    setTimeout(() => overlay.classList.add("intro-titulo-on"), 3200);
+    // 4.2s: queda vivo, esperando. El botón responde.
+    setTimeout(() => overlay.classList.add("intro-lista"), 4200);
   });
 }

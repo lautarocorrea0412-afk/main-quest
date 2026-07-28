@@ -12,6 +12,7 @@
 
 import { suite, test, assert, igual, crearDatos, hoyLocal } from "./helpers.js";
 import { setDatosEngine, fraseCeremonia } from "../js/engine.js";
+import { brasaDormida, brasaAlerta, pezEasterEgg } from "../js/brasa.js";
 
 export function correr() {
   suite("Ceremonia: la frase del motor");
@@ -58,4 +59,21 @@ export function correr() {
     setDatosEngine(d);
     assert(/sin exigirte/.test(fraseCeremonia()), "salud primero, también en la ceremonia");
   });
+  suite("Intro: el compañero-brasa");
+
+  test("las tres piezas del compañero generan SVG válido", () => {
+    for (const [nombre, fn] of [["dormida", brasaDormida], ["alerta", brasaAlerta], ["pez", pezEasterEgg]]) {
+      const svg = fn();
+      assert(svg.startsWith("<svg") && svg.includes("</svg>"), nombre + " es SVG");
+    }
+  });
+
+  test("la brasa alerta tiene la llama animable", () => {
+    assert(brasaAlerta().includes("brasa-llama"), "la capa de llama está para animar");
+  });
+
+  test("la brasa dormida tiene los ojos cerrados", () => {
+    assert(!brasaDormida().includes('r="2.4"'), "dormida no tiene pupilas abiertas");
+  });
+
 }

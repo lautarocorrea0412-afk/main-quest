@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega17b-agenda";
+const CACHE_VERSION = "mq-entrega18-intro";
 
 const CORE = [
   "./",
@@ -35,13 +35,14 @@ const CORE = [
   "./js/japon.js",
   "./js/config.js",
   "./js/stats.js",
+  "./js/brasa.js",
   "./js/agenda.js",
   "./js/sonido.js",
   "./js/vida.js",
   "./js/progression.js",
   "./js/ui.js",
   "./assets/cuarto.svg",
-  "./assets/ceremonia.svg",
+  "./assets/intro.svg",
   "./js/util.js",
   "./assets/icons/icon-192.png",
   "./assets/icons/icon-512.png"

@@ -1,32 +1,48 @@
-Entrega 17b — Agenda arreglada
-Caché SW: mq-entrega17b-agenda
-La app debe mostrar en VOS: 'Entrega 17b · agenda arreglada · datos v13'
+Entrega 18 — Intro "¿Vamos?" (nueva intro completa)
+Caché SW: mq-entrega18-intro
+La app debe mostrar en VOS: 'Entrega 18 · intro ¿vamos? · datos v13'
 
 Sin cambios de datos.
 
-DOS BUGS que impedían usar la agenda, arreglados:
+Reemplaza la ceremonia "El regreso" por una intro nueva, pensada como
+director creativo antes que como programador. Tesis: la app no es el
+descanso, es el impulso. La emoción no es "por fin me siento", es
+"ahí estás, ¿vamos?". La paz es el punto de partida, no el destino.
 
-1. LA AGENDA NO SE INICIALIZABA. En la 17, la llamada initAgenda(data)
-   nunca se agregó al arranque (se me escapó en el cableado). El panel
-   quedaba a medio armar y por eso "no dejaba escribir ni nada". Ahora
-   sí se inicializa. De paso descubrí que initSonido(data) TAMPOCO estaba
-   en el arranque —el sonido solo se activaba al entrar por la ceremonia—;
-   también lo agregué.
+LA ESCENA: una colina al atardecer (tu hora real) con valle, lago y un
+sakura. Profundidad de tres planos. El mundo ya está vivo sin vos: un
+pajarito cruza el cielo, el pasto se mece con el viento, el lago
+destella. El avatar está de espaldas mirando el valle con su mate — lo
+INTERRUMPÍS. A su lado, un compañero-brasa dormido (criatura naranja
+propia, con llamita que titila e ilumina más de noche).
 
-2. EL BOTÓN "+ AGENDAR ALGO" NO ABRÍA LA HOJA. Usaba un import dinámico
-   de ui.js —import("./ui.js")— que es frágil en la PWA con service
-   worker de iOS. Lo cambié a import estático arriba del archivo, igual
-   que japon.js e history.js (que ya funcionan así).
+LA COREOGRAFÍA (~4s, después queda vivo esperando tu toque):
+  - En los primeros ~2s ya pasa algo: la escena se revela, el pajarito
+    cruza, el viento mueve el pasto. El mundo respira.
+  - 1.6s: el avatar te NOTA y gira; el compañero despierta y te mira.
+  - 2.8s: EL MOMENTO — te ofrece el mate. Aparece MAIN QUEST flotando.
+  - Queda vivo, nunca se va solo. Botón "Tocá para aceptar el mate".
+  - AL TOCAR: el "¿vamos?" — el avatar se para de un envión, el
+    compañero pega un salto con la llama encendida fuerte, y la cámara
+    avanza hacia la aventura. No cerrás una postal: arranca la quest.
 
-La suite de arranque cazó el segundo problema al toque: verifica que cada
-initX del arranque exista, y saltó cuando initSonido no estaba en su lista.
+EASTER EGG: 1 de cada 50 aberturas, en vez del pajarito salta un pez en
+el lago con un arco tonto. Tan raro que dudás si lo viste.
 
-Modificados: js/agenda.js (import estático), js/app.js (initAgenda +
-  initSonido en el arranque), sw.js, tests/suite-arranque.js
+Respeta prefers-reduced-motion: muestra la escena quieta con el momento
+(mate, compañero) y el botón, sin animación.
+
+Nuevos: js/brasa.js (el compañero, 3 poses SVG), assets/intro.svg (la
+  escena, generada por tools/gen_intro.py).
+Modificados: js/ceremonia.js (coreografía nueva), css/app.css (todo el
+  bloque de intro reescrito), sw.js, js/app.js, tests/suite-ceremonia.js
 
 QUÉ VES HOY, SIN NADA HECHO:
-  - En VOS → Agenda: el panel vacío con "+ Agendar algo". Ahora el botón
-    ABRE la hoja: escribís qué es, elegís el día y lo agendás.
-  - Si agendás algo para hoy, el aviso verde aparece arriba en HOY.
+  - La intro aparece SIEMPRE al abrir la app, desde el primer día (no
+    necesita progreso). La escena se arma, el mundo vive, el avatar te
+    ofrece el mate. Tu avatar es el que tengas configurado; recién
+    empezando, el de por defecto. El compañero-brasa siempre está.
+  - La luz de la escena es la de tu hora real: distinta de mañana, tarde
+    y noche. De noche la llamita del compañero ilumina más.
 
-Suite: 148 tests. Todo en verde.
+Suite: 151 tests. Todo en verde.
