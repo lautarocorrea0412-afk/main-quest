@@ -37,6 +37,7 @@ import { initJapon } from "../js/japon.js";
 import { initConfig } from "../js/config.js";
 import { initStats } from "../js/stats.js";
 import { initAgenda } from "../js/agenda.js";
+import { initSonido } from "../js/sonido.js";
 import { initVida } from "../js/vida.js";
 import { renderArboles } from "../js/xp.js";
 
@@ -54,7 +55,7 @@ const IDS = [
 
 const FUNCIONES = {
   initEngine, initMisiones, initDiario, initEconomia,
-  initAvatar, initCuarto, initLogros, initHistoria, initJapon, initConfig, initStats, initVida, initAgenda
+  initAvatar, initCuarto, initLogros, initHistoria, initJapon, initConfig, initStats, initVida, initAgenda, initSonido
 };
 
 /* app.js hace render() ANTES de los init: ahí dibuja el

@@ -1,37 +1,32 @@
-Entrega 17 — Agenda
-Caché SW: mq-entrega17-agenda
-La app debe mostrar en VOS: 'Entrega 17 · agenda · datos v13'
+Entrega 17b — Agenda arreglada
+Caché SW: mq-entrega17b-agenda
+La app debe mostrar en VOS: 'Entrega 17b · agenda arreglada · datos v13'
 
-DATA_VERSION sube a 13: array de agenda en contexto. Migración automática.
+Sin cambios de datos.
 
-Agenda hacia adelante: anotás "tal día tengo tal cosa" (un parcial, una
-entrega a un cliente, un cumpleaños) y el día que toca, la app te lo pone
-ADELANTE apenas abrís. No duplica Historia (que mira el pasado): esto
-mira lo que viene, para no olvidarte.
+DOS BUGS que impedían usar la agenda, arreglados:
 
-HONESTIDAD SOBRE EL AVISO: una PWA en iOS NO puede mandar notificaciones
-a una hora ni con la app cerrada. Esto NO te avisa solo: te lo muestra
-cuando entrás a la app. Por eso el aviso vive arriba de todo en HOY,
-imposible de no ver. Aparece también al volver a la app tras un rato.
+1. LA AGENDA NO SE INICIALIZABA. En la 17, la llamada initAgenda(data)
+   nunca se agregó al arranque (se me escapó en el cableado). El panel
+   quedaba a medio armar y por eso "no dejaba escribir ni nada". Ahora
+   sí se inicializa. De paso descubrí que initSonido(data) TAMPOCO estaba
+   en el arranque —el sonido solo se activaba al entrar por la ceremonia—;
+   también lo agregué.
 
-CÓMO FUNCIONA:
-  - En VOS → Agenda: lista de próximos eventos (con cuánto falta) y botón
-    para agendar (título + fecha, en una hoja deslizable).
-  - Cuando un evento es HOY, aparece un aviso verde arriba de la pantalla
-    HOY: "Hoy en tu agenda: ...". Botón "Entendido" para ocultarlo.
-  - El aviso no se repite el mismo día una vez que lo viste, pero si el
-    evento vuelve a ser "hoy" otro día (o lo viste ayer), reaparece.
-  - Los eventos pasados desaparecen solos de la lista.
+2. EL BOTÓN "+ AGENDAR ALGO" NO ABRÍA LA HOJA. Usaba un import dinámico
+   de ui.js —import("./ui.js")— que es frágil en la PWA con service
+   worker de iOS. Lo cambié a import estático arriba del archivo, igual
+   que japon.js e history.js (que ya funcionan así).
 
-Modificados: js/agenda.js (nuevo), js/store.js (v13), index.html,
-  js/app.js, css/app.css, sw.js, tests (helpers, store, arranque,
-  suite-agenda nueva, run)
+La suite de arranque cazó el segundo problema al toque: verifica que cada
+initX del arranque exista, y saltó cuando initSonido no estaba en su lista.
+
+Modificados: js/agenda.js (import estático), js/app.js (initAgenda +
+  initSonido en el arranque), sw.js, tests/suite-arranque.js
 
 QUÉ VES HOY, SIN NADA HECHO:
-  - En VOS → Agenda: el panel vacío, con el texto invitándote a anotar lo
-    que viene y el botón "+ Agendar algo".
-  - En HOY: nada nuevo, salvo que agendes algo PARA HOY — ahí aparece el
-    aviso verde arriba. Sin eventos para hoy, HOY se ve igual que siempre.
-    Eso es correcto.
+  - En VOS → Agenda: el panel vacío con "+ Agendar algo". Ahora el botón
+    ABRE la hoja: escribís qué es, elegís el día y lo agendás.
+  - Si agendás algo para hoy, el aviso verde aparece arriba en HOY.
 
 Suite: 148 tests. Todo en verde.

@@ -57,7 +57,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 17 · agenda · datos v" + data.version;
+    "MAIN QUEST · Entrega 17b · agenda arreglada · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -223,6 +223,8 @@ initJapon(data);
 initConfig(data);
 initStats(data);
 initVida(data);
+initAgenda(data);
+initSonido(data);
 renderBackup();
 aplicarModoParcial();
 

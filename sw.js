@@ -10,7 +10,7 @@
    teléfonos descarguen la versión nueva.
    ============================================================ */
 
-const CACHE_VERSION = "mq-entrega17-agenda";
+const CACHE_VERSION = "mq-entrega17b-agenda";
 
 const CORE = [
   "./",

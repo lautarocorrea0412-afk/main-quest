@@ -20,6 +20,7 @@
 
 import { save } from "./store.js";
 import { hoyISO, escapar, diasHasta } from "./util.js";
+import { abrirHoja } from "./ui.js";
 
 let data;
 
@@ -153,9 +154,8 @@ export function renderAgenda() {
 
 /* Alta de un evento, dentro de una hoja deslizable. */
 function abrirAltaEvento() {
-  import("./ui.js").then(({ abrirHoja }) => {
-    const hoy = hoyISO();
-    const html = `
+  const hoy = hoyISO();
+  const html = `
       <div class="config-item">
         <label class="config-label" for="ev-titulo">¿Qué es?</label>
         <input type="text" id="ev-titulo" class="campo" maxlength="60"
@@ -167,17 +167,16 @@ function abrirAltaEvento() {
       </div>
       <button type="button" class="btn" id="ev-guardar">Agendar</button>`;
 
-    abrirHoja("Agendar algo", html, (cuerpo) => {
-      cuerpo.querySelector("#ev-guardar").onclick = () => {
-        const titulo = cuerpo.querySelector("#ev-titulo").value;
-        const fecha = cuerpo.querySelector("#ev-fecha").value;
-        if (agregarEvento(data, { fecha, titulo })) {
-          renderAgenda();
-          renderAvisoAgenda(); // por si agendó algo para hoy
-          document.querySelector(".hoja-fondo .hoja__cerrar")?.click();
-        }
-      };
-    });
+  abrirHoja("Agendar algo", html, (cuerpo) => {
+    cuerpo.querySelector("#ev-guardar").onclick = () => {
+      const titulo = cuerpo.querySelector("#ev-titulo").value;
+      const fecha = cuerpo.querySelector("#ev-fecha").value;
+      if (agregarEvento(data, { fecha, titulo })) {
+        renderAgenda();
+        renderAvisoAgenda(); // por si agendó algo para hoy
+        document.querySelector(".hoja-fondo .hoja__cerrar")?.click();
+      }
+    };
   });
 }
 
