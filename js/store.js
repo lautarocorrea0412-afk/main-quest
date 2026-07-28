@@ -23,10 +23,11 @@ const STORAGE_KEY = "mainquest_data";
    v9 — el objetivo Japón recuerda el día que se cumplió
    v10 — ajustes del usuario (hora del diario, sonido)
    v11 — ajuste de música de fondo (aparte de los efectos)
-   v12 — rituales (misiones recurrentes que la app sugiere)
+   v12 — (rituales: probado y quitado; la versión queda reservada)
+   v13 — agenda: eventos con fecha que la app avisa al abrir
    completarFaltantes() agrega los campos nuevos a los datos
    viejos, así que las migraciones son automáticas. */
-const DATA_VERSION = 12;
+const DATA_VERSION = 13;
 
 /* ------------------------------------------------------------
    Estado inicial (el "personaje nivel 1").
@@ -60,10 +61,10 @@ const DEFAULT_DATA = {
   contexto: {
     parciales: [],
     objetivo_japon: { meta_usd: 10000, ahorrado_usd: 0, fecha_ideal: "2027-02", aportes: [], cumplido_en: null },
-    ingresos_edicion: []
+    ingresos_edicion: [],
+    agenda: []  // { id, fecha, titulo, avisado_en }
   },
   misiones: { hoy: null, historial: [] },
-  rituales: [],  // { id, titulo, arbol, dias:[0-6], activo }
 
   economia: { monedas: 0, recompensas_reales: [], inventario: [] },
   diario: [],

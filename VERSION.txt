@@ -1,44 +1,37 @@
-Entrega 16 — Rituales
-Caché SW: mq-entrega16-rituales
-La app debe mostrar en VOS: 'Entrega 16 · rituales · datos v12'
+Entrega 17 — Agenda
+Caché SW: mq-entrega17-agenda
+La app debe mostrar en VOS: 'Entrega 17 · agenda · datos v13'
 
-DATA_VERSION sube a 12: array de rituales. Migración automática.
+DATA_VERSION sube a 13: array de agenda en contexto. Migración automática.
 
-Rituales: misiones recurrentes que la app te OFRECE el día que tocan,
-sin reclamártelas nunca. Las cosas que hacés porque son parte tuya (gym,
-japonés, editar), no una lista de tareas.
+Agenda hacia adelante: anotás "tal día tengo tal cosa" (un parcial, una
+entrega a un cliente, un cumpleaños) y el día que toca, la app te lo pone
+ADELANTE apenas abrís. No duplica Historia (que mira el pasado): esto
+mira lo que viene, para no olvidarte.
+
+HONESTIDAD SOBRE EL AVISO: una PWA en iOS NO puede mandar notificaciones
+a una hora ni con la app cerrada. Esto NO te avisa solo: te lo muestra
+cuando entrás a la app. Por eso el aviso vive arriba de todo en HOY,
+imposible de no ver. Aparece también al volver a la app tras un rato.
 
 CÓMO FUNCIONA:
-  - Cada ritual tiene un título, un árbol y los días que aplica.
-  - El día que toca, aparece en HOY arriba del campo de misión, con el
-    tag "Hoy toca" y un botón Usar que lo precarga. El tap final sigue
-    siendo tuyo: sugiere, no impone.
-  - Tiene PRIORIDAD sobre la sugerencia genérica del motor (es más
-    específico para vos).
-  - Si no lo hiciste, NO hay culpa: no hay ❌ ni "te lo perdiste". El día
-    que vuelve a tocar, vuelve a ofrecerse. Punto.
-  - Si la misión de hoy ya salió de ese ritual, no se vuelve a ofrecer.
+  - En VOS → Agenda: lista de próximos eventos (con cuánto falta) y botón
+    para agendar (título + fecha, en una hoja deslizable).
+  - Cuando un evento es HOY, aparece un aviso verde arriba de la pantalla
+    HOY: "Hoy en tu agenda: ...". Botón "Entendido" para ocultarlo.
+  - El aviso no se repite el mismo día una vez que lo viste, pero si el
+    evento vuelve a ser "hoy" otro día (o lo viste ayer), reaparece.
+  - Los eventos pasados desaparecen solos de la lista.
 
-PANEL EN VOS: lista tus rituales (título + días), botón para crear uno
-nuevo (título, árbol y chips de días en una hoja deslizable) y borrar.
-
-SUGERIDOS SEGÚN TU CRONOGRAMA (los podés cambiar o borrar):
-  - Gimnasio → lun, mié, sáb (tus días libres)
-  - Japonés 20 min → lun y jue
-  - Editar 1 hora → mié y sáb
-  - Leer un rato → días de facultad + domingo (algo liviano)
-  Pensados sabiendo que ma/ju/vie tenés la tarde tomada con facultad +
-  viaje (salís 11:30, volvés 19:30; jue 21:00).
-
-Modificados: js/rituales.js (nuevo), js/store.js (v12), js/missions.js
-  (sugerencia del ritual), index.html, js/app.js, css/app.css, sw.js,
-  tests (helpers, store, arranque, stats, suite-rituales nueva)
+Modificados: js/agenda.js (nuevo), js/store.js (v13), index.html,
+  js/app.js, css/app.css, sw.js, tests (helpers, store, arranque,
+  suite-agenda nueva, run)
 
 QUÉ VES HOY, SIN NADA HECHO:
-  - En VOS → Rituales: el panel vacío, con un botón "Empezar con algunos
-    sugeridos" (que carga los 4 de arriba) y "+ Nuevo ritual".
-  - En HOY: si el día de hoy coincide con algún ritual que tengas, aparece
-    "Hoy toca ..." arriba del campo de misión. Sin rituales cargados, no
-    aparece nada nuevo: HOY se ve igual que siempre. Eso es correcto.
+  - En VOS → Agenda: el panel vacío, con el texto invitándote a anotar lo
+    que viene y el botón "+ Agendar algo".
+  - En HOY: nada nuevo, salvo que agendes algo PARA HOY — ahí aparece el
+    aviso verde arriba. Sin eventos para hoy, HOY se ve igual que siempre.
+    Eso es correcto.
 
 Suite: 148 tests. Todo en verde.

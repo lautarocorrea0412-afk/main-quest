@@ -23,7 +23,7 @@ import { initHistoria, setDatosHistoria } from "./history.js";
 import { initJapon, setDatosJapon } from "./japon.js";
 import { initConfig, setDatosConfig } from "./config.js";
 import { initStats, setDatosStats } from "./stats.js";
-import { initRituales, setDatosRituales } from "./rituales.js";
+import { initAgenda, setDatosAgenda, renderAvisoAgenda } from "./agenda.js";
 import { initSonido, retomarMusica } from "./sonido.js";
 import { initVida, setDatosVida } from "./vida.js";
 import { contextoActual } from "./engine.js";
@@ -57,7 +57,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 16 · rituales · datos v" + data.version;
+    "MAIN QUEST · Entrega 17 · agenda · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------
@@ -200,6 +200,7 @@ document.addEventListener("visibilitychange", () => {
     aplicarLuzAmbiente();
     aplicarModoParcial(); // un parcial puede haberse acercado desde ayer
     setDatosJapon(data);  // la proyección de Japón sube con los días que pasan
+    renderAvisoAgenda();  // ¿hay algo agendado para hoy? que aparezca
     retomarMusica();      // iOS suspende el audio en el fondo; al volver, sigue
   }
 });
