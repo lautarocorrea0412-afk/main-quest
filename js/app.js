@@ -57,7 +57,7 @@ function render() {
     "En esta aventura desde el " + desde.toLocaleDateString("es-AR");
 
   document.getElementById("version-info").textContent =
-    "MAIN QUEST · Entrega 18b · intro rediseñada · datos v" + data.version;
+    "MAIN QUEST · Entrega 18c · intro ágil · datos v" + data.version;
 }
 
 /* ------------------------------------------------------------

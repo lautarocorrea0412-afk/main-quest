@@ -5,9 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>MAIN QUEST</title>
 
+  <!-- Anti-flash: el mismo fondo oscuro de la intro pintado ANTES de
+       cargar el CSS, para que al abrir desde el ícono no haya un
+       pantallazo en blanco mientras carga. -->
+  <style>
+    html, body { margin: 0; background: #1a1622; }
+  </style>
+
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#2A2130">
+  <meta name="theme-color" content="#1a1622">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">

@@ -198,12 +198,12 @@ export async function correrCeremonia(datos) {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => overlay.classList.add("intro-revelada"));
     });
-    // 1.6s: el avatar te nota y gira; el compañero despierta.
-    setTimeout(() => overlay.classList.add("intro-mira"), 1600);
-    // 2.8s: EL MOMENTO — ofrece el mate, aparece el título.
-    setTimeout(() => overlay.classList.add("intro-mate-on"), 2800);
-    setTimeout(() => overlay.classList.add("intro-titulo-on"), 3200);
-    // 4.2s: queda vivo, esperando. El botón responde.
-    setTimeout(() => overlay.classList.add("intro-lista"), 4200);
+    // 1.1s: el avatar te nota y gira; el compañero despierta.
+    setTimeout(() => overlay.classList.add("intro-mira"), 1100);
+    // 1.9s: EL MOMENTO — ofrece el mate, aparece el título.
+    setTimeout(() => overlay.classList.add("intro-mate-on"), 1900);
+    setTimeout(() => overlay.classList.add("intro-titulo-on"), 2200);
+    // 2.9s: queda vivo, esperando. El botón responde.
+    setTimeout(() => overlay.classList.add("intro-lista"), 2900);
   });
 }

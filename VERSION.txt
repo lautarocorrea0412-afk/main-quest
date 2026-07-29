@@ -1,40 +1,25 @@
-Entrega 18b — Intro rediseñada (según tu feedback en el iPhone)
-Caché SW: mq-entrega18b-intro
-La app debe mostrar en VOS: 'Entrega 18b · intro rediseñada · datos v13'
+Entrega 18c — Anti-flash + intro más ágil
+Caché SW: mq-entrega18c-intro
+La app debe mostrar en VOS: 'Entrega 18c · intro ágil · datos v13'
 
-Sin cambios de datos.
+Sin cambios de datos. Dos ajustes:
 
-Tu captura mostró tres problemas que en mi preview no se veían (la
-pantalla del iPhone es más alta y angosta, y recortaba distinto).
-Rediseñado:
+1. EL "PANTALLAZO" AL ABRIR DESDE EL ÍCONO — arreglado. Al abrir una PWA
+   en iOS hay un instante en blanco antes de que cargue el CSS. Ahora el
+   fondo oscuro de la intro (#1a1622) se pinta ANTES de todo (estilo
+   inline en el <head>), y el background_color del manifest y el
+   theme-color coinciden con ese tono. Sin salto de color al arrancar.
 
-1. EL BOTÓN YA NO TAPA TODO. Era gigante y centrado. Ahora es chico y
-   va abajo del todo, sin invadir la escena ni al avatar.
+2. INTRO MÁS ÁGIL. Comprimí la coreografía:
+   - El avatar te nota a 1.1s (antes 1.6s).
+   - Ofrece el mate a 1.9s (antes 2.8s).
+   - El botón responde a 2.9s (antes 4.2s).
+   - El revelado de la escena y la luz también entran más rápido.
+   Sigue sintiéndose tranquila, pero llega antes al momento y a poder
+   entrar.
 
-2. EL SAKURA AHORA SE VE. El problema era que el SVG era horizontal
-   (240x160) y en pantalla vertical se recortaban los lados, comiéndose
-   el árbol. Rehíce la escena en formato VERTICAL (240x420) que combina
-   con el teléfono: cielo arriba, valle y lago al medio, colina abajo, y
-   el sakura con la copa bien dentro del cuadro.
-
-3. EL AVATAR ES EL PROTAGONISTA. Antes quedaba chico, abajo a la
-   izquierda y medio cortado. Ahora está centrado, más grande, sentado
-   en la colina bajo el sakura. Verificado con render a imagen.
-
-4. SAQUÉ EL COMPAÑERO-BRASA, como pediste. (El módulo brasa.js queda por
-   si algún día lo querés, pero no aparece en la intro.)
-
-5. MÁS REMATE EN EL "¿VAMOS?". Al tocar, además del avatar que se para
-   de un envión, ahora hay un destello cálido —un "flash" de luz— que le
-   da impacto al momento antes del travelling a la aventura.
-
-Modificados: tools/gen_intro.py (escena vertical), assets/intro.svg,
-  css/app.css (layout nuevo), js/ceremonia.js (sin compañero), sw.js,
-  js/app.js
-
-QUÉ VES HOY, SIN NADA HECHO:
-  - La intro al abrir: escena vertical con el sakura visible, el avatar
-    centrado sentado bajo el árbol, el título arriba, el botón chico
-    abajo. La luz según tu hora real. Tu avatar es el que tengas puesto.
+Modificados: index.html (fondo anti-flash + theme-color), manifest.json
+  (background_color), js/ceremonia.js (tiempos), css/app.css
+  (transiciones), sw.js, js/app.js
 
 Suite: 151 tests. Todo en verde.
