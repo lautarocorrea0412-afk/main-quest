@@ -43,7 +43,7 @@ import { dibujarAvatar } from "./avatar.js";
 import { franjaLuz } from "./util.js";
 import { fraseCeremonia } from "./engine.js";
 import { sonar, setSonido, setMusica } from "./sonido.js";
-import { brasaDormida, brasaAlerta, pezEasterEgg } from "./brasa.js";
+import { pezEasterEgg } from "./brasa.js";
 
 let data;
 let escenaCache = null;
@@ -147,10 +147,6 @@ export async function correrCeremonia(datos) {
           ${fauna}
           <div class="intro-avatar">
             <div class="intro-avatar__frente">${dibujarAvatar(1)}</div>
-          </div>
-          <div class="intro-brasa">
-            <div class="intro-brasa__dormida">${brasaDormida()}</div>
-            <div class="intro-brasa__alerta">${brasaAlerta()}</div>
           </div>
           <div class="intro-mate"></div>
           <div class="intro-petalos">${sakura()}</div>

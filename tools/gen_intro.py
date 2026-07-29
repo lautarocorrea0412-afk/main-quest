@@ -19,7 +19,7 @@ de luz por hora (en el CSS) tiñe la escena según tu momento.
 Salida: assets/intro.svg
 """
 
-W, H = 240, 160
+W, H = 240, 420
 out = []
 
 def r(x, y, w, h, c, extra=""):
@@ -67,80 +67,70 @@ PETALO      = "#F8B8CC"
 out.append(f'<svg viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg" '
            f'shape-rendering="crispEdges" preserveAspectRatio="xMidYMid slice">')
 
-# ============ CIELO (fondo, capa que no se mueve) ============
+# ============ CIELO (bandas verticales, ocupa la mitad de arriba) ============
 g_open("intro-cielo")
-r(0, 0, W, 60, CIELO_ALTO)
-r(0, 40, W, 30, CIELO_MEDIO)
-r(0, 62, W, 22, CIELO_BAJO)
+r(0, 0, W, 150, CIELO_ALTO)
+r(0, 110, W, 60, CIELO_MEDIO)
+r(0, 165, W, 55, CIELO_BAJO)
 g_close()
 
-# El sol/luna en su PROPIA capa, arriba del cielo entero, para
-# que ninguna banda lo corte. Alto en el cielo, no sobre el valle.
+# ============ SOL/LUNA en su capa, alto en el cielo ============
 g_open("intro-sol")
-circle(178, 40, 15, SOL_HALO, ' opacity="0.5"')
-circle(178, 40, 10, SOL, ' id="intro-astro"')
+circle(180, 96, 22, SOL_HALO, ' opacity="0.5"')
+circle(180, 96, 14, SOL, ' id="intro-astro"')
 g_close()
 
-# ============ MONTAÑAS LEJANAS (parallax lento) ============
+# ============ MONTAÑAS LEJANAS ============
 g_open("intro-montes")
-poly([(0,84),(38,58),(76,84)], MONTE_LEJOS)
-poly([(52,84),(96,54),(140,84)], MONTE_LEJOS)
-poly([(120,84),(168,60),(216,84)], MONTE_CERCA)
-poly([(190,84),(228,62),(240,80),(240,84)], MONTE_CERCA)
-r(0, 82, W, 6, MONTE_CERCA)  # base de las montañas
+poly([(0,220),(46,165),(96,220)], MONTE_LEJOS)
+poly([(64,220),(120,158),(178,220)], MONTE_LEJOS)
+poly([(150,220),(206,168),(240,220)], MONTE_CERCA)
+r(0, 216, W, 8, MONTE_CERCA)
 g_close()
 
-# ============ LAGO (con brillo que va a destellar) ============
+# ============ LAGO ============
 g_open("intro-lago")
-# El lago ocupa el valle, entre las montañas y la colina media.
-ellipse(120, 104, 92, 16, LAGO)
-# Reflejo del sol sobre el agua: una franja clara vertical.
-r(170, 92, 6, 22, LAGO_BRILLO, ' opacity="0.5" id="intro-reflejo"')
-# Destellos: tres rayitas que el CSS hará titilar.
-r(96, 100, 10, 2, LAGO_BRILLO, ' opacity="0.6" class="intro-destello" style="--d:0"')
-r(130, 106, 14, 2, LAGO_BRILLO, ' opacity="0.5" class="intro-destello" style="--d:1"')
-r(112, 110, 8, 2, LAGO_BRILLO, ' opacity="0.55" class="intro-destello" style="--d:2"')
+ellipse(120, 250, 110, 20, LAGO)
+r(172, 232, 7, 30, LAGO_BRILLO, ' opacity="0.5" id="intro-reflejo"')
+r(90, 246, 12, 3, LAGO_BRILLO, ' opacity="0.6" class="intro-destello" style="--d:0"')
+r(132, 254, 16, 3, LAGO_BRILLO, ' opacity="0.5" class="intro-destello" style="--d:1"')
+r(108, 260, 10, 2, LAGO_BRILLO, ' opacity="0.55" class="intro-destello" style="--d:2"')
 g_close()
 
-# ============ COLINAS (tres planos para profundidad) ============
+# ============ COLINAS (tres planos) ============
 g_open("intro-colina-fondo")
-poly([(0,96),(60,88),(140,98),(240,90),(240,116),(0,116)], COLINA_1)
+poly([(0,244),(70,232),(160,248),(240,238),(240,300),(0,300)], COLINA_1)
 g_close()
-
 g_open("intro-colina-media")
-poly([(0,110),(80,102),(180,112),(240,106),(240,132),(0,132)], COLINA_2)
+poly([(0,280),(90,268),(180,284),(240,274),(240,340),(0,340)], COLINA_2)
 g_close()
 
-# ============ SAKURA (a la izquierda, primer plano) ============
-# El tronco sube desde fuera del cuadro; la copa se cierne sobre
-# el avatar. Copa hecha de racimos redondos, pixel-cozy.
+# ============ SAKURA (izquierda, copa bien dentro del cuadro) ============
 g_open("intro-sakura")
-# Tronco
-r(30, 70, 8, 74, TRONCO)
-r(30, 70, 3, 74, TRONCO_SH)
+# Tronco desde la colina del frente hacia arriba
+r(40, 250, 11, 130, TRONCO)
+r(40, 250, 4, 130, TRONCO_SH)
+poly([(45,300),(64,380),(54,380),(40,306)], TRONCO)
 # Ramas
-poly([(34,92),(18,78),(22,80),(36,96)], TRONCO)
-poly([(36,86),(54,70),(50,74),(38,90)], TRONCO)
-# Copa: racimos de flores
-for (cx, cy, rad) in [(24,64,16),(44,58,18),(62,68,15),(38,72,17),(56,54,13),(20,78,12)]:
+poly([(45,270),(22,250),(27,253),(47,274)], TRONCO)
+poly([(49,258),(74,236),(69,240),(51,262)], TRONCO)
+poly([(46,285),(64,270),(60,274),(47,288)], TRONCO)
+# Copa: racimos grandes, altos, que se ciernen
+for (cx, cy, rad) in [(30,224,26),(60,210,30),(92,226,24),(46,244,26),(78,196,22),(20,250,19),(104,214,18)]:
     circle(cx, cy, rad, SAKURA_2)
-for (cx, cy, rad) in [(30,60,11),(50,60,12),(42,52,10),(58,64,9),(26,72,8)]:
+for (cx, cy, rad) in [(38,214,18),(66,216,20),(52,198,17),(84,214,15),(26,238,14),(96,224,13)]:
     circle(cx, cy, rad, SAKURA_1)
-for (cx, cy, rad) in [(38,58,6),(48,66,5),(32,66,5)]:
+for (cx, cy, rad) in [(44,208,10),(62,228,9),(34,228,9),(78,204,8)]:
     circle(cx, cy, rad, SAKURA_3)
 g_close()
 
-# ============ COLINA DEL PRIMER PLANO (donde se sienta) ============
-# Es la más grande; sostiene al avatar y al compañero. Se inyectan
-# encima en runtime, así que acá va solo el suelo con textura.
+# ============ COLINA DEL FRENTE (donde se sienta el avatar) ============
 g_open("intro-colina-frente")
-poly([(0,124),(70,116),(160,126),(240,120),(240,160),(0,160)], COLINA_3)
-# Manchones de pasto más claro, para que no sea plano.
-for (x, y) in [(20,132),(56,138),(92,130),(128,140),(168,134),(206,142),(40,150),(150,152)]:
-    r(x, y, 5, 3, PASTO_DET, ' opacity="0.6"')
-# Briznas que se mueven con el viento (el CSS las mece).
-for i, (x, y) in enumerate([(48,124),(100,122),(150,126),(198,122)]):
-    poly([(x,y),(x+2,y-8),(x+4,y)], PASTO_DET, f' class="intro-brizna" style="--b:{i}"')
+poly([(0,330),(80,318),(170,332),(240,324),(240,420),(0,420)], COLINA_3)
+for (x, y) in [(24,346),(64,354),(104,342),(150,356),(190,346),(216,360),(44,378),(160,384)]:
+    r(x, y, 6, 3, PASTO_DET, ' opacity="0.6"')
+for i, (x, y) in enumerate([(56,332),(112,328),(168,334),(210,328)]):
+    poly([(x,y),(x+2,y-10),(x+5,y)], PASTO_DET, f' class="intro-brizna" style="--b:{i}"')
 g_close()
 
 out.append('</svg>')

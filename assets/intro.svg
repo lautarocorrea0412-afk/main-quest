@@ -1,66 +1,70 @@
-<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid slice">
+<svg viewBox="0 0 240 420" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid slice">
 <g id="intro-cielo">
-<rect x="0" y="0" width="240" height="60" fill="#3A3350"/>
-<rect x="0" y="40" width="240" height="30" fill="#5A4A66"/>
-<rect x="0" y="62" width="240" height="22" fill="#8A6A78"/>
+<rect x="0" y="0" width="240" height="150" fill="#3A3350"/>
+<rect x="0" y="110" width="240" height="60" fill="#5A4A66"/>
+<rect x="0" y="165" width="240" height="55" fill="#8A6A78"/>
 </g>
 <g id="intro-sol">
-<circle cx="178" cy="40" r="15" fill="#FFC170" opacity="0.5"/>
-<circle cx="178" cy="40" r="10" fill="#FFD98E" id="intro-astro"/>
+<circle cx="180" cy="96" r="22" fill="#FFC170" opacity="0.5"/>
+<circle cx="180" cy="96" r="14" fill="#FFD98E" id="intro-astro"/>
 </g>
 <g id="intro-montes">
-<polygon points="0,84 38,58 76,84" fill="#4A4460"/>
-<polygon points="52,84 96,54 140,84" fill="#4A4460"/>
-<polygon points="120,84 168,60 216,84" fill="#574F6E"/>
-<polygon points="190,84 228,62 240,80 240,84" fill="#574F6E"/>
-<rect x="0" y="82" width="240" height="6" fill="#574F6E"/>
+<polygon points="0,220 46,165 96,220" fill="#4A4460"/>
+<polygon points="64,220 120,158 178,220" fill="#4A4460"/>
+<polygon points="150,220 206,168 240,220" fill="#574F6E"/>
+<rect x="0" y="216" width="240" height="8" fill="#574F6E"/>
 </g>
 <g id="intro-lago">
-<ellipse cx="120" cy="104" rx="92" ry="16" fill="#6E7EA8"/>
-<rect x="170" y="92" width="6" height="22" fill="#AEC0E0" opacity="0.5" id="intro-reflejo"/>
-<rect x="96" y="100" width="10" height="2" fill="#AEC0E0" opacity="0.6" class="intro-destello" style="--d:0"/>
-<rect x="130" y="106" width="14" height="2" fill="#AEC0E0" opacity="0.5" class="intro-destello" style="--d:1"/>
-<rect x="112" y="110" width="8" height="2" fill="#AEC0E0" opacity="0.55" class="intro-destello" style="--d:2"/>
+<ellipse cx="120" cy="250" rx="110" ry="20" fill="#6E7EA8"/>
+<rect x="172" y="232" width="7" height="30" fill="#AEC0E0" opacity="0.5" id="intro-reflejo"/>
+<rect x="90" y="246" width="12" height="3" fill="#AEC0E0" opacity="0.6" class="intro-destello" style="--d:0"/>
+<rect x="132" y="254" width="16" height="3" fill="#AEC0E0" opacity="0.5" class="intro-destello" style="--d:1"/>
+<rect x="108" y="260" width="10" height="2" fill="#AEC0E0" opacity="0.55" class="intro-destello" style="--d:2"/>
 </g>
 <g id="intro-colina-fondo">
-<polygon points="0,96 60,88 140,98 240,90 240,116 0,116" fill="#5E7A55"/>
+<polygon points="0,244 70,232 160,248 240,238 240,300 0,300" fill="#5E7A55"/>
 </g>
 <g id="intro-colina-media">
-<polygon points="0,110 80,102 180,112 240,106 240,132 0,132" fill="#4A6444"/>
+<polygon points="0,280 90,268 180,284 240,274 240,340 0,340" fill="#4A6444"/>
 </g>
 <g id="intro-sakura">
-<rect x="30" y="70" width="8" height="74" fill="#6B4A3A"/>
-<rect x="30" y="70" width="3" height="74" fill="#553A2E"/>
-<polygon points="34,92 18,78 22,80 36,96" fill="#6B4A3A"/>
-<polygon points="36,86 54,70 50,74 38,90" fill="#6B4A3A"/>
-<circle cx="24" cy="64" r="16" fill="#F5A8BE"/>
-<circle cx="44" cy="58" r="18" fill="#F5A8BE"/>
-<circle cx="62" cy="68" r="15" fill="#F5A8BE"/>
-<circle cx="38" cy="72" r="17" fill="#F5A8BE"/>
-<circle cx="56" cy="54" r="13" fill="#F5A8BE"/>
-<circle cx="20" cy="78" r="12" fill="#F5A8BE"/>
-<circle cx="30" cy="60" r="11" fill="#F58EA8"/>
-<circle cx="50" cy="60" r="12" fill="#F58EA8"/>
-<circle cx="42" cy="52" r="10" fill="#F58EA8"/>
-<circle cx="58" cy="64" r="9" fill="#F58EA8"/>
-<circle cx="26" cy="72" r="8" fill="#F58EA8"/>
-<circle cx="38" cy="58" r="6" fill="#E87A98"/>
-<circle cx="48" cy="66" r="5" fill="#E87A98"/>
-<circle cx="32" cy="66" r="5" fill="#E87A98"/>
+<rect x="40" y="250" width="11" height="130" fill="#6B4A3A"/>
+<rect x="40" y="250" width="4" height="130" fill="#553A2E"/>
+<polygon points="45,300 64,380 54,380 40,306" fill="#6B4A3A"/>
+<polygon points="45,270 22,250 27,253 47,274" fill="#6B4A3A"/>
+<polygon points="49,258 74,236 69,240 51,262" fill="#6B4A3A"/>
+<polygon points="46,285 64,270 60,274 47,288" fill="#6B4A3A"/>
+<circle cx="30" cy="224" r="26" fill="#F5A8BE"/>
+<circle cx="60" cy="210" r="30" fill="#F5A8BE"/>
+<circle cx="92" cy="226" r="24" fill="#F5A8BE"/>
+<circle cx="46" cy="244" r="26" fill="#F5A8BE"/>
+<circle cx="78" cy="196" r="22" fill="#F5A8BE"/>
+<circle cx="20" cy="250" r="19" fill="#F5A8BE"/>
+<circle cx="104" cy="214" r="18" fill="#F5A8BE"/>
+<circle cx="38" cy="214" r="18" fill="#F58EA8"/>
+<circle cx="66" cy="216" r="20" fill="#F58EA8"/>
+<circle cx="52" cy="198" r="17" fill="#F58EA8"/>
+<circle cx="84" cy="214" r="15" fill="#F58EA8"/>
+<circle cx="26" cy="238" r="14" fill="#F58EA8"/>
+<circle cx="96" cy="224" r="13" fill="#F58EA8"/>
+<circle cx="44" cy="208" r="10" fill="#E87A98"/>
+<circle cx="62" cy="228" r="9" fill="#E87A98"/>
+<circle cx="34" cy="228" r="9" fill="#E87A98"/>
+<circle cx="78" cy="204" r="8" fill="#E87A98"/>
 </g>
 <g id="intro-colina-frente">
-<polygon points="0,124 70,116 160,126 240,120 240,160 0,160" fill="#3E5539"/>
-<rect x="20" y="132" width="5" height="3" fill="#567A4E" opacity="0.6"/>
-<rect x="56" y="138" width="5" height="3" fill="#567A4E" opacity="0.6"/>
-<rect x="92" y="130" width="5" height="3" fill="#567A4E" opacity="0.6"/>
-<rect x="128" y="140" width="5" height="3" fill="#567A4E" opacity="0.6"/>
-<rect x="168" y="134" width="5" height="3" fill="#567A4E" opacity="0.6"/>
-<rect x="206" y="142" width="5" height="3" fill="#567A4E" opacity="0.6"/>
-<rect x="40" y="150" width="5" height="3" fill="#567A4E" opacity="0.6"/>
-<rect x="150" y="152" width="5" height="3" fill="#567A4E" opacity="0.6"/>
-<polygon points="48,124 50,116 52,124" fill="#567A4E" class="intro-brizna" style="--b:0"/>
-<polygon points="100,122 102,114 104,122" fill="#567A4E" class="intro-brizna" style="--b:1"/>
-<polygon points="150,126 152,118 154,126" fill="#567A4E" class="intro-brizna" style="--b:2"/>
-<polygon points="198,122 200,114 202,122" fill="#567A4E" class="intro-brizna" style="--b:3"/>
+<polygon points="0,330 80,318 170,332 240,324 240,420 0,420" fill="#3E5539"/>
+<rect x="24" y="346" width="6" height="3" fill="#567A4E" opacity="0.6"/>
+<rect x="64" y="354" width="6" height="3" fill="#567A4E" opacity="0.6"/>
+<rect x="104" y="342" width="6" height="3" fill="#567A4E" opacity="0.6"/>
+<rect x="150" y="356" width="6" height="3" fill="#567A4E" opacity="0.6"/>
+<rect x="190" y="346" width="6" height="3" fill="#567A4E" opacity="0.6"/>
+<rect x="216" y="360" width="6" height="3" fill="#567A4E" opacity="0.6"/>
+<rect x="44" y="378" width="6" height="3" fill="#567A4E" opacity="0.6"/>
+<rect x="160" y="384" width="6" height="3" fill="#567A4E" opacity="0.6"/>
+<polygon points="56,332 58,322 61,332" fill="#567A4E" class="intro-brizna" style="--b:0"/>
+<polygon points="112,328 114,318 117,328" fill="#567A4E" class="intro-brizna" style="--b:1"/>
+<polygon points="168,334 170,324 173,334" fill="#567A4E" class="intro-brizna" style="--b:2"/>
+<polygon points="210,328 212,318 215,328" fill="#567A4E" class="intro-brizna" style="--b:3"/>
 </g>
 </svg>
